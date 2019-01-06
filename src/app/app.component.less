@@ -1,121 +1,19 @@
+@bgcolor:  rgb(15,15,15);
 .main {
     display: flex;
     align-items: center;
     justify-content: center;
     color: whitesmoke;
-    background-color: rgb(15,15,15);
+    background-color: @bgcolor;
     font-family: 'Anonymous Pro', monospace;
+    perspective: 100%;
+	perspective-origin: 50% 400px;
 }
-.logo {
-    font-family: 'Chakra Petch', sans-serif;
-    color: rgb(0, 0, 0);
-    font-size: 6rem;
-    text-align: center;
-    // text-shadow:0px 0px 20px rgba(168, 166, 46, 0.8);
-}
-.centerBlock {
+.cube {
     display: flex;
     flex-wrap: wrap;
     width: 45%;
     align-items: center;
     justify-content: center;
-}
-.zsh {
-    font-size: 1.5rem;
-}
-.Red {
-    color: red;
-}
-.Blue {
-    color: blue;
-}
-.White {
-    color: white;
-}
-.Yellow {
-    color: yellow;
-}
-.Green {
-    color: green;
-}
-.text {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 4px solid rgb(39, 92, 23);
-    font-size: 1.5rem;
-    opacity: 0.65;
-}
-.textBlock0 {
-    width: 13ch;
-    animation: printed-text 4s steps(12) infinite, 
-                flashin-border .75s step-start 
-                infinite;
-}
-@keyframes flashin-border{
-    0%{
-      border-color:  rgb(39, 92, 23);
-    }
-    50%{
-      border-color: transparent;
-    }
-    100%{
-      border-color:  rgb(39, 92, 23);
-    }
-  }
-@keyframes printed-text{
-from {
-    width: 0%;
-}
-37% {
-    width: 13ch;
-}
-}
-.textBlock1 {
-    width: 17ch;
-    animation: printed-text1 5s steps(17) infinite, 
-                flashin-border .75s step-start 
-                infinite;
-}
-@keyframes printed-text1{
-from {
-    width: 0%;
-}
-37% {
-    width: 17ch;
-}
-}
-.textBlock2 {
-    width: 9ch;
-    animation: printed-text2 4s steps(9) infinite, 
-                flashin-border .75s step-start 
-                infinite;
-}
-@keyframes printed-text2{
-from {
-    width: 0%;
-}
-37% {
-    width: 9ch;
-}
-}
-.iconBlock {
-    display: flex;
-    flex-wrap: wrap;
-    width: 840px;
-    align-items: center;
-    justify-content: center;
-    margin: 30px 0px;
-}
-.icon {
-    width: 3rem;
-    height: 3rem;
-    margin: 0 5px 0;
-    opacity: 0.3;
-    transition: transform 0.15s;
-}
-.icon:hover {
-    transform: scale(1.25,1.25);
-    opacity: 0.7;
-    transition: transform 0.15s;
+    transform-style: preserve-3d;
 }

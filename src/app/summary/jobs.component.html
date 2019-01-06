@@ -1,0 +1,32 @@
+<div class="commonBlock">
+  <h1>
+    <span *ngIf="job.LogoURL">
+      <a href="{{job.URL}}"><img src="{{job.LogoURL}}"></a>
+    </span>
+    <span *ngIf="!job.LogoURL">
+        {{job.Name}}
+    </span>
+  </h1>
+</div>
+<div class="job">
+    Period:<br>
+    <span class="bold"> {{job.Period}}</span><br><br>
+    Position:<br>
+    <span class="bold"> {{job.Position}}</span><br><br>
+    Duties: <br>
+    <span class="bold"> {{job.Duties}}</span><br><br>
+    <span *ngIf="job.projects">
+    Projects: <br>
+    <span class="bold" *ngFor="let project of job.projects;let i=index">{{i+1}}. {{project}}<br></span><br>
+    </span>
+    Technologies: <br>
+    <span class="logos">
+      <span *ngFor="let tech of technologies">
+        <a href="{{tech.url}}"><div class="{{tech.name}}"></div></a>
+      </span>
+    </span>
+</div>
+<nav>
+  <a routerLink="/summary">Back to CV</a> 
+  <a routerLink="">MainPage</a> 
+</nav>
