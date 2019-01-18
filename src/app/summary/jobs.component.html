@@ -1,6 +1,6 @@
   <h1>
     <span *ngIf="job.LogoURL">
-      <a href="{{job.URL}}"><img src="{{job.LogoURL}}"></a>
+      <a href="{{job.URL}}" target="_blank"><img src="{{job.LogoURL}}"></a>
     </span>
     <span *ngIf="!job.LogoURL">
         {{job.Name}}
@@ -20,7 +20,7 @@
     Technologies: <br>
     <span class="logos">
       <span *ngFor="let tech of technologies">
-        <a href="{{tech.url}}" title="{{tech.name}}"><div class="{{tech.name}}" ></div></a>
+        <a href="{{tech.url}}" title="{{tech.name}}" target="_blank"><div class="{{tech.name}}" ></div></a>
       </span>
     </span>
 </div>
