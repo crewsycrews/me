@@ -96,8 +96,12 @@ h2 {
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    width: 100px;
-    height: 100px;
+    width: 6vh;
+    height: 6vh;
+    @media (min-width: 768px) {
+        width: 10vmin;
+        height: 10vmin;
+    }
     transition: 0.3s;
     &:hover {
         transform: scale(1.2);
