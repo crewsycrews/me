@@ -43,13 +43,13 @@ export class MainComponent implements OnInit {
     }, 1);
     setInterval(() => {
       this.colorLogoChange();
-    }, 7000);
+    }, 10000);
     setTimeout(() => {
       this.colorShChange();
       setInterval(() => {
         this.colorShChange();
-      }, 7000);
-    }, 8800);
+      }, 10000);
+    }, 11800);
     setInterval(() => {
       this.classForText = 'textBlock' + this.i;
       this.textyText = this.textyTexts[this.i];
@@ -57,7 +57,7 @@ export class MainComponent implements OnInit {
       if (this.i === 3) {
         this.i = 0;
       }
-    }, 4000);
+    }, 6000);
   }
 
   ngOnInit() {
