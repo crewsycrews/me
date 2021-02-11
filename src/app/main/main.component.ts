@@ -15,8 +15,8 @@ import { Blinking } from '../animations';
 export class MainComponent implements OnInit {
   title = 'Madbroz';
   classForText = 'textBlock0';
-  textyText = 'PHP developer';
-  textyTexts = ['PHP developer', 'GameDev Romantic', 'ZSH lover'];
+  textyText = 'Software dev';
+  textyTexts = ['Software dev', 'Family guy', 'Healthy lifestyle'];
   lightColor = null;
   colors = ['Green', 'White', 'Red', 'Blue', 'Yellow'];
   i = 1;
