@@ -57,7 +57,7 @@ export class MainComponent implements OnInit {
       if (this.i === 3) {
         this.i = 0;
       }
-    }, 6000);
+    }, 4000);
   }
 
   ngOnInit() {

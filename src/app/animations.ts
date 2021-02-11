@@ -17,7 +17,7 @@ export const Blinking =
         state('lightWhite', style({
         textShadow: '0px 0px 25px rgba(200, 200, 200, 0.9)'
         })),
-        transition('* => lightGreen', [
+        transition('lightGreen => *', [
         animate('1.8s', keyframes([
             style({ textShadow: '0px 0px 25px rgba(40, 210, 40, 0.1)', offset: 0.05}),
             style({ textShadow: '0px 0px 25px rgba(40, 210, 40, 0.9)', offset: 0.25}),
@@ -30,7 +30,7 @@ export const Blinking =
             style({ textShadow: '0px 0px 25px rgba(40, 210, 40, 0.9)', offset: 1})
         ])),
         ]),
-        transition('* => lightRed', [
+        transition('lightRed => *', [
         animate('1.8s', keyframes([
             style({ textShadow: '0px 0px 25px rgba(210, 40, 40, 0.1)', offset: 0.05}),
             style({ textShadow: '0px 0px 25px rgba(210, 40, 40, 0.9)', offset: 0.25}),
@@ -43,7 +43,7 @@ export const Blinking =
             style({ textShadow: '0px 0px 25px rgba(210, 40, 40, 0.9)', offset: 1})
         ])),
         ]),
-        transition('* => lightYellow', [
+        transition('lightYellow => *', [
         animate('1.8s', keyframes([
             style({ textShadow: '0px 0px 25px rgba(200, 200, 40, 0.1)', offset: 0.05}),
             style({ textShadow: '0px 0px 25px rgba(200, 200, 40, 0.9)', offset: 0.25}),
@@ -56,7 +56,7 @@ export const Blinking =
             style({ textShadow: '0px 0px 25px rgba(200, 200, 40, 0.9)', offset: 1})
         ])),
         ]),
-        transition('* => lightBlue', [
+        transition('lightBlue => *', [
         animate('1.8s', keyframes([
             style({ textShadow: '0px 0px 25px rgba(40, 40, 210, 0.1)', offset: 0.05}),
             style({ textShadow: '0px 0px 25px rgba(40, 40, 210, 0.9)', offset: 0.25}),
@@ -69,7 +69,7 @@ export const Blinking =
             style({ textShadow: '0px 0px 25px rgba(40, 40, 210, 0.9)', offset: 1})
         ])),
         ]),
-        transition('* => lightWhite', [
+        transition('lightWhite => *', [
         animate('1.8s', keyframes([
             style({ textShadow: '0px 0px 25px rgba(200, 200, 200, 0.1)', offset: 0.05}),
             style({ textShadow: '0px 0px 25px rgba(200, 200, 200, 0.9)', offset: 0.25}),
