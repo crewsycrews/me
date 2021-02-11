@@ -52,7 +52,7 @@ var Blinking = Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["trigger"
     Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["state"])('lightWhite', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({
         textShadow: '0px 0px 25px rgba(200, 200, 200, 0.9)'
     })),
-    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('* => lightGreen', [
+    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('lightGreen => *', [
         Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["animate"])('1.8s', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["keyframes"])([
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(40, 210, 40, 0.1)', offset: 0.05 }),
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(40, 210, 40, 0.9)', offset: 0.25 }),
@@ -65,7 +65,7 @@ var Blinking = Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["trigger"
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(40, 210, 40, 0.9)', offset: 1 })
         ])),
     ]),
-    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('* => lightRed', [
+    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('lightRed => *', [
         Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["animate"])('1.8s', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["keyframes"])([
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(210, 40, 40, 0.1)', offset: 0.05 }),
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(210, 40, 40, 0.9)', offset: 0.25 }),
@@ -78,7 +78,7 @@ var Blinking = Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["trigger"
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(210, 40, 40, 0.9)', offset: 1 })
         ])),
     ]),
-    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('* => lightYellow', [
+    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('lightYellow => *', [
         Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["animate"])('1.8s', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["keyframes"])([
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(200, 200, 40, 0.1)', offset: 0.05 }),
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(200, 200, 40, 0.9)', offset: 0.25 }),
@@ -91,7 +91,7 @@ var Blinking = Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["trigger"
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(200, 200, 40, 0.9)', offset: 1 })
         ])),
     ]),
-    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('* => lightBlue', [
+    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('lightBlue => *', [
         Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["animate"])('1.8s', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["keyframes"])([
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(40, 40, 210, 0.1)', offset: 0.05 }),
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(40, 40, 210, 0.9)', offset: 0.25 }),
@@ -104,7 +104,7 @@ var Blinking = Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["trigger"
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(40, 40, 210, 0.9)', offset: 1 })
         ])),
     ]),
-    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('* => lightWhite', [
+    Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["transition"])('lightWhite => *', [
         Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["animate"])('1.8s', Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["keyframes"])([
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(200, 200, 200, 0.1)', offset: 0.05 }),
             Object(_angular_animations__WEBPACK_IMPORTED_MODULE_0__["style"])({ textShadow: '0px 0px 25px rgba(200, 200, 200, 0.9)', offset: 0.25 }),
@@ -391,7 +391,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [@Blinking]=\"lightColor\" class=\"logo\">Danil Rodin</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-1\"></span>\n  <span class=\"col\">\n    <span class=\"{{ colors[k] }}\">┌─╼[</span>~/Crewsy/Crews<span\n      class=\"{{ colors[k] }}\"\n      >] [</span\n    >main<span class=\"{{ colors[k] }}\">]<br /></span>\n  </span>\n  <span class=\"col-1\"></span>\n</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-2\"></span>\n  <span\n    class=\"{{ colors[k] }} col-2\"\n    style=\"margin-left: 2.37em; line-height: 1.2\"\n    >└─────\n  </span>\n  <span class=\"col text-left\">\n    <span class=\"{{ classForText }} text \">\n      {{ textyText }}\n    </span>\n  </span>\n</div>\n<a href=\"https://github.com/crewsycrews\" title=\"GitHub\" target=\"_blank\"\n  ><img src=\"assets/images/git_logo.png\" alt=\"GitHub\" class=\"icon\"\n/></a>\n<a href=\"https://ru.hexlet.io/u/casiq\" title=\"Hexlet\" target=\"_blank\"\n  ><img src=\"assets/images/hexlet_logo.png\" alt=\"Hexlet\" class=\"icon\"\n/></a>\n<a href=\"https://tele.gg/casiq\" title=\"Telegram\" target=\"_blank\"\n  ><img src=\"assets/images/telegram_logo.png\" alt=\"Telegram\" class=\"icon\"\n/></a>\n<a\n  href=\"https://www.codewars.com/users/crewsycrews/\"\n  title=\"CodeWars\"\n  target=\"_blank\"\n  ><img src=\"assets/images/codewars_logo.png\" alt=\"CodeWars\" class=\"icon\"\n/></a>\n<a href=\"https://dev.to/crewsycrews\" title=\"Dev.to\" target=\"_blank\">\n  <img\n    src=\"https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg\"\n    alt=\"Danil Rodin's DEV Profile\"\n    class=\"icon devto\"\n  />\n</a>\n<div class=\"row mt-3\">\n  <a href=\"https://crewsycrews.github.io/crewsycrews.blog/\" class=\"col zsh\"\n    >Blog</a\n  >\n</div>\n"
+module.exports = "<div [@Blinking]=\"lightColor\" class=\"logo\">Danil Rodin</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-1\"></span>\n  <span class=\"col\">\n    <span class=\"{{ colors[k] }}\">[</span>~/Crewsy/Crews<span\n      class=\"{{ colors[k] }}\"\n      >] [</span\n    >main<span class=\"{{ colors[k] }}\">]<br /></span>\n  </span>\n  <span class=\"col-1\"></span>\n</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-1\"></span>\n  <span class=\"col-10\">\n    <span class=\"text-left\">\n      <span class=\"{{ classForText }} text \">\n        {{ textyText }}\n      </span>\n    </span>\n  </span>\n  <span class=\"col-1\"></span>\n</div>\n<a href=\"https://github.com/crewsycrews\" title=\"GitHub\" target=\"_blank\"\n  ><img src=\"assets/images/git_logo.png\" alt=\"GitHub\" class=\"icon\"\n/></a>\n<a href=\"https://ru.hexlet.io/u/casiq\" title=\"Hexlet\" target=\"_blank\"\n  ><img src=\"assets/images/hexlet_logo.png\" alt=\"Hexlet\" class=\"icon\"\n/></a>\n<a href=\"https://tele.gg/casiq\" title=\"Telegram\" target=\"_blank\"\n  ><img src=\"assets/images/telegram_logo.png\" alt=\"Telegram\" class=\"icon\"\n/></a>\n<a\n  href=\"https://www.codewars.com/users/crewsycrews/\"\n  title=\"CodeWars\"\n  target=\"_blank\"\n  ><img src=\"assets/images/codewars_logo.png\" alt=\"CodeWars\" class=\"icon\"\n/></a>\n<a href=\"https://dev.to/crewsycrews\" title=\"Dev.to\" target=\"_blank\">\n  <img\n    src=\"https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg\"\n    alt=\"Danil Rodin's DEV Profile\"\n    class=\"icon devto\"\n  />\n</a>\n<div class=\"row mt-3\">\n  <a href=\"https://crewsycrews.github.io/crewsycrews.blog/\" class=\"col zsh\"\n    >Blog</a\n  >\n</div>\n"
 
 /***/ }),
 
@@ -460,7 +460,7 @@ var MainComponent = /** @class */ (function () {
             if (_this.i === 3) {
                 _this.i = 0;
             }
-        }, 6000);
+        }, 4000);
     }
     MainComponent.prototype.colorLogoChange = function () {
         this.lightColor = 'light' + this.colors[this.j];
