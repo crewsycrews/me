@@ -37,6 +37,10 @@ export class MainComponent implements OnInit {
     this.k++;
   }
 
+  redirectToBlog() {
+    window.location.href = "https://crewsycrews-blog.netlify.app/";
+  }
+
   constructor() {
     setTimeout(() => {
       this.lightColor = 'lightGreen';
