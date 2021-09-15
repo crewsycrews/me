@@ -477,7 +477,7 @@ var MainComponent = /** @class */ (function () {
         this.k++;
     };
     MainComponent.prototype.redirectToBlog = function () {
-        window.location.href = "https://crewsycrews-blog.netlify.app/";
+        window.location.href = "https://blog.crewsis.me";
     };
     MainComponent.prototype.ngOnInit = function () {
     };
