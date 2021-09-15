@@ -38,7 +38,7 @@ export class MainComponent implements OnInit {
   }
 
   redirectToBlog() {
-    window.location.href = "https://crewsycrews-blog.netlify.app/";
+    window.location.href = "https://blog.crewsis.me";
   }
 
   constructor() {
