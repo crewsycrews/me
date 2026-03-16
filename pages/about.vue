@@ -1,3 +1,22 @@
+<script setup lang="ts">
+const runtimeConfig = useRuntimeConfig();
+const ogImageUrl = new URL(
+  "assets/images/og-image.png",
+  new URL(runtimeConfig.app.baseURL, runtimeConfig.public.siteUrl),
+).toString();
+
+useSeoMeta({
+  title: "About | Danil Rodin",
+  description: "About Danil Rodin: fullstack developer background and experience.",
+  ogTitle: "About | Danil Rodin",
+  ogDescription: "About Danil Rodin: fullstack developer background and experience.",
+  ogImage: ogImageUrl,
+  ogImageAlt: "Danil Rodin",
+  twitterCard: "summary_large_image",
+  twitterImage: ogImageUrl,
+});
+</script>
+
 <template>
   <div class="mt-4 flex justify-center">
     <h1 class="w-full text-center font-bold text-xl">

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
+const runtimeConfig = useRuntimeConfig();
+const ogImageUrl = new URL(
+  "assets/images/og-image.png",
+  new URL(runtimeConfig.app.baseURL, runtimeConfig.public.siteUrl),
+).toString();
+
 useSeoMeta({
   title: "Danil Rodin | Fullstack Developer",
   description:
@@ -8,10 +14,10 @@ useSeoMeta({
   ogTitle: "Danil Rodin | Fullstack Developer",
   ogDescription:
     "Personal website of Danil Rodin with projects and developer profile.",
-  ogImage: "/assets/images/og-image.png",
+  ogImage: ogImageUrl,
   ogImageAlt: "Danil Rodin",
   twitterCard: "summary_large_image",
-  twitterImage: "/assets/images/og-image.png",
+  twitterImage: ogImageUrl,
 });
 
 const textBlocks = ["Software dev", "Family guy", "Healthy lifestyle"];
