@@ -98,107 +98,103 @@ const handleLogoAnimationEnd = () => {
 </script>
 
 <template>
-  <div
-    :key="logoAnimKey"
-    :class="['logo', logoClass]"
-    @animationend="handleLogoAnimationEnd"
-  >
-    Danil Rodin
-  </div>
-  <div class="zsh mt-2 hidden items-center md:flex">
-    <span class="w-1/12" />
-    <span class="w-10/12">
-      <span :class="shellColorClass">[</span>~/Crewsy/Crews<span
-        :class="shellColorClass"
-        >] [</span
-      >main<span :class="shellColorClass">]<br /></span>
-    </span>
-    <span class="w-1/12" />
-  </div>
-  <div class="zsh hidden items-center md:flex">
-    <span class="w-1/12" />
-    <span class="w-10/12">
-      <span class="text-left">
-        <span :class="[classForText, 'text']">
-          {{ textyText }}
+  <div class="flex min-h-[calc(100vh-8.5rem)] flex-col justify-center">
+    <div
+      :key="logoAnimKey"
+      :class="['logo', logoClass]"
+      @animationend="handleLogoAnimationEnd"
+    >
+      Danil Rodin
+    </div>
+    <div class="zsh mt-2 hidden items-center md:flex">
+      <span class="w-1/12" />
+      <span class="w-10/12">
+        <span :class="shellColorClass">[</span>~/Crewsy/Crews<span
+          :class="shellColorClass"
+          >] [</span
+        >main<span :class="shellColorClass">]<br /></span>
+      </span>
+      <span class="w-1/12" />
+    </div>
+    <div class="zsh hidden items-center md:flex">
+      <span class="w-1/12" />
+      <span class="w-10/12">
+        <span class="text-left">
+          <span :class="[classForText, 'text']">
+            {{ textyText }}
+          </span>
         </span>
       </span>
-    </span>
-    <span class="w-1/12" />
-  </div>
-  <div class="mt-4 flex justify-center text-center">
-    <a
-      href="https://github.com/crewsycrews"
-      title="Danil Rodin GitHub"
-      aria-label="Danil Rodin on GitHub"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img
-        src="/assets/images/git_logo.png"
-        alt="Danil Rodin GitHub"
-        class="icon"
-    /></a>
-    <a
-      href="https://ru.hexlet.io/u/casiq"
-      title="Hexlet profile"
-      aria-label="Danil Rodin on Hexlet"
-      target="_blank"
-      rel="noopener noreferrer"
-      ><img src="/assets/images/hexlet_logo.png" alt="Hexlet" class="icon"
-    /></a>
-    <a
-      href="https://t.me/casiq"
-      title="Danil Rodin Telegram"
-      aria-label="Danil Rodin on Telegram"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img
-        src="/assets/images/telegram_logo.png"
-        alt="Danil Rodin Telegram"
-        class="icon"
-    /></a>
-    <a
-      href="https://www.codewars.com/users/crewsycrews/"
-      title="CodeWars profile"
-      aria-label="Danil Rodin on CodeWars"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img src="/assets/images/codewars_logo.png" alt="CodeWars" class="icon"
-    /></a>
-    <a
-      href="https://dev.to/crewsycrews"
-      title="Danil Rodin on Dev.to"
-      aria-label="Danil Rodin on Dev.to"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img
-        src="https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg"
-        alt="Danil Rodin's DEV Profile"
-        class="icon devto"
-      />
-    </a>
-    <a
-      href="https://twitter.com/naniyak"
-      title="Danil Rodin Twitter"
-      aria-label="Danil Rodin on Twitter"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img
-        src="/assets/images/twitter_logo.png"
-        alt="Danil Rodin Twitter"
-        class="icon"
-    /></a>
-  </div>
-  <div class="mt-4 flex justify-center text-center">
-    <span class="w-full">
-      <NuxtLink to="/projects">My projects</NuxtLink> |
-      <NuxtLink to="/about">About me</NuxtLink>
-    </span>
+      <span class="w-1/12" />
+    </div>
+    <div class="mt-4 flex justify-center text-center">
+      <a
+        href="https://github.com/crewsycrews"
+        title="Danil Rodin GitHub"
+        aria-label="Danil Rodin on GitHub"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="/assets/images/git_logo.png"
+          alt="Danil Rodin GitHub"
+          class="icon"
+      /></a>
+      <a
+        href="https://ru.hexlet.io/u/casiq"
+        title="Hexlet profile"
+        aria-label="Danil Rodin on Hexlet"
+        target="_blank"
+        rel="noopener noreferrer"
+        ><img src="/assets/images/hexlet_logo.png" alt="Hexlet" class="icon"
+      /></a>
+      <a
+        href="https://t.me/casiq"
+        title="Danil Rodin Telegram"
+        aria-label="Danil Rodin on Telegram"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="/assets/images/telegram_logo.png"
+          alt="Danil Rodin Telegram"
+          class="icon"
+      /></a>
+      <a
+        href="https://www.codewars.com/users/crewsycrews/"
+        title="CodeWars profile"
+        aria-label="Danil Rodin on CodeWars"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="/assets/images/codewars_logo.png" alt="CodeWars" class="icon"
+      /></a>
+      <a
+        href="https://dev.to/crewsycrews"
+        title="Danil Rodin on Dev.to"
+        aria-label="Danil Rodin on Dev.to"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg"
+          alt="Danil Rodin's DEV Profile"
+          class="icon devto"
+        />
+      </a>
+      <a
+        href="https://twitter.com/naniyak"
+        title="Danil Rodin Twitter"
+        aria-label="Danil Rodin on Twitter"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="/assets/images/twitter_logo.png"
+          alt="Danil Rodin Twitter"
+          class="icon"
+      /></a>
+    </div>
   </div>
 </template>
 

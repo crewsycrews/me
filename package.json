@@ -12,6 +12,7 @@
     "nuxt": "latest"
   },
   "devDependencies": {
+    "@nuxt/content": "^3.12.0",
     "@nuxtjs/tailwindcss": "^6.14.0"
   }
 }

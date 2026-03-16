@@ -34,12 +34,6 @@
 
     </div>
   </div>
-
-  <div class="my-4 flex justify-center">
-    <span class="w-full text-center">
-      <NuxtLink to="/">Back to main page</NuxtLink>
-    </span>
-  </div>
 </template>
 
 <style scoped>

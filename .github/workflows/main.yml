@@ -33,6 +33,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Rebuild better-sqlite3 for runner
+        run: npm rebuild better-sqlite3 --build-from-source
+
       - name: Generate static site
         run: npm run generate
 
