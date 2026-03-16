@@ -7,7 +7,7 @@ node_modules/
 .nitro/
 .cache/
 dist/
-.data
+.data/
 
 # Logs
 *.log
