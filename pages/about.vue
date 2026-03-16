@@ -1,6 +1,6 @@
 <template>
   <div class="mt-4 flex justify-center">
-    <h1 class="w-full text-center">
+    <h1 class="w-full text-center font-bold text-xl">
       About me
       <img
         class="profile-photo"
@@ -13,14 +13,14 @@
   </div>
 
   <div class="mt-3 flex justify-center">
-    <div class="about-card w-full md:w-9/12 lg:w-8/12">
-      <h2>Nice to meet you!</h2>
+    <div class="about-card w-full md:w-9/12 lg:w-8/12 space-y-2">
+      <h2 class="text-lg">Nice to meet you!</h2>
       <p>
         I'm, <b>Danil Rodin</b>, the fullstack developer, father of two, GameDev enthusiast. Passionate at family,
         work, study and friendship. If you want to get in touch, feel free to reach out on telegram <NuxtLink to="https://t.me/casiq">@casiq</NuxtLink>.
       </p>
 
-      <h2>My tech stack:</h2>
+      <h2 class="text-lg">My tech stack:</h2>
       <p><b>Backend:</b> laravel from v5 to latest, symfony v5, phalcon, NestJS</p>
       <p>
         <b>Frontend:</b> ES6, VueJS, vuex, pinia, vue-router, vuex-reststate, react, Svelte, Angular, Nuxt, React
@@ -30,7 +30,7 @@
       <p><b>ENV:</b> linux based, docker, docker-compose, traefik, kuberenetes(k3s), terraform</p>
       <p><b>Methodologies:</b> agile, scrum, kanban</p>
 
-      <p>Vegetarian. Health lifestyle. Sometimes I lift heavy weights in gym.</p>
+      <p>Vegetarian. Healthy lifestyle. Sometimes I lift heavy weights in gym.</p>
 
     </div>
   </div>
