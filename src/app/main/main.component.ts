@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Blinking } from '../animations';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-main',
@@ -41,7 +42,7 @@ export class MainComponent implements OnInit {
     window.location.href = "https://blog.crewsis.me";
   }
 
-  constructor() {
+  constructor(private pageTitle: Title, private meta: Meta) {
     setTimeout(() => {
       this.lightColor = 'lightGreen';
     }, 1);
@@ -65,7 +66,21 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    const ogImageUrl = `${window.location.origin}/assets/images/og-image.png`;
+    this.pageTitle.setTitle('Danil Rodin | Fullstack Developer');
+    this.meta.updateTag({
+      name: 'description',
+      content: 'Personal website of Danil Rodin: fullstack developer, projects, links and background.'
+    });
+    this.meta.updateTag({ property: 'og:title', content: 'Danil Rodin | Fullstack Developer' });
+    this.meta.updateTag({
+      property: 'og:description',
+      content: 'Personal website of Danil Rodin with projects and developer profile.'
+    });
+    this.meta.updateTag({ property: 'og:image', content: ogImageUrl });
+    this.meta.updateTag({ property: 'og:image:alt', content: 'Danil Rodin' });
+    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    this.meta.updateTag({ name: 'twitter:image', content: ogImageUrl });
   }
 
 }
