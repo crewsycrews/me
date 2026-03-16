@@ -1,9 +1,10 @@
 <script setup lang="ts">
 const runtimeConfig = useRuntimeConfig();
-const ogImageUrl = new URL(
-  "assets/images/og-image.png",
-  new URL(runtimeConfig.app.baseURL, runtimeConfig.public.siteUrl),
-).toString();
+const route = useRoute();
+const baseUrl = new URL(runtimeConfig.app.baseURL, runtimeConfig.public.siteUrl);
+const pageUrl = new URL(route.path.replace(/^\/+/, ""), baseUrl).toString();
+const ogImageUrl = new URL("assets/images/og-image.png", baseUrl).toString();
+const ogLogoUrl = new URL("assets/images/avatar-small.jpg", baseUrl).toString();
 
 useSeoMeta({
   title: "About | Danil Rodin",
@@ -14,6 +15,15 @@ useSeoMeta({
   ogImageAlt: "Danil Rodin",
   twitterCard: "summary_large_image",
   twitterImage: ogImageUrl,
+});
+
+useHead({
+  meta: [
+    { property: "og:locale", content: "en_US" },
+    { property: "og:url", content: pageUrl },
+    { property: "og:type", content: "website" },
+    { property: "og:logo", content: ogLogoUrl },
+  ],
 });
 </script>
 
