@@ -23,6 +23,88 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 
 /***/ }),
 
+/***/ "./src/app/about/about.component.html":
+/*!********************************************!*\
+  !*** ./src/app/about/about.component.html ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <h1 class=\"col-12\">About me\n    <img\n      class=\"profile-photo\"\n      src=\"assets/images/avatar-small.jpg\"\n      alt=\"Danil Rodin\"\n      role=\"img\"\n      aria-label=\"Profile photo of Danil Rodin\"\n    /></h1>\n  <span class=\"col\"></span>\n</div>\n\n<div class=\"row mt-3\">\n  <span class=\"col\"></span>\n  <div class=\"col-12 col-md-9 col-lg-8 about-card\">\n\n\n    <h2>Nice to meet you!</h2>\n    <p>\n      I'm, <b>Danil Rodin</b>, the fullstack developer, father of two, GameDev enthusiast.\n      Passionate at family, work, study and friendship.\n    </p>\n\n    <h2>My tech stack:</h2>\n    <p><b>Backend:</b> laravel from v5 to latest, symfony v5, phalcon, NestJS</p>\n    <p>\n      <b>Frontend:</b> ES6, VueJS, vuex, pinia, vue-router, vuex-reststate, react, Svelte,\n      Angular, Nuxt, React Native.\n    </p>\n    <p><b>DB:</b> MySQL, PostgreSQL, MongoDB, elasticsearch, redis.</p>\n    <p><b>ENV:</b> linux based, docker, docker-compose, traefik, kuberenetes(k3s), terraform</p>\n    <p><b>Methodologies:</b> agile, scrum, kanban</p>\n\n    <p>Vegetarian. Health lifestyle. Sometimes I lift heavy weights in gym.</p>\n  </div>\n  <span class=\"col\"></span>\n</div>\n\n<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <span class=\"col-12 text-center\">\n    <a routerLink=\"/\">Back to main page</a>\n  </span>\n  <span class=\"col\"></span>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/about/about.component.less":
+/*!********************************************!*\
+  !*** ./src/app/about/about.component.less ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "h1 {\n  text-align: center;\n}\na {\n  color: #d4ef99;\n}\n.about-card {\n  color: #f4f4f4;\n  line-height: 1.5;\n  text-align: left;\n}\n.profile-photo {\n  width: 220px;\n  max-width: 100%;\n  height: auto;\n  border: 2px solid #d4ef99;\n  margin: 0 0 1.5rem 0;\n  display: block;\n}\n.profile-photo {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  margin: 0 auto 1.5rem auto;\n  opacity: 0.7;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3JrL21lL21lL3NyYy9hcHAvYWJvdXQvYWJvdXQuY29tcG9uZW50Lmxlc3MiLCJzcmMvYXBwL2Fib3V0L2Fib3V0LmNvbXBvbmVudC5sZXNzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsbUJBQUE7Q0NDRDtBREVEO0VBQ0UsZUFBQTtDQ0FEO0FER0Q7RUFDRSxlQUFBO0VBQ0EsaUJBQUE7RUFDQSxpQkFBQTtDQ0REO0FESUQ7RUFDRSxhQUFBO0VBQ0EsZ0JBQUE7RUFDQSxhQUFBO0VBQ0EsMEJBQUE7RUFDQSxxQkFBQTtFQUNBLGVBQUE7Q0NGRDtBRFFEO0VBQ0UsY0FBQTtFQUNBLG9CQUFBO0VBQ0Esd0JBQUE7RUFDQSwwQkFBQTtFQUNBLHVCQUFBO0VBQ0EsMkJBQUE7RUFDQSxhQUFBO0NDTkQiLCJmaWxlIjoic3JjL2FwcC9hYm91dC9hYm91dC5jb21wb25lbnQubGVzcyIsInNvdXJjZXNDb250ZW50IjpbImgxIHtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuXG5hIHtcbiAgY29sb3I6ICNkNGVmOTk7XG59XG5cbi5hYm91dC1jYXJkIHtcbiAgY29sb3I6ICNmNGY0ZjQ7XG4gIGxpbmUtaGVpZ2h0OiAxLjU7XG4gIHRleHQtYWxpZ246IGxlZnQ7XG59XG5cbi5wcm9maWxlLXBob3RvIHtcbiAgd2lkdGg6IDIyMHB4O1xuICBtYXgtd2lkdGg6IDEwMCU7XG4gIGhlaWdodDogYXV0bztcbiAgYm9yZGVyOiAycHggc29saWQgI2Q0ZWY5OTtcbiAgbWFyZ2luOiAwIDAgMS41cmVtIDA7XG4gIGRpc3BsYXk6IGJsb2NrO1xufVxuXG4ucGhvdG8tcGxhY2Vob2xkZXIge1xuXG59XG4ucHJvZmlsZS1waG90byB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xuICBsZXR0ZXItc3BhY2luZzogMC4wOGVtO1xuICBtYXJnaW46IDAgYXV0byAxLjVyZW0gYXV0bztcbiAgb3BhY2l0eTogMC43O1xufVxuIiwiaDEge1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG59XG5hIHtcbiAgY29sb3I6ICNkNGVmOTk7XG59XG4uYWJvdXQtY2FyZCB7XG4gIGNvbG9yOiAjZjRmNGY0O1xuICBsaW5lLWhlaWdodDogMS41O1xuICB0ZXh0LWFsaWduOiBsZWZ0O1xufVxuLnByb2ZpbGUtcGhvdG8ge1xuICB3aWR0aDogMjIwcHg7XG4gIG1heC13aWR0aDogMTAwJTtcbiAgaGVpZ2h0OiBhdXRvO1xuICBib3JkZXI6IDJweCBzb2xpZCAjZDRlZjk5O1xuICBtYXJnaW46IDAgMCAxLjVyZW0gMDtcbiAgZGlzcGxheTogYmxvY2s7XG59XG4ucHJvZmlsZS1waG90byB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xuICBsZXR0ZXItc3BhY2luZzogMC4wOGVtO1xuICBtYXJnaW46IDAgYXV0byAxLjVyZW0gYXV0bztcbiAgb3BhY2l0eTogMC43O1xufVxuIl19 */"
+
+/***/ }),
+
+/***/ "./src/app/about/about.component.ts":
+/*!******************************************!*\
+  !*** ./src/app/about/about.component.ts ***!
+  \******************************************/
+/*! exports provided: AboutComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AboutComponent", function() { return AboutComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var AboutComponent = /** @class */ (function () {
+    function AboutComponent(title, meta) {
+        this.title = title;
+        this.meta = meta;
+    }
+    AboutComponent.prototype.ngOnInit = function () {
+        var ogImageUrl = window.location.origin + "/assets/images/og-image.png";
+        this.title.setTitle('About me | Danil Rodin');
+        this.meta.updateTag({
+            name: 'description',
+            content: 'Danil Rodin - fullstack developer, tech stack, background and personal profile.'
+        });
+        this.meta.updateTag({ property: 'og:title', content: 'About me | Danil Rodin' });
+        this.meta.updateTag({
+            property: 'og:description',
+            content: 'Fullstack developer profile and tech stack.'
+        });
+        this.meta.updateTag({ property: 'og:image', content: ogImageUrl });
+        this.meta.updateTag({ property: 'og:image:alt', content: 'Danil Rodin' });
+        this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+        this.meta.updateTag({ name: 'twitter:image', content: ogImageUrl });
+    };
+    AboutComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-about',
+            template: __webpack_require__(/*! ./about.component.html */ "./src/app/about/about.component.html"),
+            styles: [__webpack_require__(/*! ../app.component.less */ "./src/app/app.component.less"), __webpack_require__(/*! ./about.component.less */ "./src/app/about/about.component.less")]
+        }),
+        __metadata("design:paramtypes", [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["Title"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["Meta"]])
+    ], AboutComponent);
+    return AboutComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/animations.ts":
 /*!*******************************!*\
   !*** ./src/app/animations.ts ***!
@@ -231,6 +313,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _main_main_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./main/main.component */ "./src/app/main/main.component.ts");
+/* harmony import */ var _projects_projects_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./projects/projects.component */ "./src/app/projects/projects.component.ts");
+/* harmony import */ var _about_about_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./about/about.component */ "./src/app/about/about.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -240,8 +324,12 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
+
 var routes = [
     { path: '', component: _main_main_component__WEBPACK_IMPORTED_MODULE_2__["MainComponent"], data: { animation: 'HomePage' } },
+    { path: 'projects', component: _projects_projects_component__WEBPACK_IMPORTED_MODULE_3__["ProjectsComponent"], data: { animation: 'ProjectsPage' } },
+    { path: 'about', component: _about_about_component__WEBPACK_IMPORTED_MODULE_4__["AboutComponent"], data: { animation: 'AboutPage' } },
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -347,12 +435,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
 /* harmony import */ var _main_main_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./main/main.component */ "./src/app/main/main.component.ts");
+/* harmony import */ var _projects_projects_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./projects/projects.component */ "./src/app/projects/projects.component.ts");
+/* harmony import */ var _about_about_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./about/about.component */ "./src/app/about/about.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -367,6 +459,8 @@ var AppModule = /** @class */ (function () {
             declarations: [
                 _app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"],
                 _main_main_component__WEBPACK_IMPORTED_MODULE_5__["MainComponent"],
+                _projects_projects_component__WEBPACK_IMPORTED_MODULE_6__["ProjectsComponent"],
+                _about_about_component__WEBPACK_IMPORTED_MODULE_7__["AboutComponent"],
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -391,7 +485,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [@Blinking]=\"lightColor\" class=\"logo\">Danil Rodin</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-1\"></span>\n  <span class=\"col\">\n    <span class=\"{{ colors[k] }}\">[</span>~/Crewsy/Crews<span\n      class=\"{{ colors[k] }}\"\n      >] [</span\n    >main<span class=\"{{ colors[k] }}\">]<br /></span>\n  </span>\n  <span class=\"col-1\"></span>\n</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-1\"></span>\n  <span class=\"col-10\">\n    <span class=\"text-left\">\n      <span class=\"{{ classForText }} text \">\n        {{ textyText }}\n      </span>\n    </span>\n  </span>\n  <span class=\"col-1\"></span>\n</div>\n<a\n  href=\"https://twitter.com/naniyak\"\n  title=\"Danil Rodin Twitter\"\n  target=\"_blank\"\n  ><img\n    src=\"assets/images/twitter_logo.png\"\n    alt=\"Danil Rodin Twitter\"\n    class=\"icon\"\n/></a>\n<a\n  href=\"https://github.com/crewsycrews\"\n  title=\"Danil Rodin GitHub\"\n  target=\"_blank\"\n  ><img src=\"assets/images/git_logo.png\" alt=\"Danil Rodin GitHub\" class=\"icon\"\n/></a>\n<a href=\"https://ru.hexlet.io/u/casiq\" title=\"Hexlet\" target=\"_blank\"\n  ><img src=\"assets/images/hexlet_logo.png\" alt=\"Hexlet\" class=\"icon\"\n/></a>\n<a href=\"https://t.me/casiq\" title=\"Danil Rodin Telegram\" target=\"_blank\"\n  ><img\n    src=\"assets/images/telegram_logo.png\"\n    alt=\"Danil Rodin Telegram\"\n    class=\"icon\"\n/></a>\n<a\n  href=\"https://www.codewars.com/users/crewsycrews/\"\n  title=\"CodeWars\"\n  target=\"_blank\"\n  ><img src=\"assets/images/codewars_logo.png\" alt=\"CodeWars\" class=\"icon\"\n/></a>\n<a href=\"https://dev.to/crewsycrews\" title=\"Danil Rodin Dev.to\" target=\"_blank\">\n  <img\n    src=\"https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg\"\n    alt=\"Danil Rodin's DEV Profile\"\n    class=\"icon devto\"\n  />\n</a>\n<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <h4 class=\"col-12\">Side homemade projects:</h4>\n  <span class=\"col\"></span>\n</div>\n<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <iframe\n    src=\"https://itch.io/embed/2068346?linkback=true&amp;border_width=4&amp;bg_color=000000&amp;fg_color=ffffff&amp;link_color=327345&amp;border_color=d4ef99\"\n    width=\"558\"\n    height=\"173\"\n    frameborder=\"0\"\n    ><a href=\"https://casiq.itch.io/ctf\"\n      >Cosmic Tree Fighters by casiq</a\n    ></iframe\n  >\n  <span class=\"col\"></span>\n</div>\n<div class=\"row mt-4\">\n  <span class=\"col\"></span\n  ><span class=\"col\"\n    ><a\n      href=\"https://marketplace.visualstudio.com/items?itemName=crewsycrews.bundlephobia-support\"\n      >BundlePhobia Vscode Extension</a\n    >\n  </span>\n  <span class=\"col\"></span>\n</div>\n"
+module.exports = "<div [@Blinking]=\"lightColor\" class=\"logo\">Danil Rodin</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-1\"></span>\n  <span class=\"col\">\n    <span class=\"{{ colors[k] }}\">[</span>~/Crewsy/Crews<span\n      class=\"{{ colors[k] }}\"\n      >] [</span\n    >main<span class=\"{{ colors[k] }}\">]<br /></span>\n  </span>\n  <span class=\"col-1\"></span>\n</div>\n<div class=\"row d-none d-md-flex zsh\">\n  <span class=\"col-1\"></span>\n  <span class=\"col-10\">\n    <span class=\"text-left\">\n      <span class=\"{{ classForText }} text \">\n        {{ textyText }}\n      </span>\n    </span>\n  </span>\n  <span class=\"col-1\"></span>\n</div>\n<a\n  href=\"https://twitter.com/naniyak\"\n  title=\"Danil Rodin Twitter\"\n  target=\"_blank\"\n  ><img\n    src=\"assets/images/twitter_logo.png\"\n    alt=\"Danil Rodin Twitter\"\n    class=\"icon\"\n/></a>\n<a\n  href=\"https://github.com/crewsycrews\"\n  title=\"Danil Rodin GitHub\"\n  target=\"_blank\"\n  ><img src=\"assets/images/git_logo.png\" alt=\"Danil Rodin GitHub\" class=\"icon\"\n/></a>\n<a href=\"https://ru.hexlet.io/u/casiq\" title=\"Hexlet\" target=\"_blank\"\n  ><img src=\"assets/images/hexlet_logo.png\" alt=\"Hexlet\" class=\"icon\"\n/></a>\n<a href=\"https://t.me/casiq\" title=\"Danil Rodin Telegram\" target=\"_blank\"\n  ><img\n    src=\"assets/images/telegram_logo.png\"\n    alt=\"Danil Rodin Telegram\"\n    class=\"icon\"\n/></a>\n<a\n  href=\"https://www.codewars.com/users/crewsycrews/\"\n  title=\"CodeWars\"\n  target=\"_blank\"\n  ><img src=\"assets/images/codewars_logo.png\" alt=\"CodeWars\" class=\"icon\"\n/></a>\n<a href=\"https://dev.to/crewsycrews\" title=\"Danil Rodin Dev.to\" target=\"_blank\">\n  <img\n    src=\"https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg\"\n    alt=\"Danil Rodin's DEV Profile\"\n    class=\"icon devto\"\n  />\n</a>\n<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <span class=\"col-12 text-center\">\n    <a routerLink=\"/projects\">My projects</a> |\n    <a routerLink=\"/about\">About me</a>\n  </span>\n  <span class=\"col\"></span>\n</div>\n"
 
 /***/ }),
 
@@ -418,6 +512,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MainComponent", function() { return MainComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _animations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../animations */ "./src/app/animations.ts");
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -429,9 +524,12 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
 var MainComponent = /** @class */ (function () {
-    function MainComponent() {
+    function MainComponent(pageTitle, meta) {
         var _this = this;
+        this.pageTitle = pageTitle;
+        this.meta = meta;
         this.title = 'Madbroz';
         this.classForText = 'textBlock0';
         this.textyText = 'Software dev';
@@ -480,6 +578,21 @@ var MainComponent = /** @class */ (function () {
         window.location.href = "https://blog.crewsis.me";
     };
     MainComponent.prototype.ngOnInit = function () {
+        var ogImageUrl = window.location.origin + "/assets/images/og-image.png";
+        this.pageTitle.setTitle('Danil Rodin | Fullstack Developer');
+        this.meta.updateTag({
+            name: 'description',
+            content: 'Personal website of Danil Rodin: fullstack developer, projects, links and background.'
+        });
+        this.meta.updateTag({ property: 'og:title', content: 'Danil Rodin | Fullstack Developer' });
+        this.meta.updateTag({
+            property: 'og:description',
+            content: 'Personal website of Danil Rodin with projects and developer profile.'
+        });
+        this.meta.updateTag({ property: 'og:image', content: ogImageUrl });
+        this.meta.updateTag({ property: 'og:image:alt', content: 'Danil Rodin' });
+        this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+        this.meta.updateTag({ name: 'twitter:image', content: ogImageUrl });
     };
     MainComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -490,9 +603,91 @@ var MainComponent = /** @class */ (function () {
                 _animations__WEBPACK_IMPORTED_MODULE_1__["Blinking"]
             ]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_2__["Title"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_2__["Meta"]])
     ], MainComponent);
     return MainComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/projects/projects.component.html":
+/*!**************************************************!*\
+  !*** ./src/app/projects/projects.component.html ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <h4 class=\"col-12\">My projects:</h4>\n  <span class=\"col\"></span>\n</div>\n<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <iframe\n    src=\"https://itch.io/embed/2068346?linkback=true&amp;border_width=4&amp;bg_color=000000&amp;fg_color=ffffff&amp;link_color=327345&amp;border_color=d4ef99\"\n    width=\"558\"\n    height=\"173\"\n    frameborder=\"0\"\n    ><a href=\"https://casiq.itch.io/ctf\"\n      >Cosmic Tree Fighters by casiq</a\n    ></iframe\n  >\n  <span class=\"col\"></span>\n</div>\n<div class=\"row mt-4\">\n  <span class=\"col\"></span\n  ><span class=\"col\"\n    ><a\n      href=\"https://marketplace.visualstudio.com/items?itemName=crewsycrews.bundlephobia-support\"\n      >BundlePhobia Vscode Extension</a\n    >\n  </span>\n  <span class=\"col\"></span>\n</div>\n<div class=\"row mt-4\">\n  <span class=\"col\"></span>\n  <span class=\"col-12 text-center\">\n    <a routerLink=\"/\">Back to main page</a> |\n    <a routerLink=\"/about\">About me</a>\n  </span>\n  <span class=\"col\"></span>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/projects/projects.component.less":
+/*!**************************************************!*\
+  !*** ./src/app/projects/projects.component.less ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "h4 {\n  text-align: center;\n}\na {\n  color: #d4ef99;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3JrL21lL21lL3NyYy9hcHAvcHJvamVjdHMvcHJvamVjdHMuY29tcG9uZW50Lmxlc3MiLCJzcmMvYXBwL3Byb2plY3RzL3Byb2plY3RzLmNvbXBvbmVudC5sZXNzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsbUJBQUE7Q0NDRDtBREVEO0VBQ0UsZUFBQTtDQ0FEIiwiZmlsZSI6InNyYy9hcHAvcHJvamVjdHMvcHJvamVjdHMuY29tcG9uZW50Lmxlc3MiLCJzb3VyY2VzQ29udGVudCI6WyJoNCB7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbn1cblxuYSB7XG4gIGNvbG9yOiAjZDRlZjk5O1xufVxuIiwiaDQge1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG59XG5hIHtcbiAgY29sb3I6ICNkNGVmOTk7XG59XG4iXX0= */"
+
+/***/ }),
+
+/***/ "./src/app/projects/projects.component.ts":
+/*!************************************************!*\
+  !*** ./src/app/projects/projects.component.ts ***!
+  \************************************************/
+/*! exports provided: ProjectsComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProjectsComponent", function() { return ProjectsComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var ProjectsComponent = /** @class */ (function () {
+    function ProjectsComponent(pageTitle, meta) {
+        this.pageTitle = pageTitle;
+        this.meta = meta;
+    }
+    ProjectsComponent.prototype.ngOnInit = function () {
+        var ogImageUrl = window.location.origin + "/assets/images/og-image.png";
+        this.pageTitle.setTitle('Projects | Danil Rodin');
+        this.meta.updateTag({
+            name: 'description',
+            content: 'Selected projects by Danil Rodin including game development and tooling work.'
+        });
+        this.meta.updateTag({ property: 'og:title', content: 'Projects | Danil Rodin' });
+        this.meta.updateTag({
+            property: 'og:description',
+            content: 'Selected projects by Danil Rodin including game development and tooling work.'
+        });
+        this.meta.updateTag({ property: 'og:image', content: ogImageUrl });
+        this.meta.updateTag({ property: 'og:image:alt', content: 'Danil Rodin' });
+        this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+        this.meta.updateTag({ name: 'twitter:image', content: ogImageUrl });
+    };
+    ProjectsComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-projects',
+            template: __webpack_require__(/*! ./projects.component.html */ "./src/app/projects/projects.component.html"),
+            styles: [__webpack_require__(/*! ../app.component.less */ "./src/app/app.component.less"), __webpack_require__(/*! ./projects.component.less */ "./src/app/projects/projects.component.less")]
+        }),
+        __metadata("design:paramtypes", [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["Title"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["Meta"]])
+    ], ProjectsComponent);
+    return ProjectsComponent;
 }());
 
 
