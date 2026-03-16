@@ -1,3 +1,5 @@
+const appBaseURL = "/me/";
+
 export default defineNuxtConfig({
   compatibilityDate: "2026-03-16",
   modules: ["@nuxtjs/tailwindcss", "@nuxt/content"],
@@ -7,7 +9,7 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    baseURL: "/me/",
+    baseURL: appBaseURL,
     head: {
       title: "Welcome to Crewsy Crews(Danil Rodin) personal web-page.",
       meta: [
@@ -25,7 +27,7 @@ export default defineNuxtConfig({
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css?family=Anonymous+Pro|Source+Code+Pro",
         },
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "icon", type: "image/x-icon", href: `${appBaseURL}favicon.ico` },
       ],
     },
   },
