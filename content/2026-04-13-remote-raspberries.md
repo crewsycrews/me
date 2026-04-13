@@ -16,9 +16,9 @@ There is no working host and no public IP.
 
 ## My Solution
 
-1. Buy 2 Raspberry Pi 4 devices.
+1. Buy Raspberry Pi 4.
 
-2. Prepare the devices:
+2. Prepare the device:
    - Install Raspberry Pi OS Lite. *Lite is important to avoid unnecessary load since we don’t need a GUI (X server).*
    - Make sure the device is connected to Raspberry Pi Connect so it’s always reachable as long as it has internet access.
    - Install Tailscale (https://tailscale.com/) and connect it to your account.
