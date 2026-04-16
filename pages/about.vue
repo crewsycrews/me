@@ -50,7 +50,7 @@ useHead({
       </p>
 
       <h2 class="text-lg">My tech stack:</h2>
-      <p><b>Backend:</b> laravel from v5 to latest, symfony v5, phalcon, NestJS</p>
+      <p><b>Backend:</b> laravel from v5 to latest, symfony v5, phalcon, NestJS, SpringBoot</p>
       <p>
         <b>Frontend:</b> ES6, VueJS, vuex, pinia, vue-router, vuex-reststate, react, Svelte, Angular, Nuxt, React
         Native.
