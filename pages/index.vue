@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-
 usePageSeo({
   title: "Danil Rodin | Fullstack Developer",
   description:
@@ -9,115 +7,46 @@ usePageSeo({
   schemaType: "ProfilePage",
 });
 
-const textBlocks = ["Software dev", "Family guy", "Healthy lifestyle"];
-const shellColors = [
-  "text-green-500",
-  "text-white",
-  "text-red-500",
-  "text-blue-500",
-  "text-yellow-300",
-];
-const logoColors = [
-  "lightGreen",
-  "lightWhite",
-  "lightRed",
-  "lightBlue",
-  "lightYellow",
-];
-
-const logoColorIndex = ref(0);
-const shellColorIndex = ref(0);
-const textIndex = ref(0);
-const logoAnimKey = ref(0);
-const pendingLogoColorIndex = ref<number | null>(null);
-
-const classForText = computed(() => `textBlock${textIndex.value}`);
-const textyText = computed(() => textBlocks[textIndex.value]);
-const logoClass = computed(() => logoColors[logoColorIndex.value]);
-const shellColorClass = computed(() => shellColors[shellColorIndex.value]);
-
-const timers: Array<
-  ReturnType<typeof setTimeout> | ReturnType<typeof setInterval>
-> = [];
-
-onMounted(() => {
-  timers.push(
-    setTimeout(() => {
-      logoColorIndex.value = 0;
-      logoAnimKey.value += 1;
-    }, 1),
-  );
-
-  timers.push(
-    setInterval(() => {
-      pendingLogoColorIndex.value =
-        (logoColorIndex.value + 1) % logoColors.length;
-      logoAnimKey.value += 1;
-    }, 10000),
-  );
-
-  timers.push(
-    setTimeout(() => {
-      shellColorIndex.value = (shellColorIndex.value + 1) % shellColors.length;
-      timers.push(
-        setInterval(() => {
-          shellColorIndex.value =
-            (shellColorIndex.value + 1) % shellColors.length;
-        }, 10000),
-      );
-    }, 11800),
-  );
-
-  timers.push(
-    setInterval(() => {
-      textIndex.value = (textIndex.value + 1) % textBlocks.length;
-    }, 4000),
-  );
+useHead({
+  link: [
+    {
+      rel: "preload",
+      href: "/me/assets/fonts/anonymous-pro-latin-400.woff2",
+      as: "font",
+      type: "font/woff2",
+      crossorigin: "anonymous",
+    },
+    {
+      rel: "preload",
+      href: "/me/assets/fonts/chakra-petch-latin-600.woff2",
+      as: "font",
+      type: "font/woff2",
+      crossorigin: "anonymous",
+    },
+  ],
 });
-
-onBeforeUnmount(() => {
-  timers.forEach((timer) => {
-    clearInterval(timer as ReturnType<typeof setInterval>);
-    clearTimeout(timer as ReturnType<typeof setTimeout>);
-  });
-});
-
-const handleLogoAnimationEnd = () => {
-  if (pendingLogoColorIndex.value === null) {
-    return;
-  }
-
-  logoColorIndex.value = pendingLogoColorIndex.value;
-  pendingLogoColorIndex.value = null;
-};
 </script>
 
 <template>
   <div class="flex min-h-[calc(100vh-8.5rem)] flex-col justify-center">
-    <h1
-      :key="logoAnimKey"
-      :class="['logo', logoClass]"
-      @animationend="handleLogoAnimationEnd"
-    >
-      Danil Rodin
-    </h1>
+    <h1 class="logo">Danil Rodin</h1>
     <div class="zsh mt-2 hidden items-center md:flex">
       <span class="w-1/12" />
       <span class="w-10/12">
-        <span :class="shellColorClass">[</span>~/Crewsy/Crews<span
-          :class="shellColorClass"
+        <span class="shell-color">[</span>~/Crewsy/Crews<span
+          class="shell-color"
           >] [</span
-        >main<span :class="shellColorClass">]<br /></span>
+        >main<span class="shell-color">]<br /></span>
       </span>
       <span class="w-1/12" />
     </div>
     <div class="zsh hidden items-center md:flex">
       <span class="w-1/12" />
       <span class="w-10/12">
-        <span class="text-left">
-          <span :class="[classForText, 'text']">
-            {{ textyText }}
-          </span>
+        <span class="text-rotator text-left">
+          <span class="text textBlock0">Software dev</span>
+          <span class="text textBlock1">Family guy</span>
+          <span class="text textBlock2">Healthy lifestyle</span>
         </span>
       </span>
       <span class="w-1/12" />
@@ -131,9 +60,11 @@ const handleLogoAnimationEnd = () => {
         rel="noopener noreferrer"
       >
         <img
-          src="/assets/images/git_logo.png"
+          src="/assets/images/git_logo.webp"
           alt="Danil Rodin GitHub"
           class="icon"
+          width="48"
+          height="48"
       /></a>
       <a
         href="https://ru.hexlet.io/u/casiq"
@@ -141,7 +72,12 @@ const handleLogoAnimationEnd = () => {
         aria-label="Danil Rodin on Hexlet"
         target="_blank"
         rel="noopener noreferrer"
-        ><img src="/assets/images/hexlet_logo.png" alt="Hexlet" class="icon"
+        ><img
+          src="/assets/images/hexlet_logo.webp"
+          alt="Hexlet"
+          class="icon icon--portrait"
+          width="33"
+          height="48"
       /></a>
       <a
         href="https://t.me/casiq"
@@ -151,9 +87,11 @@ const handleLogoAnimationEnd = () => {
         rel="noopener noreferrer"
       >
         <img
-          src="/assets/images/telegram_logo.png"
+          src="/assets/images/telegram_logo.webp"
           alt="Danil Rodin Telegram"
           class="icon"
+          width="48"
+          height="48"
       /></a>
       <a
         href="https://www.codewars.com/users/crewsycrews/"
@@ -162,7 +100,12 @@ const handleLogoAnimationEnd = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img src="/assets/images/codewars_logo.png" alt="CodeWars" class="icon"
+        <img
+          src="/assets/images/codewars_logo.webp"
+          alt="CodeWars"
+          class="icon"
+          width="48"
+          height="48"
       /></a>
       <a
         href="https://dev.to/crewsycrews"
@@ -172,9 +115,11 @@ const handleLogoAnimationEnd = () => {
         rel="noopener noreferrer"
       >
         <img
-          src="https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg"
+          src="/assets/images/dev_logo.svg"
           alt="Danil Rodin's DEV Profile"
           class="icon devto"
+          width="48"
+          height="48"
         />
       </a>
       <a
@@ -185,9 +130,11 @@ const handleLogoAnimationEnd = () => {
         rel="noopener noreferrer"
       >
         <img
-          src="/assets/images/twitter_logo.png"
+          src="/assets/images/twitter_logo.webp"
           alt="Danil Rodin Twitter"
           class="icon"
+          width="48"
+          height="48"
       /></a>
     </div>
   </div>
@@ -196,10 +143,12 @@ const handleLogoAnimationEnd = () => {
 <style scoped>
 .logo {
   font-family: "Chakra Petch", sans-serif;
-  color: rgb(0, 0, 0);
+  color: #d4ef99;
   font-size: 6rem;
   text-align: center;
-  animation: logo-flicker 1.8s;
+  animation:
+    logo-flicker 10s infinite,
+    logo-color 50s step-end infinite;
 }
 
 @media (max-width: 576px) {
@@ -208,55 +157,52 @@ const handleLogoAnimationEnd = () => {
   }
 }
 
-.lightGreen {
-  text-shadow: 0 0 25px rgba(40, 210, 40, 0.9);
-}
-
-.lightRed {
-  text-shadow: 0 0 25px rgba(210, 40, 40, 0.9);
-}
-
-.lightYellow {
-  text-shadow: 0 0 25px rgba(210, 210, 40, 0.9);
-}
-
-.lightBlue {
-  text-shadow: 0 0 25px rgba(40, 40, 210, 0.9);
-}
-
-.lightWhite {
-  text-shadow: 0 0 25px rgba(200, 200, 200, 0.9);
-}
-
 .zsh {
   font-size: 1.5rem;
   line-height: 1.2;
   font-family: "Source Code Pro", monospace;
 }
 
-.text {
+.shell-color {
+  animation: shell-color 50s step-end infinite;
+}
+
+.text-rotator {
+  position: relative;
   display: inline-block;
+  width: 18ch;
+  height: 1.5em;
+  margin-left: 0.5rem;
+}
+
+.text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
   overflow: hidden;
   white-space: nowrap;
   border-right: 4px solid rgb(39, 92, 23);
   font-size: 1.5rem;
   opacity: 0.65;
-  margin-left: 0.5rem;
 }
 
 .textBlock0 {
-  width: 13ch;
-  animation: printed-text 4s steps(13) infinite, flashin-border 0.75s step-start infinite;
+  animation:
+    printed-text-13 12s steps(13) infinite,
+    flashin-border 0.75s step-start infinite;
 }
 
 .textBlock1 {
-  width: 11ch;
-  animation: printed-text1 5s steps(11) infinite, flashin-border 0.75s step-start infinite;
+  animation:
+    printed-text-11 12s steps(11) 4s infinite,
+    flashin-border 0.75s step-start 4s infinite;
 }
 
 .textBlock2 {
-  width: 18ch;
-  animation: printed-text2 4s steps(18) infinite, flashin-border 0.75s step-start infinite;
+  animation:
+    printed-text-18 12s steps(18) 8s infinite,
+    flashin-border 0.75s step-start 8s infinite;
 }
 
 @keyframes flashin-border {
@@ -273,67 +219,137 @@ const handleLogoAnimationEnd = () => {
   }
 }
 
-@keyframes printed-text {
-  from {
+@keyframes printed-text-13 {
+  0% {
+    opacity: 0.65;
     width: 0%;
   }
 
-  37% {
+  31% {
+    opacity: 0.65;
+    width: 13ch;
+  }
+
+  32%,
+  100% {
+    opacity: 0;
     width: 13ch;
   }
 }
 
-@keyframes printed-text1 {
-  from {
+@keyframes printed-text-11 {
+  0% {
+    opacity: 0.65;
     width: 0%;
   }
 
-  37% {
+  31% {
+    opacity: 0.65;
+    width: 11ch;
+  }
+
+  32%,
+  100% {
+    opacity: 0;
     width: 11ch;
   }
 }
 
-@keyframes printed-text2 {
-  from {
+@keyframes printed-text-18 {
+  0% {
+    opacity: 0.65;
     width: 0%;
   }
 
-  37% {
+  31% {
+    opacity: 0.65;
+    width: 18ch;
+  }
+
+  32%,
+  100% {
+    opacity: 0;
     width: 18ch;
   }
 }
 
 @keyframes logo-flicker {
-  5% {
+  0%,
+  18%,
+  100% {
+    opacity: 1;
+  }
+
+  1% {
     opacity: 0.9;
   }
 
-  30% {
-    opacity: 0.25;
+  5.4% {
+    opacity: 0.72;
   }
 
-  35% {
+  6.3% {
     opacity: 0.9;
   }
 
-  50% {
-    opacity: 0.3;
+  9% {
+    opacity: 0.75;
   }
 
-  55% {
+  9.9% {
     opacity: 0.95;
   }
 
-  75% {
-    opacity: 0.4;
+  13.5% {
+    opacity: 0.78;
   }
 
-  95% {
+  17.1% {
     opacity: 0.92;
   }
+}
 
-  100% {
-    opacity: 1;
+@keyframes logo-color {
+  0% {
+    text-shadow: 0 0 25px rgba(40, 210, 40, 0.9);
+  }
+
+  20% {
+    text-shadow: 0 0 25px rgba(200, 200, 200, 0.9);
+  }
+
+  40% {
+    text-shadow: 0 0 25px rgba(210, 40, 40, 0.9);
+  }
+
+  60% {
+    text-shadow: 0 0 25px rgba(40, 40, 210, 0.9);
+  }
+
+  80% {
+    text-shadow: 0 0 25px rgba(210, 210, 40, 0.9);
+  }
+}
+
+@keyframes shell-color {
+  0% {
+    color: rgb(34 197 94);
+  }
+
+  20% {
+    color: rgb(255 255 255);
+  }
+
+  40% {
+    color: rgb(239 68 68);
+  }
+
+  60% {
+    color: rgb(59 130 246);
+  }
+
+  80% {
+    color: rgb(253 224 71);
   }
 }
 
@@ -343,6 +359,10 @@ const handleLogoAnimationEnd = () => {
   margin: 0 5px 0;
   opacity: 0.3;
   transition: transform 0.15s;
+}
+
+.icon--portrait {
+  width: 2.0625rem;
 }
 
 .devto {

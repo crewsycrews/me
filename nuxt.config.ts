@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const appBaseURL = "/me/";
 const blogPosts = readdirSync(new URL("./content/", import.meta.url), {
@@ -18,6 +19,24 @@ const blogPosts = readdirSync(new URL("./content/", import.meta.url), {
     };
   });
 const blogRoutes = blogPosts.map(({ slug }) => `/blog/${slug}`);
+
+const stripHomepageHydration = (html: string) =>
+  html
+    .replace(/<link rel="preload" as="fetch"[^>]*>/g, "")
+    .replace(/<link rel="modulepreload"[^>]*>/g, "")
+    .replace(/<script type="module"[^>]*><\/script>/g, "")
+    .replace(
+      /<script type="application\/json" data-nuxt-data=[\s\S]*?<\/script>/g,
+      "",
+    )
+    .replace(/<script>window\.__NUXT__=[\s\S]*?<\/script>/g, "");
+
+const inlineHomepageStyles = (html: string, clientAssetsDir: string) =>
+  html.replace(
+    /<link rel="stylesheet" href="\/me\/_nuxt\/([^"]+)" crossorigin>/g,
+    (_, fileName: string) =>
+      `<style>${readFileSync(join(clientAssetsDir, fileName), "utf8")}</style>`,
+  );
 
 export default defineNuxtConfig({
   compatibilityDate: "2026-03-16",
@@ -45,23 +64,6 @@ export default defineNuxtConfig({
         { name: "theme-color", content: "#0f0f0f" },
       ],
       link: [
-        {
-          rel: "preconnect",
-          href: "https://fonts.googleapis.com",
-        },
-        {
-          rel: "preconnect",
-          href: "https://fonts.gstatic.com",
-          crossorigin: "anonymous",
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css?family=Chakra+Petch:600",
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css?family=Anonymous+Pro|Source+Code+Pro",
-        },
         { rel: "icon", type: "image/x-icon", href: `${appBaseURL}favicon.ico` },
       ],
     },
@@ -77,6 +79,21 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
+    hooks: {
+      "prerender:generate": (route, nitro) => {
+        if (route.route === "/" && route.contents) {
+          const clientAssetsDir = nitro.options.publicAssets.find(
+            ({ dir }) => dir.endsWith("/_nuxt"),
+          )?.dir;
+
+          route.contents = stripHomepageHydration(
+            clientAssetsDir
+              ? inlineHomepageStyles(route.contents, clientAssetsDir)
+              : route.contents,
+          );
+        }
+      },
+    },
     prerender: {
       crawlLinks: false,
       routes: [

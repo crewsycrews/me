@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "Anonymous Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/me/assets/fonts/anonymous-pro-latin-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Chakra Petch";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/me/assets/fonts/chakra-petch-latin-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/me/assets/fonts/source-code-pro-latin-400.woff2") format("woff2");
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
