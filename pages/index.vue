@@ -146,9 +146,7 @@ useHead({
   color: #d4ef99;
   font-size: 6rem;
   text-align: center;
-  animation:
-    logo-flicker 10s infinite,
-    logo-color 50s step-end infinite;
+  text-shadow: 0 0 25px rgba(40, 210, 40, 0.9);
 }
 
 @media (max-width: 576px) {
@@ -184,7 +182,8 @@ useHead({
   white-space: nowrap;
   border-right: 4px solid rgb(39, 92, 23);
   font-size: 1.5rem;
-  opacity: 0.65;
+  width: 0;
+  opacity: 0;
 }
 
 .textBlock0 {
@@ -270,64 +269,6 @@ useHead({
   100% {
     opacity: 0;
     width: 18ch;
-  }
-}
-
-@keyframes logo-flicker {
-  0%,
-  18%,
-  100% {
-    opacity: 1;
-  }
-
-  1% {
-    opacity: 0.9;
-  }
-
-  5.4% {
-    opacity: 0.72;
-  }
-
-  6.3% {
-    opacity: 0.9;
-  }
-
-  9% {
-    opacity: 0.75;
-  }
-
-  9.9% {
-    opacity: 0.95;
-  }
-
-  13.5% {
-    opacity: 0.78;
-  }
-
-  17.1% {
-    opacity: 0.92;
-  }
-}
-
-@keyframes logo-color {
-  0% {
-    text-shadow: 0 0 25px rgba(40, 210, 40, 0.9);
-  }
-
-  20% {
-    text-shadow: 0 0 25px rgba(200, 200, 200, 0.9);
-  }
-
-  40% {
-    text-shadow: 0 0 25px rgba(210, 40, 40, 0.9);
-  }
-
-  60% {
-    text-shadow: 0 0 25px rgba(40, 40, 210, 0.9);
-  }
-
-  80% {
-    text-shadow: 0 0 25px rgba(210, 210, 40, 0.9);
   }
 }
 
