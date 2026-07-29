@@ -1,33 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
-const runtimeConfig = useRuntimeConfig();
-const route = useRoute();
-const baseUrl = new URL(runtimeConfig.app.baseURL, runtimeConfig.public.siteUrl);
-const pageUrl = new URL(route.path.replace(/^\/+/, ""), baseUrl).toString();
-const ogImageUrl = new URL("assets/images/og-image.png", baseUrl).toString();
-const ogLogoUrl = new URL("assets/images/avatar-small.jpg", baseUrl).toString();
-
-useSeoMeta({
+usePageSeo({
   title: "Danil Rodin | Fullstack Developer",
   description:
     "Personal website of Danil Rodin: fullstack developer, projects, links and background.",
-  ogTitle: "Danil Rodin | Fullstack Developer",
-  ogDescription:
-    "Personal website of Danil Rodin with projects and developer profile.",
-  ogImage: ogImageUrl,
-  ogImageAlt: "Danil Rodin",
-  twitterCard: "summary_large_image",
-  twitterImage: ogImageUrl,
-});
-
-useHead({
-  meta: [
-    { property: "og:locale", content: "en_US" },
-    { property: "og:url", content: pageUrl },
-    { property: "og:type", content: "website" },
-    { property: "og:logo", content: ogLogoUrl },
-  ],
+  path: "/",
+  schemaType: "ProfilePage",
 });
 
 const textBlocks = ["Software dev", "Family guy", "Healthy lifestyle"];
@@ -115,13 +94,13 @@ const handleLogoAnimationEnd = () => {
 
 <template>
   <div class="flex min-h-[calc(100vh-8.5rem)] flex-col justify-center">
-    <div
+    <h1
       :key="logoAnimKey"
       :class="['logo', logoClass]"
       @animationend="handleLogoAnimationEnd"
     >
       Danil Rodin
-    </div>
+    </h1>
     <div class="zsh mt-2 hidden items-center md:flex">
       <span class="w-1/12" />
       <span class="w-10/12">

@@ -1,7 +1,21 @@
+<script setup lang="ts">
+usePageSeo({
+  title: "Projects | Danil Rodin",
+  description:
+    "Projects and experiments by Danil Rodin, including web development tools and interactive demos.",
+  path: "/projects",
+  schemaType: "CollectionPage",
+  breadcrumbs: [
+    { name: "Home", path: "/" },
+    { name: "Projects", path: "/projects" },
+  ],
+});
+</script>
+
 <template>
   <section class="mx-auto w-full max-w-5xl px-4 pb-10">
     <div class="mt-4 flex justify-center">
-      <h4 class="w-full text-center text-xl">My projects:</h4>
+      <h1 class="w-full text-center text-xl">My projects</h1>
     </div>
 
     <div class="mt-6 grid gap-6 md:grid-cols-2">

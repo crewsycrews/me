@@ -46,9 +46,16 @@ const pageLink = (page: number) => ({
   query: page > 1 ? { page: String(page) } : {},
 });
 
-useSeoMeta({
+usePageSeo({
   title: "Blog | Danil Rodin",
-  description: "Notes and posts by Danil Rodin.",
+  description:
+    "Engineering notes by Danil Rodin about backend development, infrastructure, databases and developer tools.",
+  path: "/blog",
+  schemaType: "Blog",
+  breadcrumbs: [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+  ],
 });
 </script>
 

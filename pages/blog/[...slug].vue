@@ -17,9 +17,24 @@ if (!post.value) {
   });
 }
 
-useSeoMeta({
-  title: `${post.value.title || "Blog post"} | Danil Rodin`,
-  description: post.value.description || "Blog post",
+const postTitle = String(post.value.title || "Blog post");
+const postDescription = String(post.value.description || "Blog post");
+const publishedTime = post.value.meta?.date
+  ? new Date(String(post.value.meta.date)).toISOString()
+  : undefined;
+
+usePageSeo({
+  title: `${postTitle} | Danil Rodin`,
+  description: postDescription,
+  path: `/blog/${slug}`,
+  schemaType: "BlogPosting",
+  headline: postTitle,
+  publishedTime,
+  breadcrumbs: [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: postTitle, path: `/blog/${slug}` },
+  ],
 });
 
 const enhanceCodeBlocks = () => {

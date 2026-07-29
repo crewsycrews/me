@@ -101,9 +101,9 @@ function onRollComplete() {
       <p class="text-xs uppercase tracking-[0.3em] text-[#d4ef99]/80">
         Dice Playground
       </p>
-      <h5 class="text-xl font-semibold text-white sm:text-2xl">
+      <h2 class="text-xl font-semibold text-white sm:text-2xl">
         Elemental dice animation test
-      </h5>
+      </h2>
       <p class="max-w-2xl text-sm leading-7 text-white/70 sm:text-base">
         The purpose of this tool was to play around with different animations on
         each die and see it in action.
