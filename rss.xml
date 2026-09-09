@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:yandex="http://news.yandex.ru">
+  <channel>
+    <title>Блог | Данил Родин</title>
+    <link>https://danilrodin.ru/blog</link>
+    <description>Заметки о разработке, инструментах и работе.</description>
+    <language>ru</language>
+    <atom:link href="https://danilrodin.ru/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Удалённое подключение к локальной сети без публичного шлюза</title>
+      <link>https://danilrodin.ru/blog/2026-04-13-remote-raspberries</link>
+      <guid isPermaLink="true">https://danilrodin.ru/blog/2026-04-13-remote-raspberries</guid>
+      <pubDate>Mon, 13 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Raspberry Pi и Tailscale спешат на помощь!</description>
+      <yandex:full-text>Задача
+
+Получить возможность подключаться к удалённой локальной сети.
+
+Для чего
+
+Например, чтобы управлять удалёнными устройствами: роутерами, точками доступа Wi-Fi и так далее.
+
+Ограничения
+
+Нет работающего хоста и публичного IP-адреса.
+
+Как решил я
+
+Покупаем Raspberry Pi 4.
+
+Подготавливаем устройство:устанавливаем Raspberry Pi OS Lite. Версия Lite важна, чтобы не нагружать устройство: GUI с X Server нам ни к чему;
+
+убеждаемся, что подключили Raspberry Pi Connect. Тогда до устройства всегда можно достучаться, пока у него есть доступ в интернет;
+
+устанавливаем Tailscale и подключаем его к своему аккаунту.
+
+
+
+
+
+На месте подключаем устройство. Я решил использовать проводное соединение RJ-45: мне хотелось быть уверенным, что устройство не потеряет связь.
+
+Самая важная деталь:
+tailscale up --advertise-routes=192.168.x.x/24
+
+
+
+Расшариваем подсеть клиентам сети Tailscale, чтобы потом, например, иметь возможность подключиться к роутеру — допустим, 192.168.1.1 — в той сети, где установлено устройство.
+
+В админке Tailscale включаем Edit Route Settings → Subnet routes, чтобы дать доступ к подсети.
+
+Вуаля! Теперь можно подключаться к локальной сети, в которой размещён ваш «пирожок».
+
+
+
+
+P.S. Конечно, это не всегда работает на 100%: иногда машины нужно попинговать внутри сети Tailscale, чтобы они нашли друг друга. Но задачу всё равно решает.</yandex:full-text>
+    </item>
+    <item>
+      <title>Запуск cron-задач Laravel в Docker с FrankenPHP</title>
+      <link>https://danilrodin.ru/blog/2025-10-12-laravel-cron-jobs</link>
+      <guid isPermaLink="true">https://danilrodin.ru/blog/2025-10-12-laravel-cron-jobs</guid>
+      <pubDate>Sun, 12 Oct 2025 00:00:00 GMT</pubDate>
+      <description>Как запускать cron-задачи Laravel в Docker с FrankenPHP</description>
+      <yandex:full-text>Вчера сидел и разбирался с запуском cron-задач в Laravel. Есть там две бесхитростные команды:
+
+
+php artisan schedule:run
+php artisan schedule:work
+
+
+Подразумевается, что первую мы добавим в настоящий crontab в окружении, где крутится бэкенд, или в любом другом месте, где есть нужные переменные окружения и возможность подключиться к БД.
+
+В crontab должно быть что-то такое:
+
+
+* * * * * cd /path-to-your-project &amp;&amp; php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1
+
+
+Это означает запуск каждую минуту.
+
+Идея в том, чтобы сам график выполнения команд передать под управление PHP — и Laravel в частности. При запуске этой команды скрипт смотрит в app/Console/Kernel.php и проверяет зарегистрированные графики выполнения. Они выглядят примерно так:
+
+
+$schedule-&gt;command(&apos;emails:send Taylor --force&apos;)-&gt;daily();
+
+
+-&gt;daily() в данном случае означает, что команда будет выполняться ежедневно.
+
+Что делает schedule:work?
+
+Вторую команду, согласно документации, нужно запускать только локально. Всё, что она делает, — запускает schedule:run каждую минуту средствами PHP, используя бесконечный цикл.
+
+Первый pull request с реализацией даёт исчерпывающее понимание того, как это работает. В современной версии Laravel код выглядит намного сложнее.
+
+Мой случай: Docker и FrankenPHP
+
+Я запускаю бэкенд-приложение в Docker с помощью Docker Compose. Базовый образ — dunglas/frankenphp.
+
+Вот как сервис объявлен в docker-compose.yml:
+
+
+backend-cron:
+  restart: unless-stopped
+  build:
+    target: dev
+  volumes:
+    - .:/app
+  command: &quot;frankenphp php-cli artisan schedule:work&quot;
+  healthcheck:
+    disable: true
+  env_file:
+    .env
+
+
+Каждую минуту я получал одну и ту же ошибку:
+
+
+backend-cron-1  | 2025-12-09T14:54:00.043306279Z sh: 1: : Permission denied
+backend-cron-1  | 2025-12-09T14:55:00.041940906Z sh: 1: : Permission denied
+
+
+По старой памяти я ожидал, что скрипт просто не может писать в файловую систему. Это частая проблема Laravel и его папок storage и bootstrap/cache, когда приложение крутится в Docker.
+
+Но не тут-то было.
+
+В чём оказалась проблема
+
+Как оказалось, FrankenPHP по какой-то причине не может создавать подпроцессы. Я немного поиграл с setcap в Docker-образе и плюнул — сделал простой shell-скрипт, который делает то же самое, что и schedule:work:
+
+
+#!/bin/sh
+set -e
+
+echo &quot;Starting schedule loop...&quot;
+
+while true; do
+    # Wait until the start of the next minute
+    sleep $((60 - $(date +%S)))
+
+    # Run the scheduler
+    frankenphp php-cli artisan schedule:run
+done
+
+
+До этого момента я не испытывал никаких проблем с FrankenPHP. Он действительно сработал как drop-in replacement для образов, которые я использовал раньше.
+
+Worker mode пока не пробовал: ожидаю, что придётся основательно дорабатывать само приложение, чтобы всё это завелось.</yandex:full-text>
+    </item>
+    <item>
+      <title>Миграция большой базы данных из MySQL в PostgreSQL на AWS RDS</title>
+      <link>https://danilrodin.ru/blog/2025-09-11-mysql-to-pg</link>
+      <guid isPermaLink="true">https://danilrodin.ru/blog/2025-09-11-mysql-to-pg</guid>
+      <pubDate>Thu, 11 Sep 2025 00:00:00 GMT</pubDate>
+      <description>Опыт миграции большой базы данных из MySQL в PostgreSQL на AWS RDS</description>
+      <yandex:full-text>Предусловия
+
+Новая база PostgreSQL должна крутиться в AWS RDS, то есть доступа к файловой системе хоста БД нет.
+
+Есть таблицы с миллионами записей — около 1,5 ГБ на одну таблицу.
+
+Есть колонки типа JSON и созданные на основе этого JSON виртуальные колонки для возможности индексирования.
+
+Есть типы ENUM.
+
+Бэкенд написан на Laravel, активно используются миграции БД.
+
+
+
+С чего начать?
+
+Гуглим стандартные инструменты для переноса данных. Самый популярный — pgloader. Я находил ещё что-то написанное на Node.js.
+
+Оба варианта отмёл, потому что в итоге многие типы в таблицах оказываются не теми, что нужно: например, json не превращается в jsonb. Да и сама миграция занимает очень много времени, что является непозволительной роскошью при миграции продакшена.
+
+Schema-first
+
+Мои рассуждения привели меня к тому, что схему в PostgreSQL нужно создавать самому до миграции данных.
+
+Это обусловлено проблемами, упомянутыми выше, а также тем, что нам требовалось изменить схему данных при миграции: например, добавить партиционирование и избавиться от устаревших таблиц.
+
+Поэтому сначала я сгенерировал совместимую с Laravel миграцию на основе всей БД с помощью laravel-migrations-generator. Используем флаг --squash, чтобы сгенерировать одну огромную миграцию, и удаляем все прошлые миграции. Тогда при создании новой БД мы начнём с чистого листа и сразу создадим актуальную схему.
+
+Естественно, мне пришлось дорабатывать сгенерированную миграцию.
+
+Типы ENUM
+
+Enum&apos;ы с Laravel в PostgreSQL становятся обычными ограничениями, а не полноценными типами БД. Кроме того, Grammar для написания миграций нужно расширить, чтобы при определении колонок таблиц можно было указывать пользовательские типы БД.
+
+Выглядит это примерно так:
+
+
+Grammar::macro(&apos;typeCountry&apos;, function () {
+    return &apos;country&apos;;
+});
+
+DB::statement(&quot;CREATE TYPE country AS ENUM(&apos;russia&apos;, &apos;china&apos;, &apos;germany&apos;);&quot;);
+
+Schema::create(&apos;users&apos;, function (Blueprint $table) {
+    // ...
+    $table-&gt;addColumn(&apos;country&apos;, &apos;country&apos;);
+});
+
+
+Если не использовать Grammar::macro, метод addColumn ничего не будет знать о типе с названием country.
+
+Виртуальные колонки на основе JSON
+
+Кроме enum&apos;ов, нужно было что-то сделать с виртуальными колонками, созданными на основе JSON. В PostgreSQL нет виртуальных колонок как таковых.
+
+Тут мне помог ChatGPT, предложив вместо виртуальной колонки использовать обычный индекс. Представим, что settings — это JSON-колонка таблицы users. Тогда индекс выглядит так:
+
+
+CREATE INDEX ON users((settings-&gt;&gt;&apos;setting1&apos;));
+
+
+Главное — не забыть в коде приложения заменить обращение к виртуальной колонке, если оно было, на доступ по ключу в JSON-объекте.
+
+Подготовка к партиционированию
+
+Следующей задачей было подготовить одну из таблиц к партиционированию. В PostgreSQL таблица должна быть создана сразу с указанием того, что её собираются партиционировать.
+
+В моём случае это выглядело так:
+
+
+CREATE TABLE actions (
+    id SERIAL,
+    -- ... другие колонки
+    created_at TIMESTAMP NOT NULL,
+    PRIMARY KEY (id, created_at)
+) PARTITION BY RANGE (created_at);
+
+
+Необходимые расширения
+
+Основной мотивацией переезда на PostgreSQL было использование векторных типов данных, поэтому тут же в миграции я добавил:
+
+
+DB::statement(&quot;CREATE EXTENSION IF NOT EXISTS vector;&quot;);
+
+
+Этот запрос нужно выполнять на каждой вновь созданной базе PostgreSQL для каждого расширения, которое мы собираемся использовать в рамках этой БД.
+
+Также мы использовали геопространственные функции для определения расстояний, поэтому не обошлось без:
+
+
+DB::statement(&quot;CREATE EXTENSION IF NOT EXISTS postgis;&quot;);
+
+
+Локальное окружение
+
+Упомянув активацию расширений в БД, нельзя не сказать, что сначала эти расширения должны быть установлены.
+
+В AWS RDS они установлены по умолчанию, а для локальной разработки мы, как правило, используем готовые Docker-образы. Найти собранный под любую архитектуру образ PostgreSQL с pgvector или PostgreSQL с PostGIS по отдельности достаточно просто. А вот комбинации, где всё вместе работает на ARM64, нет.
+
+Пришлось собирать самому:
+
+
+FROM pgvector/pgvector:0.8.0-pg16
+
+ENV POSTGIS_VERSION=3.5.0
+
+RUN apt-get update &amp;&amp; apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    pkg-config \
+    postgresql-server-dev-16 \
+    libxml2-dev \
+    libgeos-dev \
+    libproj-dev \
+    libgdal-dev \
+    libjson-c-dev \
+    libprotobuf-c-dev \
+    protobuf-c-compiler \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libtiff-dev \
+    libsqlite3-dev \
+    sqlite3 \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+RUN cd /tmp &amp;&amp; \
+    wget https://download.osgeo.org/postgis/source/postgis-${POSTGIS_VERSION}.tar.gz &amp;&amp; \
+    tar -xzf postgis-${POSTGIS_VERSION}.tar.gz &amp;&amp; \
+    cd postgis-${POSTGIS_VERSION} &amp;&amp; \
+    ./configure \
+    --with-pgconfig=/usr/bin/pg_config \
+    --with-geosconfig=/usr/bin/geos-config \
+    --with-projdir=/usr \
+    --with-gdalconfig=/usr/bin/gdal-config \
+    --with-jsondir=/usr \
+    --with-protobufdir=/usr &amp;&amp; \
+    make &amp;&amp; \
+    make install &amp;&amp; \
+    cd / &amp;&amp; \
+    rm -rf /tmp/postgis-*
+
+
+Процесс переноса
+
+Предварительно обкатав процесс в локальном окружении, я приступил к переносу на стендовых инстансах — stage и production.
+
+Процесс выглядел так:
+
+Создаём инстанс RDS в облаке.
+
+Подключаемся клиентом psql.
+
+Включаем расширения aws_commons и aws_s3. Они нужны, чтобы использовать файлы из S3 для импорта CSV. Напомню: в RDS у нас нет доступа к файловой системе хоста БД.
+
+Создаём VPC Endpoint для доступа базы данных к S3.
+
+Изменяем конфигурацию подключения к БД в Laravel — config/database.php.
+
+Деплоим код с новой миграцией и применяем созданную нами схему к базе PostgreSQL.
+
+Останавливаем приложение, чтобы исключить новые записи в БД:
+
+
+
+
+php artisan down
+
+
+Эта команда включает maintenance mode.
+
+Делаем дамп CSV-файлов:
+
+
+
+
+mysqldump --port=3308 -u root -psecret db-name \
+  --no-create-info \
+  --fields-terminated-by=, \
+  --tab=/var/lib/mysql-files \
+  --fields-enclosed-by=&apos;\&quot;&apos; \
+  --lines-terminated-by=&apos;\n&apos;
+
+
+Это создаст отдельный файл для каждой существующей таблицы в БД. Например:
+
+
+actions.sql  actions.txt
+users.sql    users.txt
+
+
+Параметры команды:
+
+--no-create-info — отключаем генерацию схемы;
+
+--fields-terminated-by=, — разделитель-запятая;
+
+--tab=/var/lib/mysql-files — сохраняем файлы в /var/lib/mysql-files. По умолчанию MySQL может экспортировать только в эту папку. Если её нет, нужно заранее создать вручную;
+
+--fields-enclosed-by=&apos;\&quot;&apos; — оборачиваем каждое значение в \&quot;. Именно такой формат ожидает COPY в PostgreSQL;
+
+--lines-terminated-by=&apos;\n&apos; — устанавливаем символ перевода строки.
+
+
+
+Переносим .txt-файлы в S3-бакет. Если вы, как и я, генерировали файлы внутри контейнера, вам поможет docker cp.
+
+Затем импортируем каждый файл в psql следующей командой — по одной на каждую таблицу:
+
+
+
+
+SELECT aws_s3.table_import_from_s3(
+  &apos;users&apos;,
+  &apos;&apos;,
+  &apos;(format csv, header false, null &apos;&apos;\N&apos;&apos;, escape &apos;&apos;\&apos;&apos;)&apos;,
+  &apos;db-name&apos;,
+  &apos;/dumps/users.txt&apos;,
+  &apos;your-aws-region&apos;,
+  &apos;AWS_ACCESS_KEY&apos;,
+  &apos;AWS_SECRET_KEY&apos;,
+  &apos;&apos;
+);
+
+
+Запускаем приложение:
+
+
+
+
+php artisan up
+
+
+Что ещё нужно учесть?
+
+При создании схемы для PostgreSQL можно выбрать два пути:
+
+Создать схему без внешних ключей, чтобы при импорте был неважен порядок загрузки таблиц. В таком случае понадобится ещё одна миграция для добавления внешних ключей.
+
+Создать схему сразу с ключами. Тогда порядок импорта таблиц из файлов будет важен.</yandex:full-text>
+    </item>
+    <item>
+      <title>.env-файлы</title>
+      <link>https://danilrodin.ru/blog/2025-04-25-env-files</link>
+      <guid isPermaLink="true">https://danilrodin.ru/blog/2025-04-25-env-files</guid>
+      <pubDate>Fri, 25 Apr 2025 00:00:00 GMT</pubDate>
+      <description>Как я организовал работу с .env-файлами</description>
+      <yandex:full-text>Безопасное хранение секретов, а также правильное использование этой «чувствительной» информации в переменных окружения давно волнует меня.
+
+Как было раньше: локальное шифрование
+
+Раньше я использовал локальное шифрование. Применял обычный OpenSSL, установленный практически в любой системе, передавал ему keyfile (обычно он хранился в каком-нибудь укромном Google Документе) и получал зашифрованный файл с соответствующим окружению суффиксом, например:
+
+
+.env.dev.enc
+.env.stage.enc
+.env.prod.enc
+
+
+Чтобы обновить или добавить переменную, приходилось заново проводить процедуру шифрования и дешифровки для каждого окружения, что само по себе довольно утомительно.
+
+Поэтому часто я пользовался одним общим .env-файлом для всех приложений, лишь бы облегчить себе жизнь — хотя кого я обманываю?
+
+Таким образом, переменные окружения для бэкенда оказывались среди переменных фронтенда. Например, данные подключения к базе данных 🤪
+
+Ещё одной проблемой была необходимость хранить зашифрованные .env-файлы в отдельном месте, чаще всего в специальном репозитории. Их обновление происходило отдельно от обновления самого приложения, создавая дополнительное пространство для ошибок.
+
+Doppler
+
+Совсем недавно я обнаружил Doppler. Теперь управлять секретами стало проще благодаря удобному веб-интерфейсу.
+
+Никакие .env-файлы больше не нужны — достаточно команды:
+
+
+doppler run -- npm run build
+
+
+И приложение собирается с заранее настроенным конфигурационным профилем. Доступны интеграции для большинства современных инструментов развёртывания приложений.
+
+Почему я всё же оставил .env-файлы
+
+Я не люблю сильно зависеть от инструментов, поэтому не стал совсем отказываться от .env-файлов. Пока решил просто автоматически генерировать их с помощью Doppler.
+
+Автоматизация с помощью Taskfile
+
+Я создал небольшой Taskfile для первоначального запуска проекта с правильными переменными окружения:
+
+
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: &quot;3&quot;
+
+tasks:
+  install:
+    cmds:
+      - curl -Ls --tlsv1.3 --proto &quot;=https&quot; https://cli.doppler.com/install.sh | sh
+
+  login:
+    cmds:
+      - doppler login
+  
+  get-env:
+    vars:
+      DOPPLER_PROJECT: &apos;{{default &quot;help&quot; .DOPPLER_PROJECT}}&apos;
+      DOPPLER_CONFIG: &apos;{{default &quot;dev&quot; .DOPPLER_CONFIG}}&apos;
+      FILEPATH: &apos;{{default &quot;&quot; .FILEPATH}}&apos;
+    cmds:
+      - doppler secrets download --project {{.DOPPLER_PROJECT}} --config {{.DOPPLER_CONFIG}} --no-file --format env &gt; {{.FILEPATH}}
+  
+  setup-infra-secrets:
+    cmds:
+      - task: get-env
+        vars: { DOPPLER_PROJECT: &quot;infra&quot;, DOPPLER_CONFIG: &quot;{{.DOPPLER_CONFIG}}&quot;, FILEPATH: &quot;.env&quot; }
+
+  setup-frontend-secrets:
+    cmds:
+      - task: get-env
+        vars: { DOPPLER_PROJECT: &quot;frontend&quot;, DOPPLER_CONFIG: &quot;{{.DOPPLER_CONFIG}}&quot;, FILEPATH: &quot;apps/frontend/.env&quot; }
+  
+  setup-backend-secrets:
+    cmds:
+      - task: get-env
+        vars: { DOPPLER_PROJECT: &quot;backend&quot;, DOPPLER_CONFIG: &quot;{{.DOPPLER_CONFIG}}&quot;, FILEPATH: &quot;apps/backend/.env&quot; }
+
+  setup-secrets:
+    deps: [setup-frontend-secrets, setup-infra-secrets, setup-backend-secrets]
+
+  initial-setup:
+    cmds:
+      - task: install
+      - task: login
+      - task: setup-secrets</yandex:full-text>
+    </item>
+    <item>
+      <title>Редактор Zed</title>
+      <link>https://danilrodin.ru/blog/2025-03-25-zed</link>
+      <guid isPermaLink="true">https://danilrodin.ru/blog/2025-03-25-zed</guid>
+      <pubDate>Thu, 20 Mar 2025 00:00:00 GMT</pubDate>
+      <description>Мои впечатления от редактора Zed</description>
+      <yandex:full-text>На днях попробовал Zed — редактор кода, написанный на Rust.
+
+Что крутого встроено из коробки 📦
+
+Коллаборативный режим
+
+Можно пошарить свой текущий локальный код с тиммейтом и вместе работать в одной кодовой базе.
+
+Работает достаточно гладко:
+
+можно общаться голосом;
+
+следить за тиммейтом;
+
+в реальном времени править взаимосвязанный код.
+
+
+
+AI-ассистент
+
+Его можно настроить на использование современных LLM. Советую посмотреть видео на главной странице редактора.
+
+Я даже попробовал локально покрутить Ollama и написать JSDoc для своих функций. Более или менее адекватные ответы получал только от модели deepseek-coder. Также пробовал gemma, llama и qwen с суффиксом code и без — ничего внятного они не выдали.
+
+Надо сказать, что крутить LLM локально — очень дорогое удовольствие. Это требует много оперативной памяти, во время работы загружает процессор на все 100%, а ответа ждёшь несколько минут.
+
+Пробовал локальные модели, потому что большинство облачных AI-провайдеров не работают в России. Всё никак не доходят руки настроить VPS со своим VPN для этих нужд. В любом случае опыт интересный.
+
+Сейчас Zed из коробки позволяет бесплатно пользоваться ассистентом на основе Claude 3.5: разработчики только выпустили эту функцию и пока её тестируют.
+
+Знакомые сочетания клавиш
+
+В Zed по умолчанию используются сочетания клавиш VS Code, а ещё можно включить Vim-режим. Сам я не сторонник Vim, но знаю, что кому-то это может быть полезно.
+
+Всё — текстовые буферы
+
+Всё в редакторе, даже встроенный терминал, — это текстовые буферы.
+
+Насколько Zed расширяемый ⁉️
+
+Есть поддержка практически любого языка: разработчики Zed — создатели tree-sitter.
+
+Расширения для Vue и PHP работают отлично. «Прострелы» работают: можно найти все ссылки на нужные символы и с помощью мультибуферов отредактировать их как угодно.
+
+Порадовало, что для PHP можно переиспользовать лицензию Intelephense, который у меня работает в VS Code. С ним редактировать код гораздо удобнее.
+
+Тем, иконок и всего остального тоже достаточно.
+
+
+
+Мои впечатления
+
+Плюсы
+
+Производительность — уровень «Бог». Открываю триллиард файлов, и ничего не тормозит, не зависает, всё происходит мгновенно. Кажется, даже мозг начал работать быстрее.
+
+Парное программирование.
+
+Гибкая настройка.
+
+Минусы
+
+Пока сложно с SVG. Нельзя увидеть превью прямо в редакторе. Ишью под это висит уже целый год. Хорошая возможность самому законтрибьютить.
+
+Git-интеграция не настолько глубокая, как у VS Code. Разрешать конфликты пока всё ещё проще в VS Code. Но уже круто, что git blame на месте.</yandex:full-text>
+    </item>
+  </channel>
+</rss>

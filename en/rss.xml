@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:yandex="http://news.yandex.ru">
+  <channel>
+    <title>Blog | Danil Rodin</title>
+    <link>https://danilrodin.ru/en/blog</link>
+    <description>Notes on engineering, tools, and work.</description>
+    <language>en</language>
+    <atom:link href="https://danilrodin.ru/en/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Remote connection to local network without public gateway</title>
+      <link>https://danilrodin.ru/en/blog/2026-04-13-remote-raspberries</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2026-04-13-remote-raspberries</guid>
+      <pubDate>Mon, 13 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Raspberry Pi and Tailscale to the rescue!</description>
+      <yandex:full-text>Task
+
+Be able to connect to a remote local network.
+
+Purpose
+
+For example, to manage remote devices such as routers, WiFi access points, etc.
+
+Constraints
+
+There is no working host and no public IP.
+
+My Solution
+
+Buy Raspberry Pi 4.
+
+Prepare the device:Install Raspberry Pi OS Lite. Lite is important to avoid unnecessary load since we don’t need a GUI (X server).
+
+Make sure the device is connected to Raspberry Pi Connect so it’s always reachable as long as it has internet access.
+
+Install Tailscale (https://tailscale.com/) and connect it to your account.
+
+
+
+
+
+On-site setup:Connect the Raspberry Pi via Ethernet (RJ-45). I chose a wired connection to ensure stability and avoid connectivity loss.
+
+
+
+
+
+The most important part:
+tailscale up --advertise-routes=192.168.x.x/24
+
+
+This shares the local subnet with Tailscale clients, allowing access to devices like routers (e.g., 192.168.1.1) within that network.
+
+
+
+
+
+In the Tailscale admin panel:Enable the route via Edit Route Settings → Subnet routes to grant access to the subnet.
+
+
+
+
+
+Voilà!You can now connect to the local network where your Raspberry Pi is deployed.
+
+
+
+
+
+
+
+
+P.S.
+
+It’s not always 100% stable — sometimes devices need to be pinged within the Tailscale network so they can discover each other. But overall, the task is solved.</yandex:full-text>
+    </item>
+    <item>
+      <title>Running Laravel Cron Jobs in Docker with FrankenPHP</title>
+      <link>https://danilrodin.ru/en/blog/2025-10-12-laravel-cron-jobs</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2025-10-12-laravel-cron-jobs</guid>
+      <pubDate>Sun, 12 Oct 2025 00:00:00 GMT</pubDate>
+      <description>How to run Laravel cron jobs in Docker using FrankenPHP</description>
+      <yandex:full-text>Yesterday I spent some time digging into how cron jobs work in Laravel. There are two fairly straightforward commands involved:
+
+
+php artisan schedule:run
+php artisan schedule:work
+
+
+The idea is that the first command should be placed into the actual system crontab in whatever environment runs your backend (or any environment that has the required environment variables and access to the database).
+
+Your crontab entry usually looks something like this:
+
+
+* * * * * cd /path-to-your-project &amp;&amp; php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1
+
+
+This means the command runs every minute.
+
+The idea behind this approach is to delegate the scheduling logic to PHP and Laravel. When this command runs, Laravel checks app/Console/Kernel.php for registered scheduled tasks. They typically look something like this:
+
+
+$schedule-&gt;command(&apos;emails:send Taylor --force&apos;)-&gt;daily();
+
+
+In this case, -&gt;daily() means the command is expected to run once per day.
+
+
+What does schedule:work do?
+
+According to the documentation, the second command (schedule:work) is intended only for local development.
+
+All it really does is run schedule:run every minute, but implemented in PHP using an infinite loop.
+
+You can see the original implementation here:
+
+https://github.com/laravel/framework/pull/34618/files
+
+Modern Laravel versions have a much more complex implementation, but that initial pull request still gives a very clear understanding of how the mechanism works.
+
+
+My setup: Docker + FrankenPHP
+
+I run my backend application in Docker using docker-compose.
+The base image is dunglas/frankenphp.
+
+Here’s how the service is defined in docker-compose.yml:
+
+
+backend-cron:
+  restart: unless-stopped
+  build:
+    target: dev
+  volumes:
+    - .:/app
+  command: &quot;frankenphp php-cli artisan schedule:work&quot;
+  healthcheck:
+    disable: true
+  env_file:
+    .env
+
+
+Every minute I was getting the same error:
+
+
+backend-cron-1  | 2025-12-09T14:54:00.043306279Z sh: 1: : Permission denied
+backend-cron-1  | 2025-12-09T14:55:00.041940906Z sh: 1: : Permission denied
+
+
+At first, based on past experience, I assumed the script simply didn&apos;t have permission to write to the filesystem. This is a common Laravel issue when running inside Docker, usually related to the storage and bootstrap/cache directories.
+
+But that wasn’t the case here.
+
+
+The actual problem
+
+It turned out that FrankenPHP cannot spawn subprocesses in this setup for some reason.
+
+I tried playing around with setcap in the Docker image, but eventually gave up and just wrote a simple bash script that replicates what schedule:work does:
+
+
+#!/bin/sh
+set -e
+
+echo &quot;Starting schedule loop...&quot;
+
+while true; do
+    # Wait until the start of the next minute
+    sleep $((60 - $(date +%S)))
+
+    # Run the scheduler
+    frankenphp php-cli artisan schedule:run
+done
+
+
+
+Thoughts on FrankenPHP
+
+Up until this point, I hadn&apos;t experienced any issues with FrankenPHP. It really worked as a drop-in replacement for the images I used before.
+
+I haven&apos;t tried worker mode yet mostly because I expect it will require quite a bit of tweaking in the application itself to get everything running properly.</yandex:full-text>
+    </item>
+    <item>
+      <title>Migrating a Large MySQL Database to PostgreSQL on AWS RDS</title>
+      <link>https://danilrodin.ru/en/blog/2025-09-11-mysql-to-pg</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2025-09-11-mysql-to-pg</guid>
+      <pubDate>Thu, 11 Sep 2025 00:00:00 GMT</pubDate>
+      <description>Experience I gained while migrating a large MySQL database to PostgreSQL on AWS RDS.</description>
+      <yandex:full-text>Preconditions
+
+Before starting the migration, here was the situation:
+
+The new PostgreSQL database had to run on AWS RDS (so no access to the database host filesystem).
+
+Some tables contained millions of rows (~1.5 GB per table).
+
+The schema included JSON columns with virtual columns derived from JSON (used for indexing).
+
+The database used ENUM types.
+
+The backend is written in Laravel, with heavy use of database migrations.
+
+
+
+Where to start?
+
+The first step was researching standard migration tools.
+
+The most popular option is pgloader. I also found a couple of Node.js-based tools. I ended up discarding both approaches because:
+
+Many column types were not mapped correctly (for example, json not becoming jsonb).
+
+The migration process itself was too slow, which is unacceptable when dealing with production data.
+
+
+
+Schema-first approach
+
+I eventually concluded that the PostgreSQL schema should be created manually before migrating the data.
+
+This decision was driven by several factors:
+
+Type mismatches mentioned earlier
+
+The need to modify the schema during migration
+
+Adding table partitioning
+
+Removing deprecated tables
+
+
+
+To achieve this, I generated a Laravel-compatible migration for the entire existing database using laravel-migrations-generator
+
+I used the --squash flag to produce one large migration file and removed all previous migrations. This allowed new environments to start with the current schema from scratch.
+
+Naturally, the generated migration required some adjustments.
+
+Handling ENUM types
+
+Laravel handles enums in PostgreSQL as check constraints, not as real database types. I wanted proper PostgreSQL enum types.
+
+To make that work, I extended Laravel’s schema grammar so migrations could reference custom types.
+
+Example:
+
+
+Grammar::macro(&apos;typeCountry&apos;, function () {
+    return &apos;country&apos;;
+});
+
+DB::statement(&quot;CREATE TYPE country AS ENUM(&apos;russia&apos;, &apos;china&apos;, &apos;germany&apos;);&quot;);
+
+Schema::create(&apos;users&apos;, function (Blueprint $table) {
+    ...
+    $table-&gt;addColumn(&apos;country&apos;, &apos;country&apos;);
+});
+
+
+Without the Grammar::macro, Laravel would not recognize the country column type.
+
+Replacing virtual JSON columns
+
+MySQL supported virtual columns derived from JSON fields. PostgreSQL does not support virtual columns in the same way.
+
+ChatGPT actually suggested a simple alternative: use an index on the JSON expression instead.
+
+For example, if settings is a JSON column in the users table:
+
+
+CREATE INDEX ON users((settings-&gt;&gt;&apos;setting1&apos;));
+
+
+The only thing to remember is to update the application code to access the value directly from the JSON field rather than the former virtual column.
+
+Preparing tables for partitioning
+
+One of the tables needed to be partitioned by date.
+
+In PostgreSQL, tables must be created with partitioning defined from the start.
+
+Example:
+
+
+CREATE TABLE actions (
+    id SERIAL,
+    ...
+    created_at TIMESTAMP NOT NULL,
+    PRIMARY KEY (id, created_at)
+) PARTITION BY RANGE (created_at);
+
+
+Enabling required extensions
+
+One of the main motivations for moving to PostgreSQL was the ability to use vector data types, so I added the vector extension during migration:
+
+
+DB::statement(&quot;CREATE EXTENSION IF NOT EXISTS vector;&quot;);
+
+
+This command must be executed for every new database where the extension is required.
+
+We also relied on geospatial queries, so we enabled PostGIS as well:
+
+
+DB::statement(&quot;CREATE EXTENSION IF NOT EXISTS postgis;&quot;);
+
+
+Local development environment
+
+Speaking of extensions, they must first be installed in the database environment.
+
+AWS RDS comes with many extensions pre-installed. However, for local development we usually rely on Docker images.
+
+Finding images with Postgres + pgvector or Postgres + PostGIS separately is easy.
+
+Finding an image that contains both extensions and works on ARM64 is not.
+
+So I had to build one myself:
+
+
+FROM pgvector/pgvector:0.8.0-pg16
+
+ENV POSTGIS_VERSION=3.5.0
+
+RUN apt-get update &amp;&amp; apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    pkg-config \
+    postgresql-server-dev-16 \
+    libxml2-dev \
+    libgeos-dev \
+    libproj-dev \
+    libgdal-dev \
+    libjson-c-dev \
+    libprotobuf-c-dev \
+    protobuf-c-compiler \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libtiff-dev \
+    libsqlite3-dev \
+    sqlite3 \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+RUN cd /tmp &amp;&amp; \
+    wget https://download.osgeo.org/postgis/source/postgis-${POSTGIS_VERSION}.tar.gz &amp;&amp; \
+    tar -xzf postgis-${POSTGIS_VERSION}.tar.gz &amp;&amp; \
+    cd postgis-${POSTGIS_VERSION} &amp;&amp; \
+    ./configure \
+    --with-pgconfig=/usr/bin/pg_config \
+    --with-geosconfig=/usr/bin/geos-config \
+    --with-projdir=/usr \
+    --with-gdalconfig=/usr/bin/gdal-config \
+    --with-jsondir=/usr \
+    --with-protobufdir=/usr &amp;&amp; \
+    make &amp;&amp; \
+    make install &amp;&amp; \
+    cd / &amp;&amp; \
+    rm -rf /tmp/postgis-*
+
+
+Migration process
+
+After testing the process locally, I ran it in staging and production.
+
+The migration flow looked like this:
+
+Create a new AWS RDS instance
+
+Connect using psql
+
+Enable the required extensions:aws_commons
+
+aws_s3
+
+
+
+
+
+
+
+These allow importing CSV files from S3, since RDS does not provide filesystem access.
+
+Create a VPC Endpoint so the database can access S3.
+
+Update the Laravel database configuration (config/database.php)
+
+Deploy the code with the new migration and apply the schema.
+
+Stop the application to prevent writes during migration:
+
+
+
+
+php artisan down
+
+
+Export data from MySQL to CSV:
+
+
+
+
+mysqldump --port=3308 -u root -psecret db-name \
+  --no-create-info \
+  --fields-terminated-by=, \
+  --tab=/var/lib/mysql-files \
+  --fields-enclosed-by=&apos;\&quot;&apos; \
+  --lines-terminated-by=&apos;\n&apos;
+
+
+This generates files for each table:
+
+
+actions.sql  actions.txt
+users.sql    users.txt
+
+
+Key flags:
+
+--no-create-info → skip schema generation
+
+--fields-terminated-by=, → comma separator
+
+--tab=/var/lib/mysql-files → required export directory
+
+--fields-enclosed-by=&apos;&quot;&apos; → format expected by PostgreSQL COPY
+
+--lines-terminated-by=&apos;\n&apos; → newline rows
+
+
+
+Upload the .txt files to an S3 bucket.
+If you generated the files inside a container, docker cp helps extract them.
+
+Import each table using:
+
+
+
+
+SELECT aws_s3.table_import_from_s3(
+  &apos;users&apos;,
+  &apos;&apos;,
+  &apos;(format csv, header false, null &apos;&apos;\N&apos;&apos;, escape &apos;&apos;\&apos;&apos;)&apos;,
+  &apos;db-name&apos;,
+  &apos;/dumps/users.txt&apos;,
+  &apos;your-aws-region&apos;,
+  &apos;AWS_ACCESS_KEY&apos;,
+  &apos;AWS_SECRET_KEY&apos;,
+  &apos;&apos;
+);
+
+
+Repeat this command for each table.
+
+Restart the application:
+
+
+
+
+php artisan up
+
+
+One more important detail
+
+When creating the PostgreSQL schema, there are two approaches:
+
+Option 1 — No foreign keys initially
+
+Create tables without foreign keys so the import order doesn&apos;t matter.
+Then apply a second migration to add constraints afterward.
+
+Option 2 — Foreign keys from the start
+
+Create tables with foreign keys immediately.
+In this case, the table import order becomes important.
+
+Final thoughts
+
+For large production databases, a schema-first approach with CSV bulk import turned out to be much more reliable and faster than using automated migration tools.
+
+It also gave us full control over:
+
+data types
+
+indexing strategy
+
+partitioning
+
+extensions
+
+schema cleanup</yandex:full-text>
+    </item>
+    <item>
+      <title>.env files</title>
+      <link>https://danilrodin.ru/en/blog/2025-04-25-env-files</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2025-04-25-env-files</guid>
+      <pubDate>Fri, 25 Apr 2025 00:00:00 GMT</pubDate>
+      <description>My .env files setup</description>
+      <yandex:full-text>Managing Secrets Without the Pain
+
+Secure storage of secrets — and the proper use of this “sensitive” data in environment variables — has been something on my mind for quite a while.
+
+Over time I tried several approaches. Some worked… until they didn’t.
+
+This post is about how I used to manage secrets, the problems that came with it, and how I recently simplified the whole process.
+
+
+The Old Approach: Local Encryption
+
+For years my go-to solution was local encryption.
+
+I relied on good old openssl, which is available on almost any system. The idea was straightforward:
+
+Keep a keyfile somewhere safe (in my case, usually a hidden Google Doc).
+
+Encrypt .env files using that key.
+
+Store the encrypted files in the repository.
+
+
+
+The resulting files would look something like this:
+
+
+.env.dev.enc
+.env.stage.enc
+.env.prod.enc
+
+
+When needed, I would decrypt them locally, update variables, and encrypt them again.
+
+Simple enough — at least in theory.
+
+
+The Problem With This Workflow
+
+In practice, things became painful pretty quickly.
+
+Every small change required going through the full cycle:
+
+
+decrypt → edit → encrypt
+
+
+And this had to be repeated for every environment.
+
+After doing this enough times, it became tempting to take shortcuts.
+
+More often than I’d like to admit, I ended up using a single shared .env file across multiple applications just to make life easier (though who was I really fooling?).
+
+The consequences were predictable.
+
+Sometimes backend environment variables would end up sitting right next to frontend ones — including things like database connection credentials 🤪.
+
+Not exactly ideal.
+
+
+Another Issue: Separate Secret Storage
+
+There was also a structural problem.
+
+Encrypted .env files usually lived in a separate repository, which meant:
+
+secrets were updated independently
+
+application changes and secret changes were not synchronized
+
+mistakes became easier to make
+
+
+
+Any extra moving part in a deployment process increases the chance that something goes wrong.
+
+And this definitely added a few more.
+
+
+Discovering Doppler
+
+Recently I came across Doppler.
+It turned out to be a really nice way to manage secrets.
+
+Instead of juggling encrypted .env files, secrets are stored and managed through a clean web interface, and injected directly when running commands.
+
+For example:
+
+
+doppler run -- npm run build
+
+
+The application simply runs with the correct configuration profile.
+
+No .env files required.
+
+Even better, Doppler provides integrations with most modern deployment tools.
+
+
+Why I Still Keep .env Files
+
+That said, I don’t love being completely dependent on a single tool.
+
+If the tool disappears tomorrow, I still want my projects to work.
+
+So instead of abandoning .env files entirely, I decided to generate them automatically using Doppler.
+
+This keeps things portable while still benefiting from centralized secret management.
+
+
+Automating Setup With Taskfile
+
+To make things smoother, I created a small Taskfile for initializing projects with the correct environment variables:
+
+
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: &quot;3&quot;
+
+tasks:
+  install:
+    cmds:
+      - curl -Ls --tlsv1.3 --proto &quot;=https&quot; https://cli.doppler.com/install.sh | sh
+
+  login:
+    cmds:
+      - doppler login
+  
+  get-env:
+    vars:
+      DOPPLER_PROJECT: &apos;{{default &quot;help&quot; .DOPPLER_PROJECT}}&apos;
+      DOPPLER_CONFIG: &apos;{{default &quot;dev&quot; .DOPPLER_CONFIG}}&apos;
+      FILEPATH: &apos;{{default &quot;&quot; .FILEPATH}}&apos;
+    cmds:
+      - doppler secrets download --project {{.DOPPLER_PROJECT}} --config {{.DOPPLER_CONFIG}} --no-file --format env &gt; {{.FILEPATH}}
+  
+  setup-infra-secrets:
+    cmds:
+      - task: get-env
+        vars: { DOPPLER_PROJECT: &quot;infra&quot;, DOPPLER_CONFIG: &quot;{{.DOPPLER_CONFIG}}&quot;, FILEPATH: &quot;.env&quot; }
+
+  setup-frontend-secrets:
+    cmds:
+      - task: get-env
+        vars: { DOPPLER_PROJECT: &quot;frontend&quot;, DOPPLER_CONFIG: &quot;{{.DOPPLER_CONFIG}}&quot;, FILEPATH: &quot;apps/frontend/.env&quot; }
+  
+  setup-backend-secrets:
+    cmds:
+      - task: get-env
+        vars: { DOPPLER_PROJECT: &quot;backend&quot;, DOPPLER_CONFIG: &quot;{{.DOPPLER_CONFIG}}&quot;, FILEPATH: &quot;apps/backend/.env&quot; }
+
+  setup-secrets:
+    deps: [setup-frontend-secrets, setup-infra-secrets, setup-backend-secrets]
+
+  initial-setup:
+    cmds:
+      - task: install
+      - task: login
+      - task: setup-secrets
+
+
+With it, generating the .env file becomes part of the normal project setup.
+
+No manual secret handling required.
+
+
+Final Thoughts
+
+Managing secrets is one of those things that seems simple until it isn&apos;t.
+
+My old setup worked for a while, but it created too much friction and too many opportunities for mistakes.
+
+Using Doppler — while still keeping .env files as a fallback — turned out to be a good balance between convenience and control.
+
+And honestly, anything that removes a few steps from secret management is already a win.</yandex:full-text>
+    </item>
+    <item>
+      <title>Zed Editor</title>
+      <link>https://danilrodin.ru/en/blog/2025-03-25-zed</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2025-03-25-zed</guid>
+      <pubDate>Thu, 20 Mar 2025 00:00:00 GMT</pubDate>
+      <description>Impressions of Zed Editor</description>
+      <yandex:full-text>A few days ago I tried Zed (https://zed.dev/) — a code editor written in Rust.
+
+Here are some things that immediately stood out right out of the box.
+
+Built-in features
+
+Collaborative mode
+
+Zed has a built-in collaborative mode. You can share your local codebase with a teammate and work together in the same environment.
+
+It works surprisingly smoothly:
+
+you can talk via voice
+
+follow what your teammate is doing
+
+edit related parts of the code together in real time
+
+
+
+It feels a bit like Google Docs, but for your local code.
+
+AI assistant
+
+Zed includes an AI assistant that can be configured to use different modern LLMs.
+
+I recommend watching the video on their homepage — it gives a good overview of how it works.
+
+I experimented with running Ollama locally (https://ollama.com/) to generate JSDoc for some of my functions. The only model that produced somewhat reasonable results was deepseek-coder. I also tried gemma, llama, and qwen (both with and without the code variants), but they didn’t generate anything particularly useful.
+
+Running LLMs locally turned out to be very resource-intensive. It requires a lot of RAM, the CPU easily hits 100%, and responses can take several minutes.
+
+The main reason I tried running models locally is that many cloud AI providers don’t work in Russia. I still haven’t gotten around to setting up a VPS with a VPN to use them instead.
+
+Still, it was an interesting experiment.
+
+Right now, Zed allows you to use its built-in assistant (based on Claude 3.5) for free because the feature is still new and currently being tested.
+
+Familiar shortcuts
+
+Zed ships with VSCode keybindings by default, and you can also enable Vim mode if you prefer that workflow.
+
+I’m not personally a Vim user, but I know many developers appreciate having that option.
+
+Multi-buffers everywhere
+
+One particularly interesting architectural idea: everything in Zed is implemented as text buffers, including the built-in terminal.
+
+More details here:
+https://zed.dev/features#multi-buffers
+
+Extensibility
+
+Zed is surprisingly extensible.
+
+Most programming languages are already supported:
+https://zed.dev/extensions
+
+That’s not surprising considering the Zed team also created tree-sitter.
+
+Extensions for Vue and PHP work great. Navigation works well — you can jump to definitions, find references, and use multi-buffers to edit related symbols across multiple files.
+
+A nice bonus: for PHP you can reuse your Intelephense license if you already use it in VSCode. That makes working with PHP much more comfortable.
+
+Themes, icons, and other customization options are also widely available.
+
+
+
+My impressions
+
+Pros
+
+Performance is incredible.
+I can open a ridiculous number of files and nothing lags or freezes. Everything feels instant. It honestly feels like my brain starts working faster.
+
+Pair programming built in.
+This alone could be a big deal for teams.
+
+Highly configurable.
+
+Cons
+
+SVG support is still lacking.
+You can’t preview SVG files directly inside the editor yet. There’s an open issue for this that has been around for about a year:
+https://github.com/zed-industries/zed/issues/10454
+
+Maybe a good opportunity to contribute.
+
+Git integration isn’t as deep as in VSCode (yet).
+Resolving merge conflicts is still easier in VSCode. But the basics like git blame are already there.
+
+Final thoughts
+
+Zed already feels extremely fast and promising. The core ideas behind the editor — performance, collaboration, and multi-buffers — are genuinely interesting.
+
+It’s not a full replacement for VSCode for me yet, but it’s definitely something I’m keeping an eye on.</yandex:full-text>
+    </item>
+  </channel>
+</rss>
