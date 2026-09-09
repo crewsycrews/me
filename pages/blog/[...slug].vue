@@ -7,7 +7,9 @@ const route = useRoute();
 const { locale, isRussian, dateLocale } = useSiteLocale();
 
 const slugParam = route.params.slug;
-const slug = Array.isArray(slugParam) ? slugParam.join("/") : String(slugParam || "");
+// Static hosts append a trailing slash; keep the query and payload key canonical.
+const slug = (Array.isArray(slugParam) ? slugParam.join("/") : String(slugParam || ""))
+  .replace(/\/+$/, "");
 const path = isRussian.value ? `/${slug}` : `/en/${slug}`;
 const contentRef = ref<HTMLElement | null>(null);
 

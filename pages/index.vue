@@ -276,9 +276,11 @@ useHead({
   filter: invert(1);
 }
 
-.icon:hover {
-  transform: scale(1.25, 1.25);
-  opacity: 0.7;
-  transition: transform 0.15s;
+@media (hover: hover) and (pointer: fine) {
+  .icon:hover {
+    transform: scale(1.25, 1.25);
+    opacity: 0.7;
+    transition: transform 0.15s;
+  }
 }
 </style>
