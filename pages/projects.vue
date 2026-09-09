@@ -20,6 +20,38 @@ usePageSeo({
 
     <div class="mt-6 grid gap-6 md:grid-cols-2">
       <a
+        href="https://elementarydice.fun"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex flex-col items-center gap-3 rounded-3xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-[#d4ef99]/35 hover:bg-white/[0.05]"
+      >
+        <span>Elementary Dice — browser-based dice autobattler</span>
+        <img
+          src="/assets/images/elementary-dice.webp"
+          alt="Elementary Dice logo"
+          class="w-full max-w-xs rounded-2xl"
+          width="512"
+          height="512"
+        />
+      </a>
+
+      <a
+        href="https://casiq.itch.io/snowmans-home"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex flex-col items-center justify-center gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-[#d4ef99]/35 hover:bg-white/[0.05]"
+      >
+        <span>Snowman’s Home — survival game</span>
+        <img
+          src="/assets/images/snowmans-home.jpeg"
+          alt="Snowman’s Home logo"
+          class="w-full rounded-2xl"
+          width="1196"
+          height="378"
+        />
+      </a>
+
+      <a
         href="https://casiq.itch.io/ctf"
         target="_blank"
         rel="noopener noreferrer"
