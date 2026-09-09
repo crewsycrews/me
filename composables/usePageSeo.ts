@@ -188,6 +188,12 @@ export const usePageSeo = (options: PageSeoOptions) => {
       { rel: "alternate", hreflang: "ru", href: russianUrl },
       { rel: "alternate", hreflang: "en", href: englishUrl },
       { rel: "alternate", hreflang: "x-default", href: russianUrl },
+      {
+        rel: "alternate",
+        type: "application/rss+xml",
+        title: isRussian ? "Блог | Данил Родин" : "Blog | Danil Rodin",
+        href: new URL(isRussian ? "rss.xml" : "en/rss.xml", baseUrl).toString(),
+      },
     ],
     meta: options.publishedTime
       ? [

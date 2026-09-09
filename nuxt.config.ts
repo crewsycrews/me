@@ -134,6 +134,8 @@ export default defineNuxtConfig({
         "/en/about",
         "/en/blog",
         "/sitemap.xml",
+        "/rss.xml",
+        "/en/rss.xml",
         ...blogRoutes,
       ],
     },

@@ -80,6 +80,9 @@ usePageSeo({
     <header class="mb-6 text-left">
       <h1 class="text-3xl font-bold tracking-tight">{{ isRussian ? "Блог" : "Blog" }}</h1>
       <p class="mt-2 text-sm opacity-75">{{ isRussian ? "Заметки о разработке, инструментах и работе." : "Notes on engineering, tools, and work." }}</p>
+      <a :href="localePath('/rss.xml')" class="mt-3 inline-block text-sm hover:underline">
+        {{ isRussian ? "Подписаться по RSS" : "Subscribe via RSS" }}
+      </a>
     </header>
 
     <ul v-if="paginatedPosts.length" class="space-y-4 text-left">
