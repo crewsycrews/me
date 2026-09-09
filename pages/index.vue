@@ -2,6 +2,11 @@
 definePageMeta({ alias: ["/en"] });
 
 const { locale, isRussian } = useSiteLocale();
+const rotatingTexts = computed(() =>
+  isRussian.value
+    ? ["Разработчик", "Семьянин", "Здоровый образ жизни"]
+    : ["Software dev", "Family guy", "Healthy lifestyle"],
+);
 
 usePageSeo({
   title: isRussian.value
@@ -66,9 +71,12 @@ useHead({
       <span class="w-1/12" />
       <span class="w-10/12">
         <span class="text-rotator text-left">
-          <span class="text" :class="isRussian ? 'textBlockRu0' : 'textBlockEn0'">{{ isRussian ? "Разработчик" : "Software dev" }}</span>
-          <span class="text" :class="isRussian ? 'textBlockRu1' : 'textBlockEn1'">{{ isRussian ? "Семьянин" : "Family guy" }}</span>
-          <span class="text" :class="isRussian ? 'textBlockRu2' : 'textBlockEn2'">{{ isRussian ? "Здоровый образ жизни" : "Healthy lifestyle" }}</span>
+          <span
+            v-for="(text, index) in rotatingTexts"
+            :key="text"
+            class="text"
+            :style="{ '--characters': text.length, '--delay': `${index * 8}s` }"
+          >{{ text }}</span>
         </span>
       </span>
       <span class="w-1/12" />
@@ -200,48 +208,17 @@ useHead({
   top: 0;
   left: 0;
   display: block;
+  box-sizing: content-box;
   overflow: hidden;
   white-space: nowrap;
   border-right: 4px solid rgb(39, 92, 23);
   font-size: 1.5rem;
   width: 0;
-  opacity: 0;
-}
-
-.textBlockRu0 {
+  opacity: 0.65;
+  visibility: hidden;
   animation:
-    printed-text-11 12s steps(11) infinite,
-    flashin-border 0.75s step-start infinite;
-}
-
-.textBlockRu1 {
-  animation:
-    printed-text-8 12s steps(8) 4s infinite,
-    flashin-border 0.75s step-start 4s infinite;
-}
-
-.textBlockRu2 {
-  animation:
-    printed-text-20 12s steps(20) 8s infinite,
-    flashin-border 0.75s step-start 8s infinite;
-}
-
-.textBlockEn0 {
-  animation:
-    printed-text-13 12s steps(13) infinite,
-    flashin-border 0.75s step-start infinite;
-}
-
-.textBlockEn1 {
-  animation:
-    printed-text-11 12s steps(11) 4s infinite,
-    flashin-border 0.75s step-start 4s infinite;
-}
-
-.textBlockEn2 {
-  animation:
-    printed-text-18 12s steps(18) 8s infinite,
-    flashin-border 0.75s step-start 8s infinite;
+    printed-text 24s steps(var(--characters), end) var(--delay) infinite,
+    flashin-border 1s step-start infinite;
 }
 
 @keyframes flashin-border {
@@ -258,93 +235,23 @@ useHead({
   }
 }
 
-@keyframes printed-text-8 {
+/* Each phrase gets 8 seconds: 4 seconds to type, then 4 to read. */
+@keyframes printed-text {
   0% {
-    opacity: 0.65;
-    width: 0%;
+    visibility: visible;
+    width: 0;
   }
 
-  31% {
-    opacity: 0.65;
-    width: 8ch;
+  16.666667% {
+    visibility: visible;
+    width: calc(var(--characters) * 1ch);
+    animation-timing-function: step-end;
   }
 
-  32%,
+  33.333333%,
   100% {
-    opacity: 0;
-    width: 8ch;
-  }
-}
-
-@keyframes printed-text-13 {
-  0% {
-    opacity: 0.65;
-    width: 0%;
-  }
-
-  31% {
-    opacity: 0.65;
-    width: 13ch;
-  }
-
-  32%,
-  100% {
-    opacity: 0;
-    width: 13ch;
-  }
-}
-
-@keyframes printed-text-11 {
-  0% {
-    opacity: 0.65;
-    width: 0%;
-  }
-
-  31% {
-    opacity: 0.65;
-    width: 11ch;
-  }
-
-  32%,
-  100% {
-    opacity: 0;
-    width: 11ch;
-  }
-}
-
-@keyframes printed-text-20 {
-  0% {
-    opacity: 0.65;
-    width: 0%;
-  }
-
-  31% {
-    opacity: 0.65;
-    width: 20ch;
-  }
-
-  32%,
-  100% {
-    opacity: 0;
-    width: 20ch;
-  }
-}
-
-@keyframes printed-text-18 {
-  0% {
-    opacity: 0.65;
-    width: 0%;
-  }
-
-  31% {
-    opacity: 0.65;
-    width: 18ch;
-  }
-
-  32%,
-  100% {
-    opacity: 0;
-    width: 18ch;
+    visibility: hidden;
+    width: calc(var(--characters) * 1ch);
   }
 }
 
