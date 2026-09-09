@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const appBaseURL = "/me/";
+const appBaseURL = "/";
 const blogPosts = readdirSync(new URL("./content/", import.meta.url), {
   withFileTypes: true,
 })
@@ -33,7 +33,7 @@ const stripHomepageHydration = (html: string) =>
 
 const inlineHomepageStyles = (html: string, clientAssetsDir: string) =>
   html.replace(
-    /<link rel="stylesheet" href="\/me\/_nuxt\/([^"]+)" crossorigin>/g,
+    /<link rel="stylesheet" href="\/_nuxt\/([^"]+)" crossorigin>/g,
     (_, fileName: string) =>
       `<style>${readFileSync(join(clientAssetsDir, fileName), "utf8")}</style>`,
   );
@@ -44,7 +44,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     seoBlogPosts: blogPosts,
     public: {
-      siteUrl: "https://crewsycrews.github.io",
+      siteUrl: "https://danilrodin.ru",
     },
   },
   app: {

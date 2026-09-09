@@ -11,14 +11,14 @@ useHead({
   link: [
     {
       rel: "preload",
-      href: "/me/assets/fonts/anonymous-pro-latin-400.woff2",
+      href: "/assets/fonts/anonymous-pro-latin-400.woff2",
       as: "font",
       type: "font/woff2",
       crossorigin: "anonymous",
     },
     {
       rel: "preload",
-      href: "/me/assets/fonts/chakra-petch-latin-600.woff2",
+      href: "/assets/fonts/chakra-petch-latin-600.woff2",
       as: "font",
       type: "font/woff2",
       crossorigin: "anonymous",
