@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BlogImage from "~/components/BlogImage.vue";
+
 definePageMeta({ alias: ["/en/blog/:slug(.*)*"] });
 
 const route = useRoute();
@@ -106,15 +108,32 @@ watch(
 </script>
 
 <template>
-  <div class="mt-4 flex justify-center">
+  <div class="mt-4 flex justify-center pb-10">
     <article class="w-full md:w-9/12 lg:w-8/12">
       <h1 class="text-left text-xl font-bold">{{ post?.title }}</h1>
       <p v-if="post?.meta?.date" class="mt-2 text-left opacity-70">
         {{ new Date(post.meta.date).toLocaleDateString(dateLocale) }}
       </p>
       <div ref="contentRef" class="blog-content mt-6 text-left">
-        <ContentRenderer v-if="post" :value="post" />
+        <ContentRenderer v-if="post" :value="post" :components="{ img: BlogImage }" />
       </div>
+      <svg
+        class="mx-auto mt-10 h-8 w-32 text-[#d4ef99]/60"
+        viewBox="0 0 128 32"
+        fill="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <g stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+          <path d="M6 16h14c12 0 14-10 23-10 10 0 12 14 3 14-5 0-6-6-2-7" />
+          <path
+            d="M6 16h14c12 0 14-10 23-10 10 0 12 14 3 14-5 0-6-6-2-7"
+            transform="translate(128 0) scale(-1 1)"
+          />
+          <path d="M28 21c12 0 19 5 28-1m44 1c-12 0-19 5-28-1" />
+        </g>
+        <path d="m64 11 4 5-4 5-4-5Z" fill="currentColor" />
+      </svg>
     </article>
   </div>
 </template>
