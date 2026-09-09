@@ -4,13 +4,25 @@
     <loc>https://danilrodin.ru/</loc>
   </url>
   <url>
+    <loc>https://danilrodin.ru/en</loc>
+  </url>
+  <url>
     <loc>https://danilrodin.ru/about</loc>
+  </url>
+  <url>
+    <loc>https://danilrodin.ru/en/about</loc>
   </url>
   <url>
     <loc>https://danilrodin.ru/projects</loc>
   </url>
   <url>
+    <loc>https://danilrodin.ru/en/projects</loc>
+  </url>
+  <url>
     <loc>https://danilrodin.ru/blog</loc>
+  </url>
+  <url>
+    <loc>https://danilrodin.ru/en/blog</loc>
   </url>
   <url>
     <loc>https://danilrodin.ru/blog/2025-03-25-zed</loc>
@@ -26,5 +38,20 @@
   </url>
   <url>
     <loc>https://danilrodin.ru/blog/2026-04-13-remote-raspberries</loc>
+  </url>
+  <url>
+    <loc>https://danilrodin.ru/en/blog/2025-03-25-zed</loc>
+  </url>
+  <url>
+    <loc>https://danilrodin.ru/en/blog/2025-04-25-env-files</loc>
+  </url>
+  <url>
+    <loc>https://danilrodin.ru/en/blog/2025-09-11-mysql-to-pg</loc>
+  </url>
+  <url>
+    <loc>https://danilrodin.ru/en/blog/2025-10-12-laravel-cron-jobs</loc>
+  </url>
+  <url>
+    <loc>https://danilrodin.ru/en/blog/2026-04-13-remote-raspberries</loc>
   </url>
 </urlset>
