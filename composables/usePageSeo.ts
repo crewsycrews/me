@@ -13,6 +13,7 @@ type Breadcrumb = {
 type PageSeoOptions = {
   title: string;
   description: string;
+  locale?: "en" | "ru";
   path?: string;
   schemaType?: SchemaType | "BlogPosting";
   headline?: string;
@@ -31,8 +32,16 @@ export const usePageSeo = (options: PageSeoOptions) => {
     runtimeConfig.app.baseURL,
     runtimeConfig.public.siteUrl,
   );
-  const pagePath = options.path ?? route.path;
-  const canonicalUrl = new URL(pagePath.replace(/^\/+/, ""), baseUrl).toString();
+  const locale = options.locale ?? "ru";
+  const isRussian = locale === "ru";
+  const rawPagePath = options.path ?? route.path;
+  const pagePath = rawPagePath === "/en"
+    ? "/"
+    : rawPagePath.replace(/^\/en\//, "/");
+  const russianUrl = new URL(pagePath.replace(/^\/+/, ""), baseUrl).toString();
+  const englishPath = pagePath === "/" ? "/en" : `/en${pagePath}`;
+  const englishUrl = new URL(englishPath.replace(/^\/+/, ""), baseUrl).toString();
+  const canonicalUrl = isRussian ? russianUrl : englishUrl;
   const imageUrl = new URL(DEFAULT_IMAGE_PATH, baseUrl).toString();
   const avatarUrl = new URL(AVATAR_PATH, baseUrl).toString();
   const personId = `${baseUrl.toString()}#person`;
@@ -48,9 +57,11 @@ export const usePageSeo = (options: PageSeoOptions) => {
     ogType: options.schemaType === "BlogPosting" ? "article" : "website",
     ogUrl: canonicalUrl,
     ogSiteName: SITE_NAME,
-    ogLocale: "en_US",
+    ogLocale: isRussian ? "ru_RU" : "en_US",
     ogImage: imageUrl,
-    ogImageAlt: `${SITE_NAME} — Fullstack Developer`,
+    ogImageAlt: isRussian
+      ? `${SITE_NAME} — Fullstack-разработчик`
+      : `${SITE_NAME} — Fullstack Developer`,
     ogImageType: "image/png",
     ogImageWidth: 671,
     ogImageHeight: 267,
@@ -58,7 +69,9 @@ export const usePageSeo = (options: PageSeoOptions) => {
     twitterTitle: options.title,
     twitterDescription: options.description,
     twitterImage: imageUrl,
-    twitterImageAlt: `${SITE_NAME} — Fullstack Developer`,
+    twitterImageAlt: isRussian
+      ? `${SITE_NAME} — Fullstack-разработчик`
+      : `${SITE_NAME} — Fullstack Developer`,
     twitterCreator: "@naniyak",
   });
 
@@ -68,9 +81,10 @@ export const usePageSeo = (options: PageSeoOptions) => {
       "@id": websiteId,
       url: baseUrl.toString(),
       name: SITE_NAME,
-      description:
-        "Personal website of Danil Rodin, a fullstack developer.",
-      inLanguage: "en",
+      description: isRussian
+        ? "Личный сайт Данила Родина, fullstack-разработчика."
+        : "Personal website of Danil Rodin, a fullstack developer.",
+      inLanguage: locale,
       publisher: { "@id": personId },
     },
     {
@@ -79,7 +93,7 @@ export const usePageSeo = (options: PageSeoOptions) => {
       name: "Danil Rodin",
       url: baseUrl.toString(),
       image: avatarUrl,
-      jobTitle: "Fullstack Developer",
+      jobTitle: isRussian ? "Fullstack-разработчик" : "Fullstack Developer",
       sameAs: [
         "https://github.com/crewsycrews",
         "https://dev.to/crewsycrews",
@@ -102,7 +116,7 @@ export const usePageSeo = (options: PageSeoOptions) => {
         isPartOf: { "@id": websiteId },
         about: { "@id": personId },
         primaryImageOfPage: imageUrl,
-        inLanguage: "en",
+        inLanguage: locale,
         mainEntity: { "@id": articleId },
       },
       {
@@ -117,7 +131,7 @@ export const usePageSeo = (options: PageSeoOptions) => {
         dateModified: options.publishedTime,
         author: { "@id": personId },
         publisher: { "@id": personId },
-        inLanguage: "en",
+        inLanguage: locale,
       },
     );
   } else {
@@ -130,7 +144,7 @@ export const usePageSeo = (options: PageSeoOptions) => {
       isPartOf: { "@id": websiteId },
       about: { "@id": personId },
       primaryImageOfPage: imageUrl,
-      inLanguage: "en",
+      inLanguage: locale,
       ...(["ProfilePage", "AboutPage"].includes(options.schemaType ?? "")
         ? { mainEntity: { "@id": personId } }
         : {}),
@@ -144,15 +158,21 @@ export const usePageSeo = (options: PageSeoOptions) => {
     graph.push({
       "@type": "BreadcrumbList",
       "@id": `${canonicalUrl}#breadcrumb`,
-      itemListElement: options.breadcrumbs.map((breadcrumb, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: breadcrumb.name,
-        item: new URL(
-          breadcrumb.path.replace(/^\/+/, ""),
-          baseUrl,
-        ).toString(),
-      })),
+      itemListElement: options.breadcrumbs.map((breadcrumb, index) => {
+        const breadcrumbPath = locale === "en"
+          ? breadcrumb.path === "/" ? "/en" : `/en${breadcrumb.path}`
+          : breadcrumb.path;
+
+        return {
+          "@type": "ListItem",
+          position: index + 1,
+          name: breadcrumb.name,
+          item: new URL(
+            breadcrumbPath.replace(/^\/+/, ""),
+            baseUrl,
+          ).toString(),
+        };
+      }),
     });
   }
 
@@ -162,7 +182,13 @@ export const usePageSeo = (options: PageSeoOptions) => {
   }).replace(/</g, "\\u003c");
 
   useHead({
-    link: [{ rel: "canonical", href: canonicalUrl }],
+    htmlAttrs: { lang: locale },
+    link: [
+      { rel: "canonical", href: canonicalUrl },
+      { rel: "alternate", hreflang: "ru", href: russianUrl },
+      { rel: "alternate", hreflang: "en", href: englishUrl },
+      { rel: "alternate", hreflang: "x-default", href: russianUrl },
+    ],
     meta: options.publishedTime
       ? [
           {

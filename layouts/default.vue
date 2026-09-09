@@ -1,12 +1,13 @@
 <script setup lang="ts">
 const route = useRoute();
+const { isRussian, localePath, switchLocalePath } = useSiteLocale();
 
-const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Projects", to: "/projects" },
-  { label: "Blog", to: "/blog" },
-  { label: "About", to: "/about" },
-];
+const navLinks = computed(() => [
+  { label: isRussian.value ? "Главная" : "Home", to: localePath("/") },
+  { label: isRussian.value ? "Проекты" : "Projects", to: localePath("/projects") },
+  { label: isRussian.value ? "Блог" : "Blog", to: localePath("/blog") },
+  { label: isRussian.value ? "Обо мне" : "About", to: localePath("/about") },
+]);
 
 const isLinkActive = (linkPath: string) => {
   if (linkPath === "/") {
@@ -23,7 +24,7 @@ const isLinkActive = (linkPath: string) => {
   >
     <header class="sticky top-0 z-10 mb-6 border-b border-white/10 bg-[#0f0f0f]/95 py-3 backdrop-blur">
       <nav
-        aria-label="Main navigation"
+        :aria-label="isRussian ? 'Основная навигация' : 'Main navigation'"
         class="flex items-center justify-center gap-2 font-['Anonymous_Pro','Fira_Mono',monospace] sm:gap-4"
       >
         <NuxtLink
@@ -39,6 +40,16 @@ const isLinkActive = (linkPath: string) => {
         >
           {{ link.label }}
         </NuxtLink>
+        <span class="opacity-30" aria-hidden="true">|</span>
+        <a
+          :href="switchLocalePath"
+          class="rounded border border-white/15 px-2 py-1 text-sm uppercase opacity-80 transition-colors hover:border-[#d4ef99]/40 hover:bg-white/10 hover:opacity-100 sm:text-base"
+          :hreflang="isRussian ? 'en' : 'ru'"
+          :lang="isRussian ? 'en' : 'ru'"
+          :title="isRussian ? 'Switch to English' : 'Переключиться на русский'"
+        >
+          {{ isRussian ? "EN" : "RU" }}
+        </a>
       </nav>
     </header>
 

@@ -8,14 +8,44 @@ type DiceType = "d4" | "d6" | "d10" | "d12" | "d20";
 type Affinity = "fire" | "water" | "earth" | "air" | "lightning";
 
 const diceTypes: DiceType[] = ["d4", "d6", "d10", "d12", "d20"];
-const affinities: { label: string; value: Affinity | undefined }[] = [
-  { label: "None", value: undefined },
-  { label: "Fire", value: "fire" },
-  { label: "Water", value: "water" },
-  { label: "Earth", value: "earth" },
-  { label: "Air", value: "air" },
-  { label: "Lightning", value: "lightning" },
-];
+const { isRussian } = useSiteLocale();
+const affinities = computed<{ label: string; value: Affinity | undefined }[]>(() => [
+  { label: isRussian.value ? "Без стихии" : "None", value: undefined },
+  { label: isRussian.value ? "Огонь" : "Fire", value: "fire" },
+  { label: isRussian.value ? "Вода" : "Water", value: "water" },
+  { label: isRussian.value ? "Земля" : "Earth", value: "earth" },
+  { label: isRussian.value ? "Воздух" : "Air", value: "air" },
+  { label: isRussian.value ? "Молния" : "Lightning", value: "lightning" },
+]);
+const copy = computed(() => isRussian.value ? {
+  eyebrow: "Песочница игральных костей",
+  title: "Тест анимации стихийных костей",
+  description: "Этот инструмент нужен, чтобы экспериментировать с анимациями разных костей и сразу смотреть на результат.",
+  diceType: "Тип кости",
+  affinity: "Стихия",
+  spinDuration: "Длительность вращения, мс",
+  settleDuration: "Длительность остановки, мс",
+  forcedValue: "Заданное значение",
+  random: "Случайное",
+  rolling: "Бросаем...",
+  roll: "Бросить кость",
+  recent: "Последние броски",
+  rolled: "— выпало",
+} : {
+  eyebrow: "Dice Playground",
+  title: "Elemental dice animation test",
+  description: "The purpose of this tool was to play around with different animations on each die and see it in action.",
+  diceType: "Dice type",
+  affinity: "Affinity",
+  spinDuration: "Spin duration",
+  settleDuration: "Settle duration",
+  forcedValue: "Force result value",
+  random: "Random",
+  rolling: "Rolling...",
+  roll: "Roll dice",
+  recent: "Recent rolls",
+  rolled: "rolled",
+});
 const elements: DiceRollResult["result_element"][] = [
   "fire",
   "water",
@@ -99,14 +129,13 @@ function onRollComplete() {
   >
     <div class="flex flex-col gap-2">
       <p class="text-xs uppercase tracking-[0.3em] text-[#d4ef99]/80">
-        Dice Playground
+        {{ copy.eyebrow }}
       </p>
       <h2 class="text-xl font-semibold text-white sm:text-2xl">
-        Elemental dice animation test
+        {{ copy.title }}
       </h2>
       <p class="max-w-2xl text-sm leading-7 text-white/70 sm:text-base">
-        The purpose of this tool was to play around with different animations on
-        each die and see it in action.
+        {{ copy.description }}
       </p>
     </div>
 
@@ -114,7 +143,7 @@ function onRollComplete() {
       <div class="space-y-5">
         <div>
           <p class="mb-2 text-xs uppercase tracking-[0.25em] text-white/45">
-            Dice type
+            {{ copy.diceType }}
           </p>
           <div class="flex flex-wrap gap-2">
             <button
@@ -136,7 +165,7 @@ function onRollComplete() {
 
         <div>
           <p class="mb-2 text-xs uppercase tracking-[0.25em] text-white/45">
-            Affinity
+            {{ copy.affinity }}
           </p>
           <div class="flex flex-wrap gap-2">
             <button
@@ -159,7 +188,7 @@ function onRollComplete() {
         <div class="rounded-2xl border border-white/10 bg-black/20 p-4">
           <div class="grid gap-3 sm:grid-cols-2">
             <label class="flex flex-col gap-2 text-sm text-white/75">
-              Spin duration
+              {{ copy.spinDuration }}
               <input
                 v-model.number="spinDuration"
                 type="number"
@@ -170,7 +199,7 @@ function onRollComplete() {
             </label>
 
             <label class="flex flex-col gap-2 text-sm text-white/75">
-              Settle duration
+              {{ copy.settleDuration }}
               <input
                 v-model.number="settleDuration"
                 type="number"
@@ -184,12 +213,12 @@ function onRollComplete() {
 
         <div class="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/20 p-4 sm:flex-row sm:items-end sm:justify-between">
           <label class="flex flex-col gap-2 text-sm text-white/75">
-            Force result value
+            {{ copy.forcedValue }}
             <select
               v-model="forcedValue"
               class="rounded-xl border border-white/10 bg-[#111] px-3 py-2 text-sm text-white outline-none transition focus:border-[#d4ef99]/60"
             >
-              <option value="">Random</option>
+              <option value="">{{ copy.random }}</option>
               <option
                 v-for="value in forcedValueOptions"
                 :key="value"
@@ -206,13 +235,13 @@ function onRollComplete() {
             :disabled="isRolling"
             @click="rollDice"
           >
-            {{ isRolling ? "Rolling..." : "Roll dice" }}
+            {{ isRolling ? copy.rolling : copy.roll }}
           </button>
         </div>
 
         <div v-if="rollLog.length" class="rounded-2xl border border-white/10 bg-black/20 p-4">
           <p class="mb-3 text-xs uppercase tracking-[0.25em] text-white/45">
-            Recent rolls
+            {{ copy.recent }}
           </p>
           <div class="space-y-2">
             <div
@@ -221,7 +250,7 @@ function onRollComplete() {
               class="flex items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2 text-sm"
             >
               <span class="text-white/75">
-                {{ entry.dice }} <span class="text-white/45">rolled</span>
+                {{ entry.dice }} <span class="text-white/45">{{ copy.rolled }}</span>
                 {{ entry.value }}
               </span>
             </div>

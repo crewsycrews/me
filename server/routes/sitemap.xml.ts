@@ -1,4 +1,7 @@
-const staticRoutes = ["/", "/about", "/projects", "/blog"];
+const staticRoutes = ["/", "/about", "/projects", "/blog"].flatMap((path) => [
+  path,
+  path === "/" ? "/en" : `/en${path}`,
+]);
 
 const escapeXml = (value: string) =>
   value
@@ -21,10 +24,10 @@ export default defineEventHandler((event) => {
       updated?: string;
     }>
   )
-    .map(({ slug, updated }) => ({
-      path: `/blog/${slug}`,
-      lastmod: updated,
-    }))
+    .flatMap(({ slug, updated }) => [
+      { path: `/blog/${slug}`, lastmod: updated },
+      { path: `/en/blog/${slug}`, lastmod: updated },
+    ])
     .sort((a, b) => a.path.localeCompare(b.path));
 
   const urls = [

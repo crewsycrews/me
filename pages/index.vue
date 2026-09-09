@@ -1,8 +1,16 @@
 <script setup lang="ts">
+definePageMeta({ alias: ["/en"] });
+
+const { locale, isRussian } = useSiteLocale();
+
 usePageSeo({
-  title: "Danil Rodin | Fullstack Developer",
-  description:
-    "Personal website of Danil Rodin: fullstack developer, projects, links and background.",
+  title: isRussian.value
+    ? "Данил Родин | Fullstack-разработчик"
+    : "Danil Rodin | Fullstack Developer",
+  description: isRussian.value
+    ? "Личный сайт Данила Родина: fullstack-разработка, проекты, публикации и опыт."
+    : "Personal website of Danil Rodin: fullstack developer, projects, links and background.",
+  locale: locale.value,
   path: "/",
   schemaType: "ProfilePage",
 });
@@ -18,7 +26,21 @@ useHead({
     },
     {
       rel: "preload",
+      href: "/assets/fonts/anonymous-pro-cyrillic-400.woff2",
+      as: "font",
+      type: "font/woff2",
+      crossorigin: "anonymous",
+    },
+    {
+      rel: "preload",
       href: "/assets/fonts/chakra-petch-latin-600.woff2",
+      as: "font",
+      type: "font/woff2",
+      crossorigin: "anonymous",
+    },
+    {
+      rel: "preload",
+      href: "/assets/fonts/source-code-pro-cyrillic-400.woff2",
       as: "font",
       type: "font/woff2",
       crossorigin: "anonymous",
@@ -44,9 +66,9 @@ useHead({
       <span class="w-1/12" />
       <span class="w-10/12">
         <span class="text-rotator text-left">
-          <span class="text textBlock0">Software dev</span>
-          <span class="text textBlock1">Family guy</span>
-          <span class="text textBlock2">Healthy lifestyle</span>
+          <span class="text" :class="isRussian ? 'textBlockRu0' : 'textBlockEn0'">{{ isRussian ? "Разработчик" : "Software dev" }}</span>
+          <span class="text" :class="isRussian ? 'textBlockRu1' : 'textBlockEn1'">{{ isRussian ? "Семьянин" : "Family guy" }}</span>
+          <span class="text" :class="isRussian ? 'textBlockRu2' : 'textBlockEn2'">{{ isRussian ? "Здоровый образ жизни" : "Healthy lifestyle" }}</span>
         </span>
       </span>
       <span class="w-1/12" />
@@ -54,22 +76,22 @@ useHead({
     <div class="mt-4 flex justify-center text-center">
       <a
         href="https://github.com/crewsycrews"
-        title="Danil Rodin GitHub"
-        aria-label="Danil Rodin on GitHub"
+        :title="isRussian ? 'Данил Родин в GitHub' : 'Danil Rodin GitHub'"
+        :aria-label="isRussian ? 'Данил Родин в GitHub' : 'Danil Rodin on GitHub'"
         target="_blank"
         rel="noopener noreferrer"
       >
         <img
           src="/assets/images/git_logo.webp"
-          alt="Danil Rodin GitHub"
+          :alt="isRussian ? 'GitHub Данила Родина' : 'Danil Rodin GitHub'"
           class="icon"
           width="48"
           height="48"
       /></a>
       <a
         href="https://ru.hexlet.io/u/casiq"
-        title="Hexlet profile"
-        aria-label="Danil Rodin on Hexlet"
+        :title="isRussian ? 'Профиль на Хекслете' : 'Hexlet profile'"
+        :aria-label="isRussian ? 'Данил Родин на Хекслете' : 'Danil Rodin on Hexlet'"
         target="_blank"
         rel="noopener noreferrer"
         ><img
@@ -81,22 +103,22 @@ useHead({
       /></a>
       <a
         href="https://t.me/casiq"
-        title="Danil Rodin Telegram"
-        aria-label="Danil Rodin on Telegram"
+        :title="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin Telegram'"
+        :aria-label="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin on Telegram'"
         target="_blank"
         rel="noopener noreferrer"
       >
         <img
           src="/assets/images/telegram_logo.webp"
-          alt="Danil Rodin Telegram"
+          :alt="isRussian ? 'Telegram Данила Родина' : 'Danil Rodin Telegram'"
           class="icon"
           width="48"
           height="48"
       /></a>
       <a
         href="https://www.codewars.com/users/crewsycrews/"
-        title="CodeWars profile"
-        aria-label="Danil Rodin on CodeWars"
+        :title="isRussian ? 'Профиль на CodeWars' : 'CodeWars profile'"
+        :aria-label="isRussian ? 'Данил Родин на CodeWars' : 'Danil Rodin on CodeWars'"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -109,14 +131,14 @@ useHead({
       /></a>
       <a
         href="https://dev.to/crewsycrews"
-        title="Danil Rodin on Dev.to"
-        aria-label="Danil Rodin on Dev.to"
+        :title="isRussian ? 'Данил Родин на Dev.to' : 'Danil Rodin on Dev.to'"
+        :aria-label="isRussian ? 'Данил Родин на Dev.to' : 'Danil Rodin on Dev.to'"
         target="_blank"
         rel="noopener noreferrer"
       >
         <img
           src="/assets/images/dev_logo.svg"
-          alt="Danil Rodin's DEV Profile"
+          :alt="isRussian ? 'Профиль Данила Родина на DEV' : 'Danil Rodin\'s DEV Profile'"
           class="icon devto"
           width="48"
           height="48"
@@ -124,14 +146,14 @@ useHead({
       </a>
       <a
         href="https://twitter.com/naniyak"
-        title="Danil Rodin Twitter"
-        aria-label="Danil Rodin on Twitter"
+        :title="isRussian ? 'Данил Родин в Twitter' : 'Danil Rodin Twitter'"
+        :aria-label="isRussian ? 'Данил Родин в Twitter' : 'Danil Rodin on Twitter'"
         target="_blank"
         rel="noopener noreferrer"
       >
         <img
           src="/assets/images/twitter_logo.webp"
-          alt="Danil Rodin Twitter"
+          :alt="isRussian ? 'Twitter Данила Родина' : 'Danil Rodin Twitter'"
           class="icon"
           width="48"
           height="48"
@@ -168,7 +190,7 @@ useHead({
 .text-rotator {
   position: relative;
   display: inline-block;
-  width: 18ch;
+  width: 20ch;
   height: 1.5em;
   margin-left: 0.5rem;
 }
@@ -186,19 +208,37 @@ useHead({
   opacity: 0;
 }
 
-.textBlock0 {
+.textBlockRu0 {
+  animation:
+    printed-text-11 12s steps(11) infinite,
+    flashin-border 0.75s step-start infinite;
+}
+
+.textBlockRu1 {
+  animation:
+    printed-text-8 12s steps(8) 4s infinite,
+    flashin-border 0.75s step-start 4s infinite;
+}
+
+.textBlockRu2 {
+  animation:
+    printed-text-20 12s steps(20) 8s infinite,
+    flashin-border 0.75s step-start 8s infinite;
+}
+
+.textBlockEn0 {
   animation:
     printed-text-13 12s steps(13) infinite,
     flashin-border 0.75s step-start infinite;
 }
 
-.textBlock1 {
+.textBlockEn1 {
   animation:
     printed-text-11 12s steps(11) 4s infinite,
     flashin-border 0.75s step-start 4s infinite;
 }
 
-.textBlock2 {
+.textBlockEn2 {
   animation:
     printed-text-18 12s steps(18) 8s infinite,
     flashin-border 0.75s step-start 8s infinite;
@@ -215,6 +255,24 @@ useHead({
 
   100% {
     border-color: rgb(39, 92, 23);
+  }
+}
+
+@keyframes printed-text-8 {
+  0% {
+    opacity: 0.65;
+    width: 0%;
+  }
+
+  31% {
+    opacity: 0.65;
+    width: 8ch;
+  }
+
+  32%,
+  100% {
+    opacity: 0;
+    width: 8ch;
   }
 }
 
@@ -251,6 +309,24 @@ useHead({
   100% {
     opacity: 0;
     width: 11ch;
+  }
+}
+
+@keyframes printed-text-20 {
+  0% {
+    opacity: 0.65;
+    width: 0%;
+  }
+
+  31% {
+    opacity: 0.65;
+    width: 20ch;
+  }
+
+  32%,
+  100% {
+    opacity: 0;
+    width: 20ch;
   }
 }
 

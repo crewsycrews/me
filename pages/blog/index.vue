@@ -1,11 +1,25 @@
 <script setup lang="ts">
+definePageMeta({ alias: ["/en/blog"] });
+
 const route = useRoute();
+const { locale, isRussian, localePath, dateLocale } = useSiteLocale();
 
 const { data: posts } = await useAsyncData("blog-posts", () =>
   queryCollection("content").order("path", "DESC").all(),
 );
 
 const POSTS_PER_PAGE = 6;
+
+const localizedPosts = computed(() =>
+  posts.value?.filter((post) =>
+    isRussian.value
+      ? !post.path.startsWith("/en/")
+      : post.path.startsWith("/en/"),
+  ) || [],
+);
+
+const postSlug = (post: { path: string }) =>
+  post.path.replace(/^\/en\//, "").replace(/^\//, "");
 
 const currentPage = computed(() => {
   const rawPage = Number(route.query.page || 1);
@@ -17,7 +31,7 @@ const currentPage = computed(() => {
 });
 
 const totalPages = computed(() => {
-  const total = posts.value?.length || 0;
+  const total = localizedPosts.value.length;
   return Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
 });
 
@@ -26,7 +40,7 @@ const safePage = computed(() => Math.min(currentPage.value, totalPages.value));
 const paginatedPosts = computed(() => {
   const start = (safePage.value - 1) * POSTS_PER_PAGE;
   const end = start + POSTS_PER_PAGE;
-  return posts.value?.slice(start, end) || [];
+  return localizedPosts.value.slice(start, end);
 });
 
 const pageNumbers = computed(() => {
@@ -42,19 +56,21 @@ const pageNumbers = computed(() => {
 });
 
 const pageLink = (page: number) => ({
-  path: "/blog",
+  path: localePath("/blog"),
   query: page > 1 ? { page: String(page) } : {},
 });
 
 usePageSeo({
-  title: "Blog | Danil Rodin",
-  description:
-    "Engineering notes by Danil Rodin about backend development, infrastructure, databases and developer tools.",
+  title: isRussian.value ? "Блог | Данил Родин" : "Blog | Danil Rodin",
+  description: isRussian.value
+    ? "Заметки Данила Родина о бэкенд-разработке, инфраструктуре, базах данных и инструментах разработчика."
+    : "Engineering notes by Danil Rodin about backend development, infrastructure, databases and developer tools.",
+  locale: locale.value,
   path: "/blog",
   schemaType: "Blog",
   breadcrumbs: [
-    { name: "Home", path: "/" },
-    { name: "Blog", path: "/blog" },
+    { name: isRussian.value ? "Главная" : "Home", path: "/" },
+    { name: isRussian.value ? "Блог" : "Blog", path: "/blog" },
   ],
 });
 </script>
@@ -62,8 +78,8 @@ usePageSeo({
 <template>
   <section class="mx-auto mt-6 w-full md:w-10/12 lg:w-8/12">
     <header class="mb-6 text-left">
-      <h1 class="text-3xl font-bold tracking-tight">Blog</h1>
-      <p class="mt-2 text-sm opacity-75">Notes on engineering, tools, and work.</p>
+      <h1 class="text-3xl font-bold tracking-tight">{{ isRussian ? "Блог" : "Blog" }}</h1>
+      <p class="mt-2 text-sm opacity-75">{{ isRussian ? "Заметки о разработке, инструментах и работе." : "Notes on engineering, tools, and work." }}</p>
     </header>
 
     <ul v-if="paginatedPosts.length" class="space-y-4 text-left">
@@ -72,37 +88,37 @@ usePageSeo({
         :key="post.path"
         class="rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/[0.08]"
       >
-        <NuxtLink :to="`/blog/${post.stem}`" class="text-xl font-bold hover:underline">
+        <NuxtLink :to="localePath(`/blog/${postSlug(post)}`)" class="text-xl font-bold hover:underline">
           {{ post.title }}
         </NuxtLink>
         <p v-if="post.description" class="mt-2 text-sm opacity-80">{{ post.description }}</p>
         <p v-if="post.meta?.date" class="mt-3 text-xs uppercase tracking-wide opacity-70">
-          {{ new Date(post.meta.date).toLocaleDateString() }}
+          {{ new Date(post.meta.date).toLocaleDateString(dateLocale) }}
         </p>
       </li>
     </ul>
     <p v-else class="rounded-lg border border-white/10 bg-white/5 p-6 text-center opacity-80">
-      No posts yet.
+      {{ isRussian ? "Пока нет публикаций." : "No posts yet." }}
     </p>
 
     <nav
       v-if="totalPages > 1"
       class="mt-6 flex flex-wrap items-center justify-center gap-2"
-      aria-label="Pagination"
+      :aria-label="isRussian ? 'Навигация по страницам' : 'Pagination'"
     >
       <NuxtLink
         v-if="safePage > 1"
         :to="pageLink(safePage - 1)"
         class="rounded border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10"
       >
-        Prev
+        {{ isRussian ? "Назад" : "Prev" }}
       </NuxtLink>
       <span
         v-else
         class="rounded border border-white/10 px-3 py-1.5 text-sm opacity-40"
         aria-hidden="true"
       >
-        Prev
+        {{ isRussian ? "Назад" : "Prev" }}
       </span>
 
       <NuxtLink
@@ -124,14 +140,14 @@ usePageSeo({
         :to="pageLink(safePage + 1)"
         class="rounded border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10"
       >
-        Next
+        {{ isRussian ? "Далее" : "Next" }}
       </NuxtLink>
       <span
         v-else
         class="rounded border border-white/10 px-3 py-1.5 text-sm opacity-40"
         aria-hidden="true"
       >
-        Next
+        {{ isRussian ? "Далее" : "Next" }}
       </span>
     </nav>
   </section>

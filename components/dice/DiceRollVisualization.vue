@@ -7,13 +7,14 @@ export interface DiceRollResult {
   result_element: "fire" | "water" | "earth" | "air" | "lightning";
 }
 
-const elementLabelMap: Record<DiceRollResult["result_element"], string> = {
-  fire: "Fire",
-  water: "Water",
-  earth: "Earth",
-  air: "Air",
-  lightning: "Lightning",
-};
+const { isRussian } = useSiteLocale();
+const elementLabelMap = computed<Record<DiceRollResult["result_element"], string>>(() => ({
+  fire: isRussian.value ? "Огонь" : "Fire",
+  water: isRussian.value ? "Вода" : "Water",
+  earth: isRussian.value ? "Земля" : "Earth",
+  air: isRussian.value ? "Воздух" : "Air",
+  lightning: isRussian.value ? "Молния" : "Lightning",
+}));
 
 const props = defineProps<{
   diceType: "d4" | "d6" | "d10" | "d12" | "d20";
@@ -64,7 +65,7 @@ function handleDieClick() {
 }
 
 function getElementLabel(element: DiceRollResult["result_element"]): string {
-  return elementLabelMap[element];
+  return elementLabelMap.value[element];
 }
 
 defineExpose({

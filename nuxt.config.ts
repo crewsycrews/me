@@ -29,7 +29,10 @@ const blogPosts = readdirSync(new URL("./content/", import.meta.url), {
       updated: frontmatter?.[1].match(/^updated:\s*(.+)$/m)?.[1]?.trim(),
     };
   });
-const blogRoutes = blogPosts.map(({ slug }) => `/blog/${slug}`);
+const blogRoutes = blogPosts.flatMap(({ slug }) => [
+  `/blog/${slug}`,
+  `/en/blog/${slug}`,
+]);
 
 const stripHomepageHydration = (html: string) =>
   html
@@ -63,9 +66,9 @@ export default defineNuxtConfig({
     baseURL: appBaseURL,
     head: {
       htmlAttrs: {
-        lang: "en",
+        lang: "ru",
       },
-      title: "Danil Rodin | Fullstack Developer",
+      title: "Данил Родин | Fullstack-разработчик",
       meta: [
         { charset: "utf-8" },
         {
@@ -126,6 +129,10 @@ export default defineNuxtConfig({
         "/projects",
         "/about",
         "/blog",
+        "/en",
+        "/en/projects",
+        "/en/about",
+        "/en/blog",
         "/sitemap.xml",
         ...blogRoutes,
       ],

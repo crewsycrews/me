@@ -1,44 +1,45 @@
 ---
-title: Remote connection to local network without public gateway
+title: Удалённое подключение к локальной сети без публичного шлюза
 date: 2026-04-13
-description: Raspberry Pi and Tailscale to the rescue!
+description: Raspberry Pi и Tailscale спешат на помощь!
 ---
 
+## Задача
 
-## Task
-Be able to connect to a remote local network.
+Получить возможность подключаться к удалённой локальной сети.
 
-## Purpose
-For example, to manage remote devices such as routers, WiFi access points, etc.
+## Для чего
 
-## Constraints
-There is no working host and no public IP.
+Например, чтобы управлять удалёнными устройствами: роутерами, точками доступа Wi-Fi и так далее.
 
-## My Solution
+## Ограничения
 
-1. Buy Raspberry Pi 4.
+Нет работающего хоста и публичного IP-адреса.
 
-2. Prepare the device:
-   - Install Raspberry Pi OS Lite. *Lite is important to avoid unnecessary load since we don’t need a GUI (X server).*
-   - Make sure the device is connected to Raspberry Pi Connect so it’s always reachable as long as it has internet access.
-   - Install Tailscale (https://tailscale.com/) and connect it to your account.
+## Как решил я
 
-3. On-site setup:
-   - Connect the Raspberry Pi via Ethernet (RJ-45). I chose a wired connection to ensure stability and avoid connectivity loss.
+1. Покупаем Raspberry Pi 4.
 
-4. The most important part:
-    ```bash
-    tailscale up --advertise-routes=192.168.x.x/24
-    ```
-   - This shares the local subnet with Tailscale clients, allowing access to devices like routers (e.g., 192.168.1.1) within that network.
+2. Подготавливаем устройство:
 
-5. In the Tailscale admin panel:
-   - Enable the route via **Edit Route Settings → Subnet routes** to grant access to the subnet.
+   * устанавливаем Raspberry Pi OS Lite. Версия Lite важна, чтобы не нагружать устройство: GUI с X Server нам ни к чему;
+   * убеждаемся, что подключили Raspberry Pi Connect. Тогда до устройства всегда можно достучаться, пока у него есть доступ в интернет;
+   * устанавливаем [Tailscale](https://tailscale.com/) и подключаем его к своему аккаунту.
 
-6. Voilà!
-   - You can now connect to the local network where your Raspberry Pi is deployed.
+3. На месте подключаем устройство. Я решил использовать проводное соединение RJ-45: мне хотелось быть уверенным, что устройство не потеряет связь.
+
+4. Самая важная деталь:
+
+   ```bash
+   tailscale up --advertise-routes=192.168.x.x/24
+   ```
+
+   Расшариваем подсеть клиентам сети Tailscale, чтобы потом, например, иметь возможность подключиться к роутеру — допустим, `192.168.1.1` — в той сети, где установлено устройство.
+
+5. В админке Tailscale включаем **Edit Route Settings → Subnet routes**, чтобы дать доступ к подсети.
+
+6. Вуаля! Теперь можно подключаться к локальной сети, в которой размещён ваш «пирожок».
 
 ---
 
-**P.S.**  
-It’s not always 100% stable — sometimes devices need to be pinged within the Tailscale network so they can discover each other. But overall, the task is solved.
+**P.S.** Конечно, это не всегда работает на 100%: иногда машины нужно попинговать внутри сети Tailscale, чтобы они нашли друг друга. Но задачу всё равно решает.

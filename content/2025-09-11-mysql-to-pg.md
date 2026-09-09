@@ -1,52 +1,38 @@
 ---
-title: Migrating a Large MySQL Database to PostgreSQL on AWS RDS
+title: Миграция большой базы данных из MySQL в PostgreSQL на AWS RDS
 date: 2025-09-11
-description: Experience I gained while migrating a large MySQL database to PostgreSQL on AWS RDS.
+description: Опыт миграции большой базы данных из MySQL в PostgreSQL на AWS RDS
 ---
 
-## Preconditions
+## Предусловия
 
-Before starting the migration, here was the situation:
+* Новая база PostgreSQL должна крутиться в **AWS RDS**, то есть доступа к файловой системе хоста БД нет.
+* Есть таблицы с миллионами записей — около 1,5 ГБ на одну таблицу.
+* Есть колонки типа **JSON** и созданные на основе этого JSON виртуальные колонки для возможности индексирования.
+* Есть типы **ENUM**.
+* Бэкенд написан на **Laravel**, активно используются миграции БД.
 
-* The new PostgreSQL database had to run on **AWS RDS** (so **no access to the database host filesystem**).
-* Some tables contained **millions of rows** (~1.5 GB per table).
-* The schema included **JSON columns with virtual columns derived from JSON** (used for indexing).
-* The database used **ENUM types**.
-* The backend is written in **Laravel**, with heavy use of **database migrations**.
+## С чего начать?
 
-## Where to start?
+Гуглим стандартные инструменты для переноса данных. Самый популярный — **pgloader**. Я находил ещё что-то написанное на Node.js.
 
-The first step was researching standard migration tools.
+Оба варианта отмёл, потому что в итоге многие типы в таблицах оказываются не теми, что нужно: например, `json` не превращается в `jsonb`. Да и сама миграция занимает очень много времени, что является непозволительной роскошью при миграции продакшена.
 
-The most popular option is **pgloader**. I also found a couple of Node.js-based tools. I ended up discarding both approaches because:
+## Schema-first
 
-* Many column types were not mapped correctly (for example, `json` not becoming `jsonb`).
-* The migration process itself was **too slow**, which is unacceptable when dealing with production data.
+Мои рассуждения привели меня к тому, что схему в PostgreSQL нужно создавать самому до миграции данных.
 
-## Schema-first approach
+Это обусловлено проблемами, упомянутыми выше, а также тем, что нам требовалось изменить схему данных при миграции: например, добавить партиционирование и избавиться от устаревших таблиц.
 
-I eventually concluded that the **PostgreSQL schema should be created manually before migrating the data**.
+Поэтому сначала я сгенерировал совместимую с Laravel миграцию на основе всей БД с помощью [laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator). Используем флаг `--squash`, чтобы сгенерировать одну огромную миграцию, и удаляем все прошлые миграции. Тогда при создании новой БД мы начнём с чистого листа и сразу создадим актуальную схему.
 
-This decision was driven by several factors:
+Естественно, мне пришлось дорабатывать сгенерированную миграцию.
 
-* Type mismatches mentioned earlier
-* The need to **modify the schema during migration**
-* Adding **table partitioning**
-* Removing **deprecated tables**
+## Типы ENUM
 
-To achieve this, I generated a Laravel-compatible migration for the entire existing database using [laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator)
+Enum'ы с Laravel в PostgreSQL становятся обычными ограничениями, а не полноценными типами БД. Кроме того, Grammar для написания миграций нужно расширить, чтобы при определении колонок таблиц можно было указывать пользовательские типы БД.
 
-I used the `--squash` flag to produce **one large migration file** and removed all previous migrations. This allowed new environments to start with the **current schema from scratch**.
-
-Naturally, the generated migration required some adjustments.
-
-## Handling ENUM types
-
-Laravel handles enums in PostgreSQL as **check constraints**, not as real database types. I wanted proper PostgreSQL enum types.
-
-To make that work, I extended Laravel’s schema grammar so migrations could reference custom types.
-
-Example:
+Выглядит это примерно так:
 
 ```php
 Grammar::macro('typeCountry', function () {
@@ -56,71 +42,63 @@ Grammar::macro('typeCountry', function () {
 DB::statement("CREATE TYPE country AS ENUM('russia', 'china', 'germany');");
 
 Schema::create('users', function (Blueprint $table) {
-    ...
+    // ...
     $table->addColumn('country', 'country');
 });
 ```
 
-Without the `Grammar::macro`, Laravel would not recognize the `country` column type.
+Если не использовать `Grammar::macro`, метод `addColumn` ничего не будет знать о типе с названием `country`.
 
-## Replacing virtual JSON columns
+## Виртуальные колонки на основе JSON
 
-MySQL supported **virtual columns derived from JSON fields**. PostgreSQL does not support virtual columns in the same way.
+Кроме enum'ов, нужно было что-то сделать с виртуальными колонками, созданными на основе JSON. В PostgreSQL нет виртуальных колонок как таковых.
 
-ChatGPT actually suggested a simple alternative: **use an index on the JSON expression instead**.
-
-For example, if `settings` is a JSON column in the `users` table:
+Тут мне помог ChatGPT, предложив вместо виртуальной колонки использовать обычный индекс. Представим, что `settings` — это JSON-колонка таблицы `users`. Тогда индекс выглядит так:
 
 ```sql
 CREATE INDEX ON users((settings->>'setting1'));
 ```
 
-The only thing to remember is to update the application code to access the value directly from the JSON field rather than the former virtual column.
+Главное — не забыть в коде приложения заменить обращение к виртуальной колонке, если оно было, на доступ по ключу в JSON-объекте.
 
-## Preparing tables for partitioning
+## Подготовка к партиционированию
 
-One of the tables needed to be **partitioned by date**.
+Следующей задачей было подготовить одну из таблиц к партиционированию. В PostgreSQL таблица должна быть создана сразу с указанием того, что её собираются партиционировать.
 
-In PostgreSQL, tables must be created **with partitioning defined from the start**.
-
-Example:
+В моём случае это выглядело так:
 
 ```sql
 CREATE TABLE actions (
     id SERIAL,
-    ...
+    -- ... другие колонки
     created_at TIMESTAMP NOT NULL,
     PRIMARY KEY (id, created_at)
 ) PARTITION BY RANGE (created_at);
 ```
 
-## Enabling required extensions
+## Необходимые расширения
 
-One of the main motivations for moving to PostgreSQL was the ability to use **vector data types**, so I added the `vector` extension during migration:
+Основной мотивацией переезда на PostgreSQL было использование векторных типов данных, поэтому тут же в миграции я добавил:
 
 ```php
 DB::statement("CREATE EXTENSION IF NOT EXISTS vector;");
 ```
 
-This command must be executed **for every new database** where the extension is required.
+Этот запрос нужно выполнять на каждой вновь созданной базе PostgreSQL для каждого расширения, которое мы собираемся использовать в рамках этой БД.
 
-We also relied on **geospatial queries**, so we enabled **PostGIS** as well:
+Также мы использовали геопространственные функции для определения расстояний, поэтому не обошлось без:
 
 ```php
 DB::statement("CREATE EXTENSION IF NOT EXISTS postgis;");
 ```
 
-## Local development environment
+## Локальное окружение
 
-Speaking of extensions, they must first be installed in the database environment.
+Упомянув активацию расширений в БД, нельзя не сказать, что сначала эти расширения должны быть установлены.
 
-AWS RDS comes with many extensions pre-installed. However, for **local development** we usually rely on Docker images.
+В AWS RDS они установлены по умолчанию, а для локальной разработки мы, как правило, используем готовые Docker-образы. Найти собранный под любую архитектуру образ PostgreSQL с pgvector или PostgreSQL с PostGIS по отдельности достаточно просто. А вот комбинации, где всё вместе работает на ARM64, нет.
 
-Finding images with **Postgres + pgvector** or **Postgres + PostGIS** separately is easy.
-
-Finding an image that contains **both extensions and works on ARM64** is not.
-
-So I had to build one myself:
+Пришлось собирать самому:
 
 ```dockerfile
 FROM pgvector/pgvector:0.8.0-pg16
@@ -165,31 +143,27 @@ RUN cd /tmp && \
     rm -rf /tmp/postgis-*
 ```
 
-## Migration process
+## Процесс переноса
 
-After testing the process locally, I ran it in **staging** and **production**.
+Предварительно обкатав процесс в локальном окружении, я приступил к переносу на стендовых инстансах — stage и production.
 
-The migration flow looked like this:
+Процесс выглядел так:
 
-1. Create a new **AWS RDS instance**
-2. Connect using `psql`
-3. Enable the required extensions:
-
-   * `aws_commons`
-   * `aws_s3`
-
-These allow importing CSV files from **S3**, since RDS does not provide filesystem access.
-
-4. Create a **VPC Endpoint** so the database can access S3.
-5. Update the Laravel database configuration (`config/database.php`)
-6. Deploy the code with the new migration and apply the schema.
-7. Stop the application to prevent writes during migration:
+1. Создаём инстанс RDS в облаке.
+2. Подключаемся клиентом `psql`.
+3. Включаем расширения `aws_commons` и `aws_s3`. Они нужны, чтобы использовать файлы из S3 для импорта CSV. Напомню: в RDS у нас нет доступа к файловой системе хоста БД.
+4. Создаём [VPC Endpoint](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html) для доступа базы данных к S3.
+5. Изменяем конфигурацию подключения к БД в Laravel — `config/database.php`.
+6. Деплоим код с новой миграцией и применяем созданную нами схему к базе PostgreSQL.
+7. Останавливаем приложение, чтобы исключить новые записи в БД:
 
 ```bash
 php artisan down
 ```
 
-8. Export data from MySQL to CSV:
+Эта команда включает maintenance mode.
+
+8. Делаем дамп CSV-файлов:
 
 ```bash
 mysqldump --port=3308 -u root -psecret db-name \
@@ -200,25 +174,23 @@ mysqldump --port=3308 -u root -psecret db-name \
   --lines-terminated-by='\n'
 ```
 
-This generates files for each table:
+Это создаст отдельный файл для каждой существующей таблицы в БД. Например:
 
-```
+```text
 actions.sql  actions.txt
 users.sql    users.txt
 ```
 
-Key flags:
+Параметры команды:
 
-* `--no-create-info` → skip schema generation
-* `--fields-terminated-by=,` → comma separator
-* `--tab=/var/lib/mysql-files` → required export directory
-* `--fields-enclosed-by='"'` → format expected by PostgreSQL COPY
-* `--lines-terminated-by='\n'` → newline rows
+* `--no-create-info` — отключаем генерацию схемы;
+* `--fields-terminated-by=,` — разделитель-запятая;
+* `--tab=/var/lib/mysql-files` — сохраняем файлы в `/var/lib/mysql-files`. По умолчанию MySQL может экспортировать только в эту папку. Если её нет, нужно заранее создать вручную;
+* `--fields-enclosed-by='\"'` — оборачиваем каждое значение в `\"`. Именно такой формат ожидает `COPY` в PostgreSQL;
+* `--lines-terminated-by='\n'` — устанавливаем символ перевода строки.
 
-9. Upload the `.txt` files to an **S3 bucket**.
-   If you generated the files inside a container, `docker cp` helps extract them.
-
-10. Import each table using:
+9. Переносим `.txt`-файлы в S3-бакет. Если вы, как и я, генерировали файлы внутри контейнера, вам поможет [`docker cp`](https://docs.docker.com/reference/cli/docker/container/cp/).
+10. Затем импортируем каждый файл в `psql` следующей командой — по одной на каждую таблицу:
 
 ```sql
 SELECT aws_s3.table_import_from_s3(
@@ -234,36 +206,15 @@ SELECT aws_s3.table_import_from_s3(
 );
 ```
 
-Repeat this command for each table.
-
-11. Restart the application:
+11. Запускаем приложение:
 
 ```bash
 php artisan up
 ```
 
-## One more important detail
+## Что ещё нужно учесть?
 
-When creating the PostgreSQL schema, there are two approaches:
+При создании схемы для PostgreSQL можно выбрать два пути:
 
-### Option 1 — No foreign keys initially
-
-Create tables **without foreign keys** so the import order doesn't matter.
-Then apply a second migration to add constraints afterward.
-
-### Option 2 — Foreign keys from the start
-
-Create tables with foreign keys immediately.
-In this case, the **table import order becomes important**.
-
-## Final thoughts
-
-For large production databases, a **schema-first approach with CSV bulk import** turned out to be much more reliable and faster than using automated migration tools.
-
-It also gave us full control over:
-
-* data types
-* indexing strategy
-* partitioning
-* extensions
-* schema cleanup
+1. Создать схему без внешних ключей, чтобы при импорте был неважен порядок загрузки таблиц. В таком случае понадобится ещё одна миграция для добавления внешних ключей.
+2. Создать схему сразу с ключами. Тогда порядок импорта таблиц из файлов будет важен.
