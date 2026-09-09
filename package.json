@@ -10,7 +10,8 @@
     "dev": "nuxt dev",
     "build": "nuxt build",
     "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "nuxt": "^4.5.1"

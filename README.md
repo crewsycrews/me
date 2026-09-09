@@ -27,6 +27,41 @@ npm run generate
 
 Generated static files are written to `.output/public`.
 
+## IndexNow (Yandex)
+
+The verification key is stored in
+`public/2c63cd824616b7dfa96d8c74a879dbb5.txt` and is copied to the site root
+by Nuxt. Publish the site through the existing GitHub Pages workflow first
+and wait for the new version to become available.
+
+After publishing new or updated pages, submit their canonical URLs explicitly:
+
+```bash
+npm run indexnow -- /blog/post-slug /en/blog/post-slug /blog /en/blog
+```
+
+Replace `post-slug` with the actual article slug. Include both language versions
+and listing pages when they changed. Deleted page URLs can be submitted the same
+way, after their removal is published. Absolute `https://danilrodin.ru/...` URLs
+also work. The host comes from `public/CNAME`; duplicate URLs are removed.
+
+To inspect the request locally without network access:
+
+```bash
+npm run indexnow -- --dry-run /about /en/about
+```
+
+The command checks the published key before sending a single JSON request to
+`https://yandex.com/indexnow`. HTTP 200 means the URLs were accepted; HTTP 202
+means the key is awaiting verification. Other responses fail the command.
+No notification is sent during development, build, or deployment: run the
+command after the updated site is live. No Yandex OAuth token is required.
+
+Only submit new, changed, or deleted pages, not the entire sitemap on every
+deployment. IndexNow does not guarantee indexing; `/sitemap.xml` remains in use.
+See the [Yandex IndexNow documentation](https://yandex.ru/support/webmaster/ru/indexing-options/index-now)
+and [API reference](https://yandex.ru/support/webmaster/ru/indexnow/reference).
+
 ## RSS
 
 - Russian: `https://danilrodin.ru/rss.xml`
