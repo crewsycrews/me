@@ -97,19 +97,6 @@ useHead({
           height="48"
       /></a>
       <a
-        href="https://ru.hexlet.io/u/casiq"
-        :title="isRussian ? 'Профиль на Хекслете' : 'Hexlet profile'"
-        :aria-label="isRussian ? 'Данил Родин на Хекслете' : 'Danil Rodin on Hexlet'"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><img
-          src="/assets/images/hexlet_logo.webp"
-          alt="Hexlet"
-          class="icon icon--portrait"
-          width="33"
-          height="48"
-      /></a>
-      <a
         href="https://t.me/casiq"
         :title="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin Telegram'"
         :aria-label="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin on Telegram'"
@@ -124,15 +111,15 @@ useHead({
           height="48"
       /></a>
       <a
-        href="https://www.codewars.com/users/crewsycrews/"
-        :title="isRussian ? 'Профиль на CodeWars' : 'CodeWars profile'"
-        :aria-label="isRussian ? 'Данил Родин на CodeWars' : 'Danil Rodin on CodeWars'"
+        href="https://itch.io/profile/casiq"
+        :title="isRussian ? 'Профиль на itch.io' : 'itch.io profile'"
+        :aria-label="isRussian ? 'Данил Родин на itch.io' : 'Danil Rodin on itch.io'"
         target="_blank"
         rel="noopener noreferrer"
       >
         <img
-          src="/assets/images/codewars_logo.webp"
-          alt="CodeWars"
+          src="/assets/images/itchio_logo.svg"
+          alt="itch.io"
           class="icon"
           width="48"
           height="48"
@@ -283,10 +270,6 @@ useHead({
   margin: 0 5px 0;
   opacity: 0.3;
   transition: transform 0.15s;
-}
-
-.icon--portrait {
-  width: 2.0625rem;
 }
 
 .devto {
