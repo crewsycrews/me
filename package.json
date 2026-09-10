@@ -11,13 +11,16 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "telegram": "node scripts/telegram.mjs",
+    "test:telegram": "node --test scripts/telegram/*.test.mjs"
   },
   "dependencies": {
     "nuxt": "^4.5.1"
   },
   "devDependencies": {
     "@nuxt/content": "^3.15.2",
+    "@nuxtjs/mdc": "^0.22.2",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "better-sqlite3": "^12.5.0"
   },

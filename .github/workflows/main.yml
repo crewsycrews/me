@@ -6,18 +6,24 @@ on:
       - master
       - main
   workflow_dispatch:
+    inputs:
+      telegram_update:
+        description: "Slug сообщения для явного обновления в Telegram (пусто — только новые)"
+        required: false
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
-  group: gh-pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: site-and-telegram-publication
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -39,8 +45,22 @@ jobs:
       - name: Generate static site
         run: npm run generate
 
+      - name: Validate Telegram posts and record generated pages
+        run: npm run telegram -- prepare
+
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: .output/public
+
+      - name: Publish Telegram posts after pages become available
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_UPDATE: ${{ inputs.telegram_update }}
+        run: |
+          if [ -n "$TELEGRAM_UPDATE" ]; then
+            npm run telegram -- update "$TELEGRAM_UPDATE"
+          else
+            npm run telegram -- publish
+          fi
