@@ -7,6 +7,26 @@
     <language>en</language>
     <atom:link href="https://danilrodin.ru/en/rss.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Ten years with VS Code</title>
+      <link>https://danilrodin.ru/en/blog/2026-09-10-vscode-documentary</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2026-09-10-vscode-documentary</guid>
+      <pubDate>Thu, 10 Sep 2026 00:00:00 GMT</pubDate>
+      <description>A documentary about VS Code, my experience writing an extension, and some gratitude for the editor I&apos;ve spent almost a third of my life with.</description>
+      <yandex:full-text>A documentary about VS Code is out: The Story of VS Code. I recommend watching it. It&apos;s lovely to meet the people behind a tool like this, learn its history, and discover its close connection with TypeScript. 🤝
+
+I&apos;ve been using VS Code since almost its very first release. Over that time, it has become such a familiar part of my work that it&apos;s easy to stop noticing the tool itself and the people building it behind that window full of code.
+
+At one point, I even wrote a small extension for it: Bundlephobia Support. That experience gave me a particular appreciation for the editor&apos;s architecture.
+
+When you want to extend its functionality, it&apos;s fairly easy as a developer to figure out what to do and how. The concepts behind VS Code&apos;s extensibility feel intuitive, and the types help you navigate the API. They almost tell you what is expected and how everything should fit together.
+
+For me, this is one of those cases where both using a tool and trying to build something for it are enjoyable.
+
+Thank you to the VS Code team for a wonderful editor. I&apos;ve been using it for the past ten years. I&apos;ve spent almost a third of my life looking at that window, and it has become more than just a tool to me. ❤️
+
+Originally published on Telegram.</yandex:full-text>
+    </item>
+    <item>
       <title>A developer somehow ends up running hotel IT. Part 2: Replacing the core switches and trying not to break anything</title>
       <link>https://danilrodin.ru/en/blog/2026-09-07-hotel-admin-part-2</link>
       <guid isPermaLink="true">https://danilrodin.ru/en/blog/2026-09-07-hotel-admin-part-2</guid>
