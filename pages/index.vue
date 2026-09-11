@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ alias: ["/en"] });
 
-const { locale, isRussian } = useSiteLocale();
+const { locale, isRussian, localePath } = useSiteLocale();
 const rotatingTexts = computed(() =>
   isRussian.value
     ? ["Разработчик", "Семьянин", "Здоровый образ жизни"]
@@ -55,104 +55,115 @@ useHead({
 </script>
 
 <template>
-  <div class="flex min-h-[calc(100vh-8.5rem)] flex-col justify-center">
-    <h1 class="logo">Danil Rodin</h1>
-    <div class="zsh mt-2 hidden items-center md:flex">
-      <span class="w-1/12" />
-      <span class="w-10/12">
-        <span class="shell-color">[</span>~/Crewsy/Crews<span
-          class="shell-color"
-          >] [</span
-        >main<span class="shell-color">]<br /></span>
-      </span>
-      <span class="w-1/12" />
-    </div>
-    <div class="zsh hidden items-center md:flex">
-      <span class="w-1/12" />
-      <span class="w-10/12">
-        <span class="text-rotator text-left">
-          <span
-            v-for="(text, index) in rotatingTexts"
-            :key="text"
-            class="text"
-            :style="{ '--characters': text.length, '--delay': `${index * 8}s` }"
-          >{{ text }}</span>
+  <div class="flex flex-1 flex-col">
+    <div class="flex flex-1 flex-col justify-center py-8">
+      <h1 class="logo">Danil Rodin</h1>
+      <div class="zsh mt-2 hidden items-center md:flex">
+        <span class="w-1/12" />
+        <span class="w-10/12">
+          <span class="shell-color">[</span>~/Crewsy/Crews<span
+            class="shell-color"
+            >] [</span
+          >main<span class="shell-color">]<br /></span>
         </span>
-      </span>
-      <span class="w-1/12" />
+        <span class="w-1/12" />
+      </div>
+      <div class="zsh hidden items-center md:flex">
+        <span class="w-1/12" />
+        <span class="w-10/12">
+          <span class="text-rotator text-left">
+            <span
+              v-for="(text, index) in rotatingTexts"
+              :key="text"
+              class="text"
+              :style="{ '--characters': text.length, '--delay': `${index * 8}s` }"
+            >{{ text }}</span>
+          </span>
+        </span>
+        <span class="w-1/12" />
+      </div>
+      <div class="mt-4 flex justify-center text-center">
+        <a
+          href="https://github.com/crewsycrews"
+          :title="isRussian ? 'Данил Родин в GitHub' : 'Danil Rodin GitHub'"
+          :aria-label="isRussian ? 'Данил Родин в GitHub' : 'Danil Rodin on GitHub'"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/assets/images/git_logo.webp"
+            :alt="isRussian ? 'GitHub Данила Родина' : 'Danil Rodin GitHub'"
+            class="icon"
+            width="48"
+            height="48"
+        /></a>
+        <a
+          href="https://t.me/casiq"
+          :title="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin Telegram'"
+          :aria-label="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin on Telegram'"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/assets/images/telegram_logo.webp"
+            :alt="isRussian ? 'Telegram Данила Родина' : 'Danil Rodin Telegram'"
+            class="icon"
+            width="48"
+            height="48"
+        /></a>
+        <a
+          href="https://itch.io/profile/casiq"
+          :title="isRussian ? 'Профиль на itch.io' : 'itch.io profile'"
+          :aria-label="isRussian ? 'Данил Родин на itch.io' : 'Danil Rodin on itch.io'"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/assets/images/itchio_logo.svg"
+            alt="itch.io"
+            class="icon"
+            width="48"
+            height="48"
+        /></a>
+        <a
+          href="https://dev.to/crewsycrews"
+          :title="isRussian ? 'Данил Родин на Dev.to' : 'Danil Rodin on Dev.to'"
+          :aria-label="isRussian ? 'Данил Родин на Dev.to' : 'Danil Rodin on Dev.to'"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/assets/images/dev_logo.svg"
+            :alt="isRussian ? 'Профиль Данила Родина на DEV' : 'Danil Rodin\'s DEV Profile'"
+            class="icon devto"
+            width="48"
+            height="48"
+          />
+        </a>
+        <a
+          href="https://twitter.com/naniyak"
+          :title="isRussian ? 'Данил Родин в Twitter' : 'Danil Rodin Twitter'"
+          :aria-label="isRussian ? 'Данил Родин в Twitter' : 'Danil Rodin on Twitter'"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/assets/images/twitter_logo.webp"
+            :alt="isRussian ? 'Twitter Данила Родина' : 'Danil Rodin Twitter'"
+            class="icon"
+            width="48"
+            height="48"
+        /></a>
+      </div>
     </div>
-    <div class="mt-4 flex justify-center text-center">
-      <a
-        href="https://github.com/crewsycrews"
-        :title="isRussian ? 'Данил Родин в GitHub' : 'Danil Rodin GitHub'"
-        :aria-label="isRussian ? 'Данил Родин в GitHub' : 'Danil Rodin on GitHub'"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img
-          src="/assets/images/git_logo.webp"
-          :alt="isRussian ? 'GitHub Данила Родина' : 'Danil Rodin GitHub'"
-          class="icon"
-          width="48"
-          height="48"
-      /></a>
-      <a
-        href="https://t.me/casiq"
-        :title="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin Telegram'"
-        :aria-label="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin on Telegram'"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img
-          src="/assets/images/telegram_logo.webp"
-          :alt="isRussian ? 'Telegram Данила Родина' : 'Danil Rodin Telegram'"
-          class="icon"
-          width="48"
-          height="48"
-      /></a>
-      <a
-        href="https://itch.io/profile/casiq"
-        :title="isRussian ? 'Профиль на itch.io' : 'itch.io profile'"
-        :aria-label="isRussian ? 'Данил Родин на itch.io' : 'Danil Rodin on itch.io'"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img
-          src="/assets/images/itchio_logo.svg"
-          alt="itch.io"
-          class="icon"
-          width="48"
-          height="48"
-      /></a>
-      <a
-        href="https://dev.to/crewsycrews"
-        :title="isRussian ? 'Данил Родин на Dev.to' : 'Danil Rodin on Dev.to'"
-        :aria-label="isRussian ? 'Данил Родин на Dev.to' : 'Danil Rodin on Dev.to'"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img
-          src="/assets/images/dev_logo.svg"
-          :alt="isRussian ? 'Профиль Данила Родина на DEV' : 'Danil Rodin\'s DEV Profile'"
-          class="icon devto"
-          width="48"
-          height="48"
-        />
+    <div class="mx-auto mt-8 max-w-xl shrink-0 px-4 pb-8 text-base leading-relaxed">
+      <p class="text-white/70">
+        {{ isRussian ? "Помогаю бизнесу с ИТ:" : "I help businesses with IT:" }}<br />
+        {{ isRussian ? "от серверов и сетей до разработки сервисов." : "from servers and networks to software development." }}
+      </p>
+      <a :href="localePath('/consulting')" class="mt-3 inline-block rounded border border-[#d4ef99]/40 px-4 py-2 transition-colors hover:bg-[#d4ef99]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4ef99]">
+        {{ isRussian ? "Чем могу помочь вашему бизнесу →" : "How I can help your business →" }}
       </a>
-      <a
-        href="https://twitter.com/naniyak"
-        :title="isRussian ? 'Данил Родин в Twitter' : 'Danil Rodin Twitter'"
-        :aria-label="isRussian ? 'Данил Родин в Twitter' : 'Danil Rodin on Twitter'"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img
-          src="/assets/images/twitter_logo.webp"
-          :alt="isRussian ? 'Twitter Данила Родина' : 'Danil Rodin Twitter'"
-          class="icon"
-          width="48"
-          height="48"
-      /></a>
     </div>
   </div>
 </template>

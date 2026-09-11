@@ -1,4 +1,4 @@
-const staticRoutes = ["/", "/about", "/projects", "/blog"].flatMap((path) => [
+const staticRoutes = ["/", "/about", "/consulting", "/projects", "/blog"].flatMap((path) => [
   path,
   path === "/" ? "/en" : `/en${path}`,
 ]);

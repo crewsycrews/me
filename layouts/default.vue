@@ -4,6 +4,7 @@ const { isRussian, localePath, switchLocalePath } = useSiteLocale();
 
 const navLinks = computed(() => [
   { label: isRussian.value ? "Главная" : "Home", to: localePath("/") },
+  { label: isRussian.value ? "Для бизнеса" : "For business", to: localePath("/consulting") },
   { label: isRussian.value ? "Проекты" : "Projects", to: localePath("/projects") },
   { label: isRussian.value ? "Блог" : "Blog", to: localePath("/blog") },
   { label: isRussian.value ? "Обо мне" : "About", to: localePath("/about") },
@@ -25,7 +26,7 @@ const isLinkActive = (linkPath: string) => {
     <header class="sticky top-0 z-10 mb-6 border-b border-white/10 bg-[#0f0f0f]/95 py-3 backdrop-blur">
       <nav
         :aria-label="isRussian ? 'Основная навигация' : 'Main navigation'"
-        class="flex items-center justify-center gap-2 font-['Anonymous_Pro','Fira_Mono',monospace] sm:gap-4"
+        class="flex flex-wrap items-center justify-center gap-2 font-['Anonymous_Pro','Fira_Mono',monospace] sm:gap-4"
       >
         <NuxtLink
           v-for="link in navLinks"
@@ -55,9 +56,9 @@ const isLinkActive = (linkPath: string) => {
 
     <main
       role="main"
-      class="bg-[#0f0f0f] font-['Anonymous_Pro','Fira_Mono',monospace] text-[whitesmoke] [perspective:100%] [perspective-origin:50%_400px]"
+      class="flex flex-1 flex-col bg-[#0f0f0f] font-['Anonymous_Pro','Fira_Mono',monospace] text-[whitesmoke] [perspective:100%] [perspective-origin:50%_400px]"
     >
-      <div class="[transform-style:preserve-3d]">
+      <div class="flex flex-1 flex-col [transform-style:preserve-3d]">
         <slot />
       </div>
     </main>
