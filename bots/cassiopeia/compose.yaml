@@ -1,0 +1,35 @@
+services:
+  cassiopeia:
+    build: .
+    restart: unless-stopped
+    init: true
+    env_file: .env
+    environment:
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_PATH: /app/data/cassiopeia.sqlite
+    ports:
+      - "127.0.0.1:${HTTP_PORT:-3088}:3000"
+    volumes:
+      - cassiopeia-data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 60s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  cassiopeia-data:

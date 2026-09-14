@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { leadHref, leadEndpoint } = useLeadContact();
 definePageMeta({ alias: ["/en/consulting"] });
 
 const { locale, isRussian, localePath } = useSiteLocale();
@@ -206,7 +207,7 @@ usePageSeo({
         {{ copy.intro }}
       </p>
       <div class="mt-7 flex flex-wrap items-center gap-5">
-        <a href="https://t.me/casiq" class="contact-link"
+        <a :href="leadHref" :data-lead-endpoint="leadEndpoint" class="contact-link"
           >{{ copy.cta }} <span aria-hidden="true">↗</span></a
         >
         <a
@@ -307,7 +308,7 @@ usePageSeo({
     >
       <h2 id="contact-title">{{ copy.contactTitle }}</h2>
       <p class="mt-4 max-w-2xl text-white/75">{{ copy.contactText }}</p>
-      <a href="https://t.me/casiq" class="contact-link mt-6"
+      <a :href="leadHref" :data-lead-endpoint="leadEndpoint" class="contact-link mt-6"
         >{{ copy.cta }} <span aria-hidden="true">↗</span></a
       >
       <p class="mt-4 text-sm text-white/60">

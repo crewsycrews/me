@@ -59,6 +59,9 @@ export default defineNuxtConfig({
     seoBlogPosts: blogPosts,
     public: {
       siteUrl: "https://danilrodin.ru",
+      leadBotUrl:
+        process.env.NUXT_PUBLIC_LEAD_BOT_URL || "https://cassey.danilrodin.ru/go",
+      leadBotUsername: "casiq_cassiopeia_bot",
       yandexMetrikaId,
     },
   },
@@ -82,6 +85,10 @@ export default defineNuxtConfig({
         { rel: "icon", type: "image/x-icon", href: `${appBaseURL}favicon.ico` },
       ],
       script: [
+        {
+          src: `${appBaseURL}lead-attribution.js`,
+          defer: true,
+        },
         {
           key: "yandex-metrika",
           innerHTML: yandexMetrikaScript,

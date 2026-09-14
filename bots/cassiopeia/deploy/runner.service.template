@@ -1,0 +1,17 @@
+[Unit]
+Description={{Description}}
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+ExecStart={{RunnerRoot}}/runsvc.sh
+User={{User}}
+WorkingDirectory={{RunnerRoot}}
+KillMode=process
+KillSignal=SIGTERM
+TimeoutStopSec=5min
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

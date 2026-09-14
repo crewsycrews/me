@@ -2,6 +2,7 @@
 definePageMeta({ alias: ["/en"] });
 
 const { locale, isRussian, localePath } = useSiteLocale();
+const { leadHref, leadEndpoint } = useLeadContact();
 const rotatingTexts = computed(() =>
   isRussian.value
     ? ["Разработчик", "Семьянин", "Здоровый образ жизни"]
@@ -98,9 +99,10 @@ useHead({
             height="48"
         /></a>
         <a
-          href="https://t.me/casiq"
-          :title="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin Telegram'"
-          :aria-label="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin on Telegram'"
+          :href="leadHref"
+          :data-lead-endpoint="leadEndpoint"
+          :title="isRussian ? 'Оставить заявку Кассеопее' : 'Contact Cassiopeia'"
+          :aria-label="isRussian ? 'Оставить заявку Кассеопее в Telegram' : 'Contact Cassiopeia on Telegram'"
           target="_blank"
           rel="noopener noreferrer"
         >

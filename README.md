@@ -27,6 +27,22 @@ npm run generate
 
 Generated static files are written to `.output/public`.
 
+## Кассеопея — бот для клиентских заявок
+
+Отдельный сервис на Node.js 24 с Docker Compose, SQLite и атрибуцией переходов:
+[инструкция по настройке и развёртыванию](bots/cassiopeia/README.md).
+Кнопка Telegram на главной и обе кнопки обращения на `/consulting` (включая `/en`)
+ведут через `https://cassey.danilrodin.ru/go` к Кассеопее с сохранением полных UTM.
+Перед публикацией сайта настройте DNS и HTTPS-прокси на crews-main-msk по инструкции.
+Адрес можно переопределить GitHub Actions variable `NUXT_PUBLIC_LEAD_BOT_URL`;
+без неё используется указанный домен. Для ручного перехода без сервиса атрибуции:
+`https://t.me/casiq_cassiopeia_bot?start=website`.
+Личные ссылки на странице «Обо мне» и SEO-профиль остаются ссылками на Данила.
+Проверки без сборки и реальных отправок: `npm run test:leads` под Node.js 24.
+Push в `master` также запускает деплой бота self-hosted runner в `/opt/me` на `crews-main-msk`:
+обновление Git, сборку и пересоздание контейнера с ожиданием `healthy`.
+Настройка systemd-службы runner описана в инструкции бота, раздел «Автодеплой».
+
 ## Публикация в блог и Telegram
 
 Основной текст — Markdown в `content/`. После push в `master` или `main`
