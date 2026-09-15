@@ -58,7 +58,7 @@ useHead({
 <template>
   <div class="flex flex-1 flex-col">
     <div class="flex flex-1 flex-col justify-center py-8">
-      <h1 class="logo">Danil Rodin</h1>
+      <NameWordmark />
       <div class="zsh mt-2 hidden items-center md:flex">
         <span class="w-1/12" />
         <span class="w-10/12">
@@ -171,20 +171,6 @@ useHead({
 </template>
 
 <style scoped>
-.logo {
-  font-family: "Chakra Petch", sans-serif;
-  color: #d4ef99;
-  font-size: 6rem;
-  text-align: center;
-  text-shadow: 0 0 25px rgba(40, 210, 40, 0.9);
-}
-
-@media (max-width: 576px) {
-  .logo {
-    font-size: 3.2rem;
-  }
-}
-
 .zsh {
   font-size: 1.5rem;
   line-height: 1.2;

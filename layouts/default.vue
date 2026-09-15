@@ -3,7 +3,6 @@ const route = useRoute();
 const { isRussian, localePath, switchLocalePath } = useSiteLocale();
 
 const navLinks = computed(() => [
-  { label: isRussian.value ? "Главная" : "Home", to: localePath("/") },
   { label: isRussian.value ? "Для бизнеса" : "For business", to: localePath("/consulting") },
   { label: isRussian.value ? "Опыт" : "Experience", to: localePath("/experience") },
   { label: isRussian.value ? "Проекты" : "Projects", to: localePath("/projects") },
