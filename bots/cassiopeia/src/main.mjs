@@ -70,6 +70,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(JSON.stringify({ event: 'fatal', message: error.message }));
+  console.error(JSON.stringify({ event: 'fatal', message: error.message, code: error.code }));
   process.exitCode = 1;
 });

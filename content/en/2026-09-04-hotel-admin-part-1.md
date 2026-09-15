@@ -39,3 +39,7 @@ And just like that, upgrading server Xeons quietly became part of my stack.
 I've attached photos of the old processor being removed. Ba-dum-tss. Unfortunately, the whole machine was covered in construction dust because someone had drilled a hole in the wall right above the server to run some cables or pipes. I vacuumed it as best I could, but didn't take an "after" photo: I just wanted to get it back together and check that it worked.
 
 ![Replacing the server CPU](/assets/images/blog/hotel-admin/server-cpu-1.jpg)
+
+---
+
+Next part: [Part 2: Replacing the core switches and trying not to break anything](/en/blog/2026-09-07-hotel-admin-part-2).

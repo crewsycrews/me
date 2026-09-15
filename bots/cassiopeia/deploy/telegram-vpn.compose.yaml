@@ -1,0 +1,37 @@
+name: cassiopeia-vpn
+
+services:
+  telegram-proxy:
+    # Official Xray 26.3.27, pinned to the verified multi-platform digest.
+    image: ghcr.io/xtls/xray-core:26.3.27@sha256:592ec4d11f656db95598d01e76dbcc6e002d67360b96a5436500a938230f52c7
+    command: ["run", "-config", "/usr/local/etc/xray/config.json"]
+    user: "65532:65532"
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    pids_limit: 128
+    volumes:
+      - type: bind
+        source: /etc/cassiopeia/xray
+        target: /usr/local/etc/xray
+        read_only: true
+        bind:
+          create_host_path: false
+    tmpfs:
+      - /var/log/xray:size=1m,uid=65532,gid=65532,mode=0700
+    networks:
+      bot:
+        aliases: [telegram-proxy]
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+networks:
+  bot:
+    external: true
+    name: cassiopeia_default

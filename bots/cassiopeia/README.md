@@ -149,6 +149,9 @@ bash /opt/me/bots/cassiopeia/deploy/deploy.sh
 
 ## Ссылки с сайта: два режима
 
+Настройка исходящего доступа к Telegram через VLESS описана ниже в разделе
+«Telegram через VLESS/REALITY». Она не влияет на входящий HTTPS `/go`.
+
 **Без публичного HTTP-сервиса:**
 
 ```text
@@ -237,6 +240,72 @@ https://cassey.danilrodin.ru/go?utm_source=yandex&utm_medium=cpc&utm_campaign=co
 ```
 
 ## Надёжность, данные и эксплуатация
+
+### Telegram через VLESS/REALITY
+
+На `crews-main-msk` для исходящего Telegram API установлен отдельный Xray-контейнер.
+Схема: `cassiopeia → telegram-proxy:1080 → VLESS/REALITY → api.telegram.org:443`.
+Прокси разрешает только точное имя `api.telegram.org` на TCP-порту 443;
+все остальные назначения в этом прокси блокируются. Системные маршруты,
+SSH, GitHub Actions, Docker daemon и другие приложения не используют этот прокси.
+TLS-соединение бота с Telegram сохраняет обычную проверку сертификатов.
+
+Файлы на сервере:
+
+- `/etc/cassiopeia/telegram-vpn.compose.yaml` — отдельный Compose-проект `cassiopeia-vpn`.
+- `/etc/cassiopeia/xray/config.json` — секретная конфигурация, `root:65532`, режим `640`;
+  каталог `xray` имеет режим `750`. Полная VLESS-ссылка и UUID не хранятся в Git.
+- `/opt/me/bots/cassiopeia/.env` содержит настройки прокси только для процесса бота:
+
+```dotenv
+NODE_USE_ENV_PROXY=1
+HTTPS_PROXY=http://telegram-proxy:1080
+NO_PROXY=localhost,127.0.0.1,::1
+```
+
+Используется встроенная поддержка proxy-переменных Node.js 24. Внешний порт
+для Xray не публикуется; он подключён к существующей сети `cassiopeia_default`.
+Xray работает как UID/GID 65532, с файловой системой только для чтения и без
+дополнительных capabilities. TUN-интерфейс и изменение firewall не требуются.
+Клиент перезапускается Docker после перезагрузки сервера независимо от деплоя бота.
+
+Для повторной установки после создания сети бота:
+
+```bash
+sudo install -d -m 755 /etc/cassiopeia
+sudo install -m 644 /opt/me/bots/cassiopeia/deploy/telegram-vpn.compose.yaml /etc/cassiopeia/telegram-vpn.compose.yaml
+sudo python3 /opt/me/bots/cassiopeia/deploy/configure-telegram-vpn.py
+sudo chown root:65532 /etc/cassiopeia/xray /etc/cassiopeia/xray/config.json
+sudo chmod 750 /etc/cassiopeia/xray
+sudo chmod 640 /etc/cassiopeia/xray/config.json
+docker compose -f /etc/cassiopeia/telegram-vpn.compose.yaml run --rm --no-deps telegram-proxy run -test -config /usr/local/etc/xray/config.json
+docker compose -f /etc/cassiopeia/telegram-vpn.compose.yaml up -d
+```
+
+Конвертер запросит VLESS-ссылку со скрытым вводом; готовый файл он не перезаписывает.
+Затем добавьте три proxy-переменные в `.env` бота и пересоздайте его:
+
+```bash
+cd /opt/me/bots/cassiopeia
+docker compose up -d --no-build --force-recreate --wait --wait-timeout 180 cassiopeia
+```
+
+При обычном push `.env` сохраняется, поэтому новые контейнеры продолжают использовать
+туннель. Изменения шаблона `telegram-vpn.compose.yaml` применяются отдельно копированием
+в `/etc/cassiopeia` и повторным `up -d`. Для проверки и просмотра логов:
+
+```bash
+docker compose -f /etc/cassiopeia/telegram-vpn.compose.yaml ps
+docker compose -f /etc/cassiopeia/telegram-vpn.compose.yaml logs --tail=50
+curl -fsS http://127.0.0.1:3088/healthz
+```
+
+Для отключения удалите proxy-переменные из `.env`, пересоздайте только бота,
+затем остановите proxy-проект командой `docker compose -f /etc/cassiopeia/telegram-vpn.compose.yaml down`.
+Бот сможет работать без прокси только после восстановления прямого доступа к Telegram.
+Обычный `curl` на хосте продолжает обращаться к Telegram напрямую и не проверяет туннель.
+
+### Хранение и доставка
 
 В SQLite одной транзакцией сохраняются шаг анкеты, заявка, исходящие сообщения
 и offset Telegram. Повторно полученный update не создаёт вторую заявку.

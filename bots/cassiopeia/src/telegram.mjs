@@ -16,7 +16,7 @@ export function createTelegram(token, fetchImpl = fetch) {
     } catch (cause) {
       // Never expose request URLs: they contain the bot token.
       const error = new Error(`Telegram ${method} failed`);
-      error.code = cause.code || 'network';
+      error.code = cause.code || cause.cause?.code || (cause.name === 'TimeoutError' ? 'ETIMEDOUT' : 'network');
       error.retryAfter = cause.retryAfter;
       throw error;
     }

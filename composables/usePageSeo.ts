@@ -22,7 +22,7 @@ type PageSeoOptions = {
 };
 
 const SITE_NAME = "Danil Rodin";
-const DEFAULT_IMAGE_PATH = "assets/images/og-image.png";
+const DEFAULT_IMAGE_PATH = "assets/images/og-image.png?v=eihwaz";
 const AVATAR_PATH = "assets/images/avatar-small.jpg";
 
 export const usePageSeo = (options: PageSeoOptions) => {
@@ -63,8 +63,8 @@ export const usePageSeo = (options: PageSeoOptions) => {
       ? `${SITE_NAME} — Fullstack-разработчик`
       : `${SITE_NAME} — Fullstack Developer`,
     ogImageType: "image/png",
-    ogImageWidth: 671,
-    ogImageHeight: 267,
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
     twitterCard: "summary_large_image",
     twitterTitle: options.title,
     twitterDescription: options.description,

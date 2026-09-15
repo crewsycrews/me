@@ -24,34 +24,43 @@ const isLinkActive = (linkPath: string) => {
     class="mx-auto flex min-h-screen w-full flex-col bg-[#0f0f0f] p-3 text-center text-white [text-shadow:0_0.05rem_0.1rem_rgba(0,0,0,0.5)] [&_a]:text-[#d4ef99]"
   >
     <header class="sticky top-0 z-10 mb-6 border-b border-white/10 bg-[#0f0f0f]/95 py-3 backdrop-blur">
-      <nav
-        :aria-label="isRussian ? 'Основная навигация' : 'Main navigation'"
-        class="flex flex-wrap items-center justify-center gap-2 font-['Anonymous_Pro','Fira_Mono',monospace] sm:gap-4"
-      >
+      <div class="mx-auto flex max-w-4xl items-center justify-center gap-3 sm:gap-6">
         <NuxtLink
-          v-for="link in navLinks"
-          :key="link.to"
-          :to="link.to"
-          class="rounded px-2 py-1 text-sm transition-colors sm:text-base"
-          :class="
-            isLinkActive(link.to)
-              ? 'bg-[#d4ef99]/15 text-[#d4ef99]'
-              : 'opacity-80 hover:bg-white/10 hover:opacity-100'
-          "
+          :to="localePath('/')"
+          :aria-label="isRussian ? 'Данил Родин — на главную' : 'Danil Rodin — home'"
+          class="shrink-0 rounded p-1 transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4ef99]"
         >
-          {{ link.label }}
+          <img src="/main-logo.svg" alt="" width="35" height="39" class="h-10 w-auto" />
         </NuxtLink>
-        <span class="opacity-30" aria-hidden="true">|</span>
-        <a
-          :href="switchLocalePath"
-          class="rounded border border-white/15 px-2 py-1 text-sm uppercase opacity-80 transition-colors hover:border-[#d4ef99]/40 hover:bg-white/10 hover:opacity-100 sm:text-base"
-          :hreflang="isRussian ? 'en' : 'ru'"
-          :lang="isRussian ? 'en' : 'ru'"
-          :title="isRussian ? 'Switch to English' : 'Переключиться на русский'"
+        <nav
+          :aria-label="isRussian ? 'Основная навигация' : 'Main navigation'"
+          class="flex min-w-0 flex-wrap items-center justify-center gap-2 font-['Anonymous_Pro','Fira_Mono',monospace] sm:gap-4"
         >
-          {{ isRussian ? "EN" : "RU" }}
-        </a>
-      </nav>
+          <NuxtLink
+            v-for="link in navLinks"
+            :key="link.to"
+            :to="link.to"
+            class="rounded px-2 py-1 text-sm transition-colors sm:text-base"
+            :class="
+              isLinkActive(link.to)
+                ? 'bg-[#d4ef99]/15 text-[#d4ef99]'
+                : 'opacity-80 hover:bg-white/10 hover:opacity-100'
+            "
+          >
+            {{ link.label }}
+          </NuxtLink>
+          <span class="opacity-30" aria-hidden="true">|</span>
+          <a
+            :href="switchLocalePath"
+            class="rounded border border-white/15 px-2 py-1 text-sm uppercase opacity-80 transition-colors hover:border-[#d4ef99]/40 hover:bg-white/10 hover:opacity-100 sm:text-base"
+            :hreflang="isRussian ? 'en' : 'ru'"
+            :lang="isRussian ? 'en' : 'ru'"
+            :title="isRussian ? 'Switch to English' : 'Переключиться на русский'"
+          >
+            {{ isRussian ? "EN" : "RU" }}
+          </a>
+        </nav>
+      </div>
     </header>
 
     <main

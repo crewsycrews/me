@@ -83,6 +83,12 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: "icon", type: "image/x-icon", href: `${appBaseURL}favicon.ico` },
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          sizes: "any",
+          href: `${appBaseURL}favicon.svg`,
+        },
       ],
       script: [
         {

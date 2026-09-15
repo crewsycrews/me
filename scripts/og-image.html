@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Danil Rodin — social preview</title>
+    <style>
+      @font-face {
+        font-family: "Chakra Petch";
+        font-weight: 600;
+        src: url("../public/assets/fonts/chakra-petch-latin-600.woff2");
+      }
+      @font-face {
+        font-family: "Anonymous Pro";
+        src: url("../public/assets/fonts/anonymous-pro-latin-400.woff2");
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1200px; height: 630px; }
+      body {
+        background: #0f0f0f;
+        color: #d4ef99;
+        font-family: "Anonymous Pro", monospace;
+      }
+      main {
+        display: flex;
+        align-items: center;
+        gap: 64px;
+        height: 500px;
+        padding: 70px 80px 0;
+      }
+      .mark { width: 270px; height: auto; flex-shrink: 0; }
+      .identity {
+        border-left: 1px solid #d4ef9933;
+        padding: 35px 0 35px 64px;
+      }
+      h1 {
+        margin: 0;
+        color: #d4ef99;
+        font: 600 80px/1.15 "Chakra Petch", sans-serif;
+        letter-spacing: -2px;
+        white-space: nowrap;
+      }
+      .role { margin: 24px 0 0; color: #deded8; font-size: 32px; }
+      footer {
+        margin: 12px 80px 0;
+        padding-top: 27px;
+        border-top: 1px solid #ffffff1a;
+        color: #a0a397;
+        font-size: 26px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Render at 1200 x 630, scale 1, after document.fonts.ready and image decode. -->
+    <main>
+      <img class="mark" src="../public/main-logo.svg" alt="DR" />
+      <div class="identity">
+        <h1>Danil Rodin</h1>
+        <p class="role">Fullstack developer</p>
+      </div>
+    </main>
+    <footer>danilrodin.ru</footer>
+  </body>
+</html>

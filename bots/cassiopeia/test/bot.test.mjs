@@ -152,3 +152,14 @@ test('Telegram client hides token URLs and preserves retry_after', async () => {
   const limited = createTelegram('123:secret', async () => ({ ok: false, status: 429, json: async () => ({ ok: false, error_code: 429, parameters: { retry_after: 17 } }) }));
   await assert.rejects(limited('sendMessage'), e => e.code === 429 && e.retryAfter === 17);
 });
+
+test('Telegram client retains network cause codes without leaking request details', async () => {
+  const api = createTelegram('123:secret', async () => {
+    throw new TypeError('fetch failed for https://api.telegram.org/bot123:secret/getMe', {
+      cause: Object.assign(new Error('connection timed out'), { code: 'UND_ERR_CONNECT_TIMEOUT' }),
+    });
+  });
+  await assert.rejects(api('getMe'), e => e.code === 'UND_ERR_CONNECT_TIMEOUT' && !e.message.includes('secret') && !e.cause);
+  const timeout = createTelegram('123:secret', async () => { throw Object.assign(new Error('timeout'), { name: 'TimeoutError' }); });
+  await assert.rejects(timeout('getMe'), e => e.code === 'ETIMEDOUT');
+});

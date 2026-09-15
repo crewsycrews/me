@@ -60,3 +60,7 @@ With real ports, VLANs, uplinks, exceptions, and a clear rollback plan. With tha
 ![Anonymised network diagram showing ports, VLANs, and equipment models; labels are in Russian](/assets/images/blog/hotel-admin/network-map.png)
 
 ![Eltex MES2428P switch](/assets/images/blog/hotel-admin/eltex-mes2428p.png)
+
+---
+
+Previous part: [Part 1: Replacing a server CPU](/en/blog/2026-09-04-hotel-admin-part-1).
