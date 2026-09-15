@@ -11,11 +11,14 @@ const navLinks = computed(() => [
 ]);
 
 const isLinkActive = (linkPath: string) => {
-  if (linkPath === "/") {
-    return route.path === "/";
+  const currentPath = route.path.replace(/\/+$/, "") || "/";
+  const targetPath = linkPath.replace(/\/+$/, "") || "/";
+
+  if (targetPath === "/" || targetPath === "/en") {
+    return currentPath === targetPath;
   }
 
-  return route.path === linkPath || route.path.startsWith(`${linkPath}/`);
+  return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
 };
 </script>
 

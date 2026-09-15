@@ -1,3 +1,5 @@
+import { toStaticSitePath } from "../shared/utils/site-path";
+
 export type SiteLocale = "en" | "ru";
 
 export const useSiteLocale = () => {
@@ -12,10 +14,10 @@ export const useSiteLocale = () => {
     const basePath = path === "/en" ? "/" : path.replace(/^\/en\//, "/");
 
     if (targetLocale === "en") {
-      return basePath === "/" ? "/en" : `/en${basePath}`;
+      return toStaticSitePath(basePath === "/" ? "/en" : `/en${basePath}`);
     }
 
-    return basePath;
+    return toStaticSitePath(basePath);
   };
 
   const switchLocalePath = computed(() => {

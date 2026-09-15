@@ -1,3 +1,5 @@
+import { toStaticSitePath } from "../../shared/utils/site-path";
+
 const staticRoutes = ["/", "/about", "/consulting", "/projects", "/blog"].flatMap((path) => [
   path,
   path === "/" ? "/en" : `/en${path}`,
@@ -35,7 +37,7 @@ export default defineEventHandler((event) => {
     ...postRoutes,
   ]
     .map(({ path, lastmod }) => {
-      const location = new URL(path.replace(/^\/+/, ""), baseUrl).toString();
+      const location = new URL(toStaticSitePath(path).replace(/^\/+/, ""), baseUrl).toString();
       const lastModified = lastmod
         ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>`
         : "";

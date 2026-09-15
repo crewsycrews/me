@@ -1,3 +1,5 @@
+import { toStaticSitePath } from "../shared/utils/site-path";
+
 type SchemaType =
   | "WebPage"
   | "ProfilePage"
@@ -38,9 +40,9 @@ export const usePageSeo = (options: PageSeoOptions) => {
   const pagePath = rawPagePath === "/en"
     ? "/"
     : rawPagePath.replace(/^\/en\//, "/");
-  const russianUrl = new URL(pagePath.replace(/^\/+/, ""), baseUrl).toString();
+  const russianUrl = new URL(toStaticSitePath(pagePath).replace(/^\/+/, ""), baseUrl).toString();
   const englishPath = pagePath === "/" ? "/en" : `/en${pagePath}`;
-  const englishUrl = new URL(englishPath.replace(/^\/+/, ""), baseUrl).toString();
+  const englishUrl = new URL(toStaticSitePath(englishPath).replace(/^\/+/, ""), baseUrl).toString();
   const canonicalUrl = isRussian ? russianUrl : englishUrl;
   const imageUrl = new URL(DEFAULT_IMAGE_PATH, baseUrl).toString();
   const avatarUrl = new URL(AVATAR_PATH, baseUrl).toString();
@@ -168,7 +170,7 @@ export const usePageSeo = (options: PageSeoOptions) => {
           position: index + 1,
           name: breadcrumb.name,
           item: new URL(
-            breadcrumbPath.replace(/^\/+/, ""),
+            toStaticSitePath(breadcrumbPath).replace(/^\/+/, ""),
             baseUrl,
           ).toString(),
         };
