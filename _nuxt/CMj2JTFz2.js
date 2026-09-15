@@ -1,0 +1,1 @@
+import{o as e}from"./CoHvJfeZ.js";function t(){let t=e().public,n=t.leadBotUrl;return{leadEndpoint:n,leadHref:n||`https://t.me/${t.leadBotUsername}?start=website`}}export{t};

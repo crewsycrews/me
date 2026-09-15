@@ -90,7 +90,14 @@ Then another surprise turned up. The cable leading to one of the access switches
 
 For me, the biggest result wasn&apos;t even the new switches. After this migration, the network finally had a diagram I could more or less trust.
 
-With real ports, VLANs, uplinks, exceptions, and a clear rollback plan. With that done, I could move on to the next tricky task: putting guest Wi-Fi on its own VLAN. Stay tuned.</yandex:full-text>
+With real ports, VLANs, uplinks, exceptions, and a clear rollback plan. With that done, I could move on to the next tricky task: putting guest Wi-Fi on its own VLAN. Stay tuned.
+
+
+
+
+
+
+Previous part: Part 1: Replacing a server CPU.</yandex:full-text>
     </item>
     <item>
       <title>A developer somehow ends up running hotel IT. Part 1: Replacing a server CPU</title>
@@ -136,7 +143,12 @@ It booted.
 
 And just like that, upgrading server Xeons quietly became part of my stack.
 
-I&apos;ve attached photos of the old processor being removed. Ba-dum-tss. Unfortunately, the whole machine was covered in construction dust because someone had drilled a hole in the wall right above the server to run some cables or pipes. I vacuumed it as best I could, but didn&apos;t take an &quot;after&quot; photo: I just wanted to get it back together and check that it worked.</yandex:full-text>
+I&apos;ve attached photos of the old processor being removed. Ba-dum-tss. Unfortunately, the whole machine was covered in construction dust because someone had drilled a hole in the wall right above the server to run some cables or pipes. I vacuumed it as best I could, but didn&apos;t take an &quot;after&quot; photo: I just wanted to get it back together and check that it worked.
+
+
+
+
+Next part: Part 2: Replacing the core switches and trying not to break anything.</yandex:full-text>
     </item>
     <item>
       <title>Remote connection to local network without public gateway</title>

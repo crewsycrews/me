@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="270 240 700 780" fill="none">
+  <title>DR — Eihwaz</title>
+  <desc>Angular DR monogram with three arrows, a shared Eihwaz stem, and a diagonal R leg crossing below the D. Transparent background.</desc>
+  <g fill="#D4EF99">
+    <path id="d-upper-and-right" d="M400 282H456L402 336H810L928 454V776L826 878L784 836L872 748V478L784 390H402L456 444H396L314 363Z"/>
+    <path id="d-lower-arrow" d="M400 774H456L398 832H666L714 886H410L458 934H396L314 852Z"/>
+    <path id="r-eihwaz" fill-rule="evenodd" d="M474 450L496 452L658 560H676L622 506H678L752 580L678 650H626L672 604H658L596 642L892 978H824L550 670L526 686V798H486L396 704L422 678L474 730ZM526 526V638L610 582Z"/>
+  </g>
+</svg>
