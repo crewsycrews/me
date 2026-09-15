@@ -33,7 +33,7 @@ usePageSeo({
   </div>
 
   <div class="mt-3 flex justify-center">
-    <div v-if="isRussian" class="about-card w-full md:w-9/12 lg:w-8/12 space-y-2">
+    <div v-if="isRussian" class="about-card w-full max-w-4xl space-y-2 px-3 sm:px-6">
       <h2 class="text-lg">Приятно познакомиться!</h2>
       <p>
         Я <b>Данил Родин</b> — fullstack-разработчик, отец двоих детей и энтузиаст GameDev. Ценю семью,
@@ -53,7 +53,7 @@ usePageSeo({
       <p>Вегетарианец. Веду здоровый образ жизни. Иногда поднимаю тяжёлые веса в зале.</p>
 
     </div>
-    <div v-else class="about-card w-full md:w-9/12 lg:w-8/12 space-y-2">
+    <div v-else class="about-card w-full max-w-4xl space-y-2 px-3 sm:px-6">
       <h2 class="text-lg">Nice to meet you!</h2>
       <p>
         I'm <b>Danil Rodin</b>, a fullstack developer, father of two, and GameDev enthusiast. Passionate about family,

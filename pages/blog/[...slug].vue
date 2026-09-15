@@ -111,7 +111,7 @@ watch(
 
 <template>
   <div class="mt-4 flex justify-center pb-10">
-    <article class="w-full md:w-9/12 lg:w-8/12">
+    <article class="w-full max-w-4xl px-3 sm:px-6">
       <h1 class="text-left text-xl font-bold">{{ post?.title }}</h1>
       <p v-if="post?.meta?.date" class="mt-2 text-left opacity-70">
         {{ new Date(post.meta.date).toLocaleDateString(dateLocale) }}

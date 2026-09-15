@@ -76,7 +76,7 @@ usePageSeo({
 </script>
 
 <template>
-  <section class="mx-auto mt-6 w-full md:w-10/12 lg:w-8/12">
+  <section class="mx-auto mt-6 w-full max-w-4xl px-3 sm:px-6">
     <header class="mb-6 text-left">
       <h1 class="text-3xl font-bold tracking-tight">{{ isRussian ? "Блог" : "Blog" }}</h1>
       <p class="mt-2 text-sm opacity-75">{{ isRussian ? "Заметки о разработке, инструментах и работе." : "Notes on engineering, tools, and work." }}</p>
