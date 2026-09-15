@@ -1,28 +1,45 @@
 <script setup lang="ts">
+import { experience } from "~/data/experience";
+
 const { leadHref, leadEndpoint } = useLeadContact();
 definePageMeta({ alias: ["/en/consulting"] });
 
 const { locale, isRussian, localePath } = useSiteLocale();
+const currentClients = experience.filter((period) => period.current).flatMap((period) => period.projects);
 const copy = computed(() =>
   isRussian.value
     ? {
         title: "ИТ-консалтинг для бизнеса | Данил Родин",
         description:
-          "Помогаю малому и среднему бизнесу разобраться в ИТ, наладить серверы и сети, автоматизировать процессы и развивать сервисы. Данил Родин — разработчик и системный администратор.",
+          "Разработка и запуск продуктов, интеграции, серверы и сети, помощь командам разработки. Данил Родин — ведущий разработчик с опытом Dallari, Sababuu, Домиленда и инфраструктуры отеля «Бристоль».",
         eyebrow: "Данил Родин / ИТ для малого и среднего бизнеса",
-        heading: "Помогу привести ИТ в порядок и развивать ваш бизнес",
+        heading: "Помогу запустить продукт и наладить ИТ вашего бизнеса",
         intro:
-          "Сайт тормозит, сеть работает нестабильно, сотрудники переносят данные вручную, а предложения подрядчиков сложно сравнить? Разберусь в ситуации, объясню варианты и возьму на себя техническую работу.",
+          "Нужно запустить сервис, связать несколько систем или разобраться, почему приложение и сеть работают нестабильно? Я разрабатывал продукты с нуля, руководил командами и обслуживал серверы. Помогу выбрать решение и довести его до работающего результата.",
         cta: "Обсудить задачу в Telegram",
         secondary: "Посмотреть, чем я могу помочь ↓",
         note: "Можно начать с описания проблемы своими словами — техническое задание не обязательно.",
         servicesTitle: "С чем ко мне можно обратиться",
         services: [
           {
-            title: "Разобраться, что происходит с ИТ",
-            text: "Изучу, как устроены ваши системы, где возникают сбои и что мешает работе. Помогу оценить предложения подрядчиков и выбрать, за что браться первым.",
-            result:
-              "Результат: понятный список проблем и план действий с приоритетами.",
+            title: "Запустить или развить продукт",
+            text: "Спроектирую серверную часть, API и базу данных, разработаю веб-приложение или помогу с мобильным. Возьму на себя путь от первого рабочего варианта до запуска и последующих доработок.",
+            result: "Результат: работающий продукт с согласованными функциями и понятной архитектурой для дальнейшего развития.",
+          },
+          {
+            title: "Связать системы и убрать ручную работу",
+            text: "Соединю сервисы через API, настрою обмен данными и уведомления. Разработаю интеграцию с внешним поставщиком, внутренний сервис или корпоративный портал.",
+            result: "Результат: автоматизированный обмен данными с обработкой ошибок и меньшим количеством повторного ввода.",
+          },
+          {
+            title: "Подготовить приложение к росту",
+            text: "Найду узкие места в серверной части и базе данных. Помогу перенести данные и файлы, настроить автоматическую сборку и выпуск обновлений, подобрать инфраструктуру под нагрузку.",
+            result: "Результат: проверенные изменения, воспроизводимый выпуск обновлений и план переноса с возможностью отката.",
+          },
+          {
+            title: "Помочь команде разработки",
+            text: "Помогу превратить требования бизнеса в технические задачи, выбрать архитектуру и проверить код. Подключусь к сложной реализации и помогу разработчикам освоить подходы, которые они смогут поддерживать самостоятельно.",
+            result: "Результат: согласованные технические решения, задачи с приоритетами и переданные команде знания.",
           },
           {
             title: "Наладить серверы, сеть и рабочие места",
@@ -31,43 +48,49 @@ const copy = computed(() =>
               "Результат: настроенная инфраструктура, документация и согласованный порядок обслуживания.",
           },
           {
-            title: "Убрать ручную работу и связать сервисы",
-            text: "Соединю системы через API, настрою передачу данных и уведомления. Разработаю внутренний инструмент, если готовые решения не закрывают задачу.",
+            title: "Разобраться, что происходит с ИТ",
+            text: "Изучу код, серверы и связи между системами, найду причины сбоев. Помогу оценить предложения подрядчиков и определить, какие изменения действительно нужны бизнесу.",
             result:
-              "Результат: работающий процесс с меньшим количеством повторного ввода данных.",
-          },
-          {
-            title: "Доработать сайт или запустить сервис",
-            text: "Помогу с существующим кодом, базой данных и размещением приложения. Могу пройти путь от идеи и первого рабочего варианта до развития продукта вместе с вашей командой.",
-            result:
-              "Результат: согласованные функции, проверенные в работе, и понятный следующий шаг.",
+              "Результат: понятный список проблем и план действий с приоритетами.",
           },
         ],
-        storyTitle: "От рабочих мест до продуктов и команд",
+        storyTitle: "Опыт разработки, инфраструктуры и руководства",
         story: [
-          "Я Данил Родин. Мой путь в ИТ начался с сайтов и работы с рекламой. Затем я стал системным администратором в группе компаний «РУСТ»: поддерживал более 200 пользователей, вводил в домен более 150 компьютеров, занимался серверами, сетью и корпоративными сервисами.",
-          "Позже перешёл в разработку: делал интеграции для страхового бизнеса, работал над сервисами для жилых домов в «Домиленд», вырос до тимлида в Umbrella IT. В международном стартапе занимался приложением, переносом базы данных и инфраструктурой его запуска.",
-          "Сейчас этот опыт сходится в практических задачах: я могу разобраться и в приложении, и в сервере, на котором оно работает. Поддерживаю инфраструктуру отеля — от физического оборудования до сети. Мне важно понимать, как техническое решение повлияет на работу людей.",
+          "Я Данил Родин. Работаю в ИТ с 2015 года: начинал с сайтов и системного администрирования, затем перешёл к разработке продуктов. В Umbrella IT руководил командами из 3–6 разработчиков, проектировал архитектуру и сам писал код. В Sababuu отвечал за разработку приложения и инфраструктуру.",
+          "Этот опыт позволяет разбирать задачу целиком: от того, что нужно пользователю, до кода, базы данных и сервера. Могу самостоятельно выполнить работу или подключиться к вашей команде — с понятным объёмом ответственности и передачей знаний.",
         ],
-        evidenceTitle: "Что стоит за этим опытом",
+        experienceLabel: "Все проекты и этапы работы →",
+        clientsTitle: "С кем работаю сейчас",
+        clientsText: "В 2026 году параллельно работаю с тремя клиентами:",
+        evidenceTitle: "Задачи, которые я уже решал",
         evidence: [
           {
-            title: "Сервер работающего отеля",
-            text: "Подобрал совместимый процессор и заменил его в ночное окно обслуживания. Сервер перешёл с 4 на 20 ядер без замены всей платформы.",
-            link: "/blog/2026-09-04-hotel-admin-part-1",
-            label: "Как проходил апгрейд →",
+            title: "Dallari и Rent Responsibly — запуск с нуля",
+            text: "Разработал и запустил маркетплейс для продуктовой розницы и платформу сообществ арендодателей в США. Для Dallari спроектировал отдельный сервис обмена данными с учётной системой.",
           },
           {
-            title: "Сеть, которую можно обслуживать",
-            text: "Восстановил фактическую схему сети отеля и поэтапно заменил корневые коммутаторы. Сохранил старое оборудование для отката и задокументировал соединения.",
-            link: "/blog/2026-09-07-hotel-admin-part-2",
-            label: "История замены сети →",
+            title: "Sababuu — приложение и инфраструктура",
+            text: "Перевёл базу с MySQL на PostgreSQL, настроил Kubernetes с автоматическим масштабированием под нагрузку и выпуском обновлений через GitOps. Руководил переходом от приложения с WebView к полноценному React Native-приложению.",
           },
           {
-            title: "Разработка и интеграции",
-            text: "В страховом сервисе интегрировал калькуляторы компаний через API и разрабатывал административную часть. Такой опыт полезен, когда несколько систем нужно связать в один рабочий процесс.",
-            link: "/about",
-            label: "Больше обо мне и технологиях →",
+            title: "Домиленд — интеграции и хранение файлов",
+            text: "Интегрировал Ujin для управления устройствами умного дома. Перенёс хранение файлов из локального хранилища на сервере в S3 Object Storage.",
+          },
+          {
+            title: "Пкаско — быстрее расчёты, больше интеграций",
+            text: "Подключал API страховых компаний и разрабатывал административную часть агрегатора ОСАГО и КАСКО. Оптимизировал расчёт страховых премий, сократив время ответа примерно на 20–30%.",
+          },
+          {
+            title: "«Бристоль» — сервер и сеть работающего отеля",
+            text: "Обновил сервер с 4 до 20 ядер без замены всей платформы. Восстановил схему сети и поэтапно заменил корневые коммутаторы, сохранив оборудование для отката и задокументировав соединения.",
+            links: [
+              { path: "/blog/2026-09-04-hotel-admin-part-1", label: "Обновление сервера →" },
+              { path: "/blog/2026-09-07-hotel-admin-part-2", label: "Замена сети →" },
+            ],
+          },
+          {
+            title: "«РУСТ» — ИТ для более 200 пользователей",
+            text: "Обслуживал серверы и сеть, ввёл в домен более 150 компьютеров. Создал корпоративный портал с авторизацией через Active Directory и единым справочником сотрудников.",
           },
         ],
         processTitle: "Как будем работать",
@@ -87,29 +110,43 @@ const copy = computed(() =>
         ],
         format:
           "Можно обратиться за разовой консультацией, отдельным проектом или регулярным сопровождением. Я в Таганроге, работаю удалённо; необходимость и возможность выезда обсудим отдельно. График поддержки и время реакции согласуем под вашу задачу.",
-        contactTitle: "Расскажите, что мешает вашему бизнесу",
+        contactTitle: "Обсудим вашу задачу",
         contactText:
-          "Напишите, чем занимается компания, какая задача возникла и насколько она срочная. Этого достаточно, чтобы начать разговор и определить следующий шаг.",
+          "Расскажите, что хотите запустить или улучшить, что уже есть и кто работает над задачей. Если возник сбой — опишите, кому он мешает и насколько срочно нужно разобраться.",
         emailLabel: "Или напишите на почту",
       }
     : {
         title: "IT consulting for businesses | Danil Rodin",
         description:
-          "IT consulting, system administration, automation and software development for small and medium businesses. Work directly with Danil Rodin.",
+          "Product development, integrations, servers, networks and engineering team support. Danil Rodin, a lead developer with experience at Dallari, Sababuu, Domiland and Bristol Hotel.",
         eyebrow: "Danil Rodin / IT for small and medium businesses",
-        heading: "Helping you get IT in order and move your business forward",
+        heading: "Helping you launch products and get your business IT in order",
         intro:
-          "A slow website, an unreliable network, manual data entry or vendor proposals that are hard to compare? I can investigate, explain your options and take on the technical work.",
+          "Need to launch a service, connect several systems or understand why your application and network are unreliable? I have built products from scratch, led teams and maintained servers. I can help choose a solution and deliver it.",
         cta: "Discuss your task on Telegram",
         secondary: "See how I can help ↓",
         note: "Start by describing the problem in your own words. You do not need a technical specification.",
         servicesTitle: "What I can help with",
         services: [
           {
-            title: "Understand what is happening with your IT",
-            text: "I review your systems, investigate failures and identify what gets in the way. I can help assess vendor proposals and decide what to tackle first.",
-            result:
-              "Outcome: a clear list of issues and a prioritised action plan.",
+            title: "Launch or develop a product",
+            text: "I design backends, APIs and databases, build web applications and help with mobile development. I can take a product from its first working version through launch and subsequent improvements.",
+            result: "Outcome: a working product with agreed features and a clear architecture for further development.",
+          },
+          {
+            title: "Connect systems and reduce manual work",
+            text: "I connect services through APIs and set up data exchange and notifications. I can build an integration with an external provider, an internal service or an intranet portal.",
+            result: "Outcome: automated data exchange with error handling and less duplicate data entry.",
+          },
+          {
+            title: "Prepare an application for growth",
+            text: "I investigate backend and database bottlenecks, help migrate data and files, automate builds and releases, and select infrastructure for your workload.",
+            result: "Outcome: verified changes, repeatable releases and a migration plan with a rollback option.",
+          },
+          {
+            title: "Support your engineering team",
+            text: "I help translate business requirements into technical tasks, choose architecture and review code. I can take on complex implementation work and help developers adopt approaches they can maintain independently.",
+            result: "Outcome: agreed technical decisions, prioritised tasks and knowledge shared with the team.",
           },
           {
             title: "Look after servers, networks and workstations",
@@ -118,43 +155,49 @@ const copy = computed(() =>
               "Outcome: configured infrastructure, documentation and an agreed maintenance process.",
           },
           {
-            title: "Connect services and reduce manual work",
-            text: "I integrate systems through APIs and set up data transfers and notifications. Where existing products do not fit, I can build an internal tool.",
+            title: "Understand what is happening with your IT",
+            text: "I review code, servers and connections between systems to find the causes of failures. I can assess vendor proposals and identify the changes your business actually needs.",
             result:
-              "Outcome: a working process with less duplicate data entry.",
-          },
-          {
-            title: "Improve a website or launch a service",
-            text: "I work with existing code, databases and application hosting. I can take an idea through its first working version and continue developing it with your team.",
-            result:
-              "Outcome: agreed features verified in use and a clear next step.",
+              "Outcome: a clear list of issues and a prioritised action plan.",
           },
         ],
-        storyTitle: "From workstations to products and teams",
+        storyTitle: "Experience in development, infrastructure and leadership",
         story: [
-          "I'm Danil Rodin. I started with websites and advertising, then became a system administrator at RUST Group. I supported over 200 users, joined over 150 computers to the domain and looked after servers, networking and internal services.",
-          "I later moved into software development: insurance integrations, residential building services at Domiland and a team lead role at Umbrella IT. At an international startup, I worked on the application, a database migration and deployment infrastructure.",
-          "Today, these skills come together in practical work: I can investigate both an application and the server it runs on. I also maintain hotel infrastructure, from physical hardware to networking. I care about how technical decisions affect the people using these systems.",
+          "I'm Danil Rodin. I have worked in IT since 2015, starting with websites and system administration before moving into product development. At Umbrella IT, I led teams of 3–6 developers, designed architecture and wrote code. At Sababuu, I was responsible for application development and infrastructure.",
+          "This background lets me work through a problem as a whole, from user needs to code, databases and servers. I can deliver the work independently or join your team, with a clear scope of responsibility and knowledge transfer.",
         ],
-        evidenceTitle: "Experience behind the offer",
+        experienceLabel: "All projects and career milestones →",
+        clientsTitle: "Who I work with now",
+        clientsText: "In 2026, I am working with three clients in parallel:",
+        evidenceTitle: "Problems I have already solved",
         evidence: [
           {
-            title: "A server in an operating hotel",
-            text: "I selected a compatible CPU and installed it during a night maintenance window. The server went from 4 to 20 cores without replacing the entire platform.",
-            link: "/blog/2026-09-04-hotel-admin-part-1",
-            label: "Read about the upgrade →",
+            title: "Dallari and Rent Responsibly — built from scratch",
+            text: "Built and launched a grocery retail marketplace and a platform for US landlord communities. For Dallari, I designed a dedicated service to exchange data with the client's accounting system.",
           },
           {
-            title: "A network that can be maintained",
-            text: "I mapped the hotel's actual network and replaced the core switches in stages. I kept the old equipment ready for rollback and documented the connections.",
-            link: "/blog/2026-09-07-hotel-admin-part-2",
-            label: "Read about the network migration →",
+            title: "Sababuu — application and infrastructure",
+            text: "Migrated the database from MySQL to PostgreSQL and set up Kubernetes with load-based autoscaling and GitOps releases. Led the move from a WebView-based application to a full React Native app.",
           },
           {
-            title: "Software and integrations",
-            text: "For an insurance service, I integrated insurers' calculators through APIs and developed the administration interface. This experience helps when separate systems need to become a working process.",
-            link: "/about",
-            label: "More about my background and tools →",
+            title: "Domiland — integrations and file storage",
+            text: "Integrated Ujin for smart home device management. Migrated file storage from local storage on the server to S3 Object Storage.",
+          },
+          {
+            title: "PKASKO — faster calculations, more integrations",
+            text: "Integrated insurer APIs and developed the administration interface for a car insurance aggregator. Optimised premium calculations, reducing response times by approximately 20–30%.",
+          },
+          {
+            title: "Bristol — servers and networking in an operating hotel",
+            text: "Upgraded the server from 4 to 20 cores without replacing the entire platform. Mapped the network and replaced core switches in stages, retaining hardware for rollback and documenting the connections.",
+            links: [
+              { path: "/blog/2026-09-04-hotel-admin-part-1", label: "Server upgrade →" },
+              { path: "/blog/2026-09-07-hotel-admin-part-2", label: "Network migration →" },
+            ],
+          },
+          {
+            title: "RUST — IT for over 200 users",
+            text: "Maintained servers and networking and joined over 150 computers to the domain. Built an intranet portal with Active Directory sign-in and a shared employee directory.",
           },
         ],
         processTitle: "How we can work together",
@@ -174,9 +217,9 @@ const copy = computed(() =>
         ],
         format:
           "You can engage me for a consultation, a project or ongoing support. I am based in Taganrog and work remotely; we can discuss the need and feasibility of a site visit separately. Support hours and response times are agreed for your task.",
-        contactTitle: "Tell me what is holding your business back",
+        contactTitle: "Let's discuss your task",
         contactText:
-          "Describe what your company does, the task you have and how urgent it is. That is enough to start a conversation and decide on the next step.",
+          "Tell me what you want to launch or improve, what you already have and who is working on it. If something has failed, describe who is affected and how urgently it needs attention.",
         emailLabel: "Or send me an email",
       },
 );
@@ -197,7 +240,7 @@ usePageSeo({
 </script>
 
 <template>
-  <article class="consulting mx-auto max-w-4xl px-3 pb-12 text-left sm:px-6">
+  <article class="consulting mx-auto w-full max-w-4xl px-3 pb-12 text-left sm:px-6">
     <header class="py-7 sm:py-12">
       <p class="text-sm text-[#d4ef99]">{{ copy.eyebrow }}</p>
       <h1 class="mt-5 max-w-3xl text-3xl font-bold leading-tight sm:text-5xl">
@@ -239,7 +282,7 @@ usePageSeo({
     </section>
 
     <section aria-labelledby="story-title" class="section">
-      <div class="flex items-center gap-5">
+      <div class="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
         <img
           src="/assets/images/avatar.png"
           :alt="isRussian ? 'Данил Родин' : 'Danil Rodin'"
@@ -257,11 +300,27 @@ usePageSeo({
       >
         {{ paragraph }}
       </p>
+      <NuxtLink
+        :to="localePath('/experience')"
+        class="mt-5 inline-block text-sm underline decoration-[#d4ef99]/40 underline-offset-4"
+        >{{ copy.experienceLabel }}</NuxtLink
+      >
+      <div class="mt-7 rounded-xl border border-white/10 p-5">
+        <h3 class="text-lg">{{ copy.clientsTitle }}</h3>
+        <p class="mt-2 text-sm text-white/65">{{ copy.clientsText }}</p>
+        <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-3">
+          <li v-for="client in currentClients" :key="client.href">
+            <a :href="client.href" target="_blank" rel="noopener noreferrer" class="underline decoration-[#d4ef99]/40 underline-offset-4">
+              {{ client.name[locale] }} <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
+      </div>
     </section>
 
     <section aria-labelledby="evidence-title" class="section">
       <h2 id="evidence-title">{{ copy.evidenceTitle }}</h2>
-      <div class="mt-6 space-y-7">
+      <div class="mt-6 grid gap-x-8 gap-y-7 sm:grid-cols-2">
         <div
           v-for="item in copy.evidence"
           :key="item.title"
@@ -270,9 +329,11 @@ usePageSeo({
           <h3 class="text-xl">{{ item.title }}</h3>
           <p class="mt-2 text-white/75">{{ item.text }}</p>
           <NuxtLink
-            :to="localePath(item.link)"
-            class="mt-3 inline-block text-sm underline decoration-[#d4ef99]/40 underline-offset-4"
-            >{{ item.label }}</NuxtLink
+            v-for="link in item.links"
+            :key="link.path"
+            :to="localePath(link.path)"
+            class="mr-4 mt-3 inline-block text-sm underline decoration-[#d4ef99]/40 underline-offset-4"
+            >{{ link.label }}</NuxtLink
           >
         </div>
       </div>
