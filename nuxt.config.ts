@@ -34,17 +34,6 @@ const blogRoutes = blogPosts.flatMap(({ slug }) => [
   `/en/blog/${slug}`,
 ]);
 
-const stripHomepageHydration = (html: string) =>
-  html
-    .replace(/<link rel="preload" as="fetch"[^>]*>/g, "")
-    .replace(/<link rel="modulepreload"[^>]*>/g, "")
-    .replace(/<script type="module"[^>]*><\/script>/g, "")
-    .replace(
-      /<script type="application\/json" data-nuxt-data=[\s\S]*?<\/script>/g,
-      "",
-    )
-    .replace(/<script>window\.__NUXT__=[\s\S]*?<\/script>/g, "");
-
 const inlineHomepageStyles = (html: string, clientAssetsDir: string) =>
   html.replace(
     /<link rel="stylesheet" href="\/_nuxt\/([^"]+)" crossorigin>/g,
@@ -127,11 +116,10 @@ export default defineNuxtConfig({
             ({ dir }) => dir.endsWith("/_nuxt"),
           )?.dir;
 
-          route.contents = stripHomepageHydration(
-            clientAssetsDir
-              ? inlineHomepageStyles(route.contents, clientAssetsDir)
-              : route.contents,
-          );
+          // Keep hydration: NameWordmark starts its animations in onMounted.
+          if (clientAssetsDir) {
+            route.contents = inlineHomepageStyles(route.contents, clientAssetsDir);
+          }
         }
       },
     },
