@@ -1,4 +1,4 @@
-import { toStaticSitePath } from "../shared/utils/site-path";
+import { toStaticSitePath } from "#shared/utils/site-path";
 
 type SchemaType =
   | "WebPage"

@@ -1,4 +1,4 @@
-import { toStaticSitePath } from "../../shared/utils/site-path";
+import { toStaticSitePath } from "#shared/utils/site-path";
 
 const staticRoutes = ["/", "/about", "/consulting", "/experience", "/projects", "/blog"].flatMap((path) => [
   path,
