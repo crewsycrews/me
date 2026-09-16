@@ -6,9 +6,16 @@ const contactKeyboard = {
 };
 const prompts = {
   contact: 'Поделитесь своим номером телефона кнопкой «Поделиться контактом». Он нужен Данилу, чтобы связаться с вами по заявке.',
-  name: 'Как к вам обращаться?',
   request: 'Сформулируйте ваш запрос своими словами.',
 };
+
+function telegramName(user) {
+  return [user?.first_name, user?.last_name].filter(Boolean).join(' ').trim();
+}
+
+function senderName(sender) {
+  return telegramName(sender) || (sender.username ? `@${sender.username}` : `Telegram ID ${sender.id}`);
+}
 
 // Telegram's message limit is 4096. Split by code points so emoji remain intact.
 export function splitText(text, size = 3500) {
@@ -78,10 +85,17 @@ function handleMessage(store, update, { ownerChatId }) {
     return;
   }
   if (command?.[1] === 'help') {
-    say('Я Кассеопея, помощница Данила Родина. Соберу контакт, имя и описание задачи и передам заявку Данилу.\n/start — начать или продолжить\n/cancel — отменить заполнение\n/whoami — узнать свой Telegram ID');
+    say('Я Кассеопея, помощница Данила Родина. Соберу контакт и описание задачи и передам заявку Данилу.\n/start — начать или продолжить\n/cancel — отменить заполнение\n/whoami — узнать свой Telegram ID');
     return;
   }
   let session = store.getSession(chatId);
+  // Drafts saved by the old flow must ask for the request before accepting text.
+  if (session?.step === 'name') {
+    session.name = senderName(m.from);
+    session.step = 'request';
+    store.saveSession(chatId, session);
+    if (command?.[1] !== 'start') { ask(session); return; }
+  }
   if (command?.[1] === 'start') {
     const payload = command[2] || '';
     let attribution;
@@ -96,7 +110,7 @@ function handleMessage(store, update, { ownerChatId }) {
     session ??= { step: 'contact', attribution: { source: 'telegram_direct' } };
     if (attribution) session.attribution = attribution;
     store.saveSession(chatId, session);
-    say('Здравствуйте! Я Кассеопея, помощница Данила Родина. Помогу передать ему вашу заявку: попрошу контакт, имя и описание задачи.');
+    say('Здравствуйте! Я Кассеопея, помощница Данила Родина. Помогу передать ему вашу заявку: попрошу контакт и описание задачи.');
     ask(session);
     return;
   }
@@ -111,13 +125,7 @@ function handleMessage(store, update, { ownerChatId }) {
       return;
     }
     session.phone = m.contact.phone_number;
-    session.step = 'name';
-  } else if (session.step === 'name') {
-    if (!text || Array.from(text).length > 120) {
-      say('Напишите, как к вам обращаться, текстом — до 120 символов.');
-      return;
-    }
-    session.name = text;
+    session.name = telegramName(m.contact) || senderName(m.from);
     session.step = 'request';
   } else if (session.step === 'request') {
     if (!text || Array.from(text).length > 4000) {

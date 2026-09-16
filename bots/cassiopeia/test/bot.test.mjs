@@ -9,15 +9,17 @@ import { createTelegram, deliverPending } from '../src/telegram.mjs';
 
 const config = { ownerChatId: 999 };
 function update(id, message = {}, chatId = 42) {
-  return { update_id: id, message: { chat: { id: chatId, type: 'private' }, from: { id: chatId, username: 'client' }, ...message } };
+  return { update_id: id, message: { chat: { id: chatId, type: 'private' }, from: { id: chatId, username: 'client', first_name: 'Анна', last_name: 'Иванова' }, ...message } };
 }
 function rows(store, table) { return store.db.prepare(`SELECT * FROM ${table}`).all(); }
 function messages(store, chat = 42) { return rows(store, 'outbox').filter(r => r.chat_id === chat).map(r => JSON.parse(r.payload)); }
 function complete(store, startId = 1, payload = '') {
   processUpdate(store, update(startId, { text: `/start ${payload}`.trim() }), config);
-  processUpdate(store, update(startId + 1, { contact: { user_id: 42, phone_number: '+79991234567' } }), config);
-  processUpdate(store, update(startId + 2, { text: 'Анна <b> & Co' }), config);
-  processUpdate(store, update(startId + 3, { text: 'Нужен сайт 🪐' }), config);
+  processUpdate(store, update(startId + 1, { contact: { user_id: 42, phone_number: '+79991234567', first_name: 'Анна <b>', last_name: '& Co' } }), config);
+  assert.equal(store.getSession(42).step, 'request');
+  assert.equal(messages(store).at(-1).text, 'Сформулируйте ваш запрос своими словами.');
+  assert.deepEqual(messages(store).at(-1).reply_markup, { remove_keyboard: true });
+  processUpdate(store, update(startId + 2, { text: 'Нужен сайт 🪐' }), config);
 }
 
 test('full lead, attribution, exact questions, owner delivery and replay deduplication', t => {
@@ -29,14 +31,16 @@ test('full lead, attribution, exact questions, owner delivery and replay dedupli
   assert.deepEqual(lead.attribution, attribution);
   assert.equal(lead.phone, '+79991234567');
   assert.equal(lead.name, 'Анна <b> & Co');
-  assert.ok(messages(store).some(m => m.text === 'Как к вам обращаться?'));
+  assert.equal(lead.request, 'Нужен сайт 🪐');
+  assert.ok(messages(store).every(m => m.text !== 'Как к вам обращаться?'));
   assert.ok(messages(store).some(m => m.text === 'Сформулируйте ваш запрос своими словами.'));
   assert.ok(messages(store).some(m => m.reply_markup.keyboard?.[0][0].request_contact));
   assert.match(messages(store, 999)[0].text, /utm_custom: a&b/);
+  assert.match(messages(store, 999)[0].text, /Имя: Анна <b> & Co/);
   assert.equal(messages(store, 999)[0].parse_mode, undefined);
   assert.equal(store.getSession(42), null);
   const count = rows(store, 'outbox').length;
-  processUpdate(store, update(13, { text: 'Нужен сайт 🪐' }), config);
+  processUpdate(store, update(12, { text: 'Нужен сайт 🪐' }), config);
   assert.equal(rows(store, 'leads').length, 1);
   assert.equal(rows(store, 'outbox').length, count);
   complete(store, 14);
@@ -52,12 +56,48 @@ test('foreign contacts and media are rejected; /start resumes and /cancel clears
   }
   processUpdate(store, update(4, { contact: { user_id: 42, phone_number: '12345' } }), config);
   processUpdate(store, update(5, { photo: [{}] }), config);
-  assert.equal(store.getSession(42).step, 'name');
+  assert.equal(store.getSession(42).step, 'request');
   processUpdate(store, update(6, { text: '/start' }), config);
-  assert.equal(store.getSession(42).step, 'name');
+  assert.equal(store.getSession(42).step, 'request');
   processUpdate(store, update(7, { text: '/cancel' }), config);
   assert.equal(store.getSession(42), null);
   assert.equal(rows(store, 'leads').length, 0);
+});
+
+test('contact name is automatic, with profile fallback and optional last name', t => {
+  const store = new Store(); t.after(() => store.close());
+  const cases = [
+    [{ first_name: 'Мария' }, 'Мария'],
+    [{}, 'Анна Иванова'],
+  ];
+  let id = 1;
+  for (const [nameFields, expected] of cases) {
+    processUpdate(store, update(id++, { text: '/start' }), config);
+    processUpdate(store, update(id++, { contact: { user_id: 42, phone_number: '12345', ...nameFields } }), config);
+    assert.equal(store.getSession(42).name, expected);
+    assert.equal(store.getSession(42).step, 'request');
+    processUpdate(store, update(id++, { text: 'Запрос' }), config);
+    assert.equal(JSON.parse(rows(store, 'leads').at(-1).data).name, expected);
+  }
+});
+
+test('old name drafts advance safely without treating a name reply as the request', t => {
+  const store = new Store(); t.after(() => store.close());
+  let id = 1;
+  for (const text of ['Анна', '/start website']) {
+    store.saveSession(42, { step: 'name', phone: '12345', attribution: { source: 'telegram_direct' } });
+    processUpdate(store, update(id++, { text }), config);
+    assert.equal(store.getSession(42).step, 'request');
+    assert.equal(store.getSession(42).name, 'Анна Иванова');
+    assert.equal(store.getSession(42).phone, '12345');
+    assert.equal(messages(store).at(-1).text, 'Сформулируйте ваш запрос своими словами.');
+    const count = rows(store, 'leads').length;
+    processUpdate(store, update(id++, { text: 'Нужен сайт' }), config);
+    assert.equal(rows(store, 'leads').length, count + 1);
+    const lead = JSON.parse(rows(store, 'leads').at(-1).data);
+    assert.equal(lead.request, 'Нужен сайт');
+    assert.equal(lead.attribution.source, text.startsWith('/start') ? 'website' : 'telegram_direct');
+  }
 });
 
 test('plain /start preserves an attributed draft, explicit new link updates attribution', t => {
@@ -96,11 +136,11 @@ test('database restart preserves unfinished conversation, accepted lead, outbox 
   processUpdate(store, update(1, { text: '/start' }), config);
   processUpdate(store, update(2, { contact: { user_id: 42, phone_number: '12345' } }), config);
   store.close(); store = new Store(path);
-  assert.equal(store.getSession(42).step, 'name');
-  processUpdate(store, update(3, { text: 'Анна' }), config);
-  processUpdate(store, update(4, { text: 'Запрос' }), config);
+  assert.equal(store.getSession(42).step, 'request');
+  assert.equal(store.getSession(42).name, 'Анна Иванова');
+  processUpdate(store, update(3, { text: 'Запрос' }), config);
   store.close(); store = new Store(path); t.after(() => store.close());
-  assert.equal(store.offset, 5);
+  assert.equal(store.offset, 4);
   assert.equal(rows(store, 'leads').length, 1);
   assert.ok(messages(store, 999).length);
 });
