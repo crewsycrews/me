@@ -6,19 +6,6 @@
       "status": "sent",
       "messageId": 34,
       "imported": true
-    },
-    "2026-09-29-deltaplan": {
-      "status": "pending",
-      "operation": "send",
-      "attemptId": "b55ba368-0548-40a9-8f4e-34d13d4c2625",
-      "startedAt": "2026-09-29T11:59:05.472Z",
-      "hash": "4e7a3b2b9da3f815c261fdcf3168c93f3c286fdb68c42a59c1c522bf9d8995a3",
-      "photos": [
-        "https://danilrodin.ru/assets/images/blog/deltaplan/hang-glider.jpg",
-        "https://danilrodin.ru/assets/images/blog/deltaplan/terrain.jpg",
-        "https://danilrodin.ru/assets/images/blog/deltaplan/first-person.jpg",
-        "https://danilrodin.ru/assets/images/blog/deltaplan/pilots.jpg"
-      ]
     }
   }
 }
