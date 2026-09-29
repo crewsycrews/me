@@ -1,0 +1,45 @@
+name: Cassiopeia Deploy
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'bots/cassiopeia/**'
+      - 'public/lead-attribution.js'
+      - 'package.json'
+      - '.github/workflows/cassiopeia.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cassiopeia-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy-cassiopeia:
+    if: github.ref == 'refs/heads/master'
+    runs-on: [self-hosted, linux, x64, crews-main-msk]
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node for bot tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Test Cassiopeia without Telegram requests
+        run: npm run test:leads
+
+      - name: Update /opt/me and restart Cassiopeia on crews-main-msk
+        shell: bash
+        env:
+          DEPLOY_GITHUB_TOKEN: ${{ github.token }}
+        run: bash "$GITHUB_WORKSPACE/bots/cassiopeia/deploy/deploy.sh"

@@ -76,14 +76,17 @@ whoami - Мой Telegram ID
 
 ## Автодеплой при push в master
 
-В `.github/workflows/main.yml` задача `deploy-cassiopeia` при каждом push в `master`
-выполняется на self-hosted runner с метками `self-hosted`, `linux`, `x64`,
+В `.github/workflows/cassiopeia.yml` задача `deploy-cassiopeia` запускается при push
+в `master`, затрагивающем `bots/cassiopeia/**`, `public/lead-attribution.js`,
+`package.json` или сам workflow. Посты и остальные страницы сайта не запускают
+деплой бота. Задача выполняется на self-hosted runner с метками `self-hosted`, `linux`, `x64`,
 `crews-main-msk`. Runner установлен в `/opt/actions-runner` и работает под
 пользователем `github-runner`. Checkout и тесты выполняются в рабочем каталоге
 runner; [deploy/deploy.sh](deploy/deploy.sh) обновляет отдельный checkout `/opt/me`.
 Задача не зависит от публикации сайта и постов в Telegram, которые по-прежнему
-выполняются на GitHub-hosted runner. Push в `main` и `workflow_dispatch` сохраняют
-прежний сценарий сайта; бота можно повторно развернуть через Re-run jobs у push-запуска.
+выполняются на GitHub-hosted runner. У бота отдельная очередь `cassiopeia-deployment`.
+Для ручного повторного деплоя используйте **Actions → Cassiopeia Deploy → Run workflow**
+с веткой `master` или Re-run jobs у соответствующего запуска. Из `main` бот не деплоится.
 
 SSH secrets для деплоя не нужны. Для `git fetch` используется временный
 `GITHUB_TOKEN` задачи с `contents: read`: SSH-адрес origin преобразуется в HTTPS
@@ -286,6 +289,9 @@ docker compose -f /etc/cassiopeia/telegram-vpn.compose.yaml up -d
 ```
 
 Конвертер запросит VLESS-ссылку со скрытым вводом; готовый файл он не перезаписывает.
+Поддерживаются TCP/REALITY и gRPC/REALITY (`type=grpc`, `serviceName`, `alpn=h2`);
+XTLS Vision применяется только с TCP. Параметры gRPC описаны в
+[документации Xray](https://xtls.github.io/en/config/transports/grpc.html).
 Затем добавьте три proxy-переменные в `.env` бота и пересоздайте его:
 
 ```bash

@@ -39,8 +39,11 @@ Generated static files are written to `.output/public`.
 `https://t.me/casiq_cassiopeia_bot?start=website`.
 Личные ссылки на странице «Обо мне» и SEO-профиль остаются ссылками на Данила.
 Проверки без сборки и реальных отправок: `npm run test:leads` под Node.js 24.
-Push в `master` также запускает деплой бота self-hosted runner в `/opt/me` на `crews-main-msk`:
-обновление Git, сборку и пересоздание контейнера с ожиданием `healthy`.
+Отдельный workflow **Cassiopeia Deploy** запускает деплой бота на `crews-main-msk`
+при push в `master`, если изменились `bots/cassiopeia/**`, `public/lead-attribution.js`,
+`package.json` или сам `.github/workflows/cassiopeia.yml`. Изменение поста не
+перезапускает бота. Деплой обновляет `/opt/me`, собирает и пересоздаёт контейнер
+с ожиданием `healthy`. Его также можно запустить вручную из `master`.
 Настройка systemd-службы runner описана в инструкции бота, раздел «Автодеплой».
 
 ## Публикация в блог и Telegram
@@ -49,6 +52,12 @@ Push в `master` также запускает деплой бота self-hosted
 GitHub Actions собирает и публикует сайт, затем отправляет новые отмеченные
 статьи в `@casiq_the_dev`. Английские файлы из `content/en/` в Telegram не уходят.
 Обычные статьи без блока `telegram` публикуются только на сайте.
+Workflow **Site and Telegram Deploy** пропускает push, содержащий только изменения
+в `bots/cassiopeia/**` и `.github/workflows/cassiopeia.yml`; ручной запуск доступен
+независимо от фильтра файлов. У сайта и бота отдельные очереди деплоя.
+`npm ci` устанавливает готовый модуль `better-sqlite3` или собирает его при
+отсутствии подходящего бинарника. Перед генерацией проверяется открытие SQLite
+в памяти; повторная принудительная компиляция не запускается.
 
 ### Однократная настройка
 
@@ -155,7 +164,7 @@ telegram:
 Не переименовывайте slug опубликованной статьи без переноса записи в журнале.
 
 Обычные правки обновляют только сайт. Чтобы также обновить Telegram, запустите
-**Actions → Nuxt SSG Deploy → Run workflow** из `master`/`main` и заполните
+**Actions → Site and Telegram Deploy → Run workflow** из `master`/`main` и заполните
 `telegram_update` точным slug. Скрипт отредактирует существующее сообщение;
 остальные новые посты в таком запуске не отправляются. Пустое поле означает
 обычную публикацию новых записей.

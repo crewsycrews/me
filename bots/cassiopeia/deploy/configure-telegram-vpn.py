@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert a VLESS TCP/REALITY URI from hidden input to a Telegram-only Xray config."""
+"""Convert a VLESS TCP or gRPC/REALITY URI to a Telegram-only Xray config."""
 
 import argparse
 import base64
@@ -29,11 +29,14 @@ def make_config(uri):
     port = parsed.port or 443
     if not 1 <= port <= 65535:
         raise ValueError('Invalid VLESS port')
-    if field('type', 'tcp') != 'tcp' or field('security') != 'reality' or field('encryption', 'none') != 'none':
-        raise ValueError('Only VLESS TCP/REALITY without additional encryption is supported')
+    transport = field('type', 'tcp')
+    if transport not in ('tcp', 'grpc') or field('security') != 'reality' or field('encryption', 'none') != 'none':
+        raise ValueError('Only VLESS TCP or gRPC/REALITY without additional encryption is supported')
     flow = field('flow', '')
     if flow not in ('', 'xtls-rprx-vision'):
         raise ValueError('Unsupported VLESS flow')
+    if transport == 'grpc' and flow:
+        raise ValueError('XTLS flow is not supported with gRPC')
     public_key = field('pbk')
     if not re.fullmatch(r'[A-Za-z0-9_-]{43}', public_key) or len(base64.urlsafe_b64decode(public_key + '=')) != 32:
         raise ValueError('Invalid REALITY public key')
@@ -46,6 +49,20 @@ def make_config(uri):
     fingerprint = field('fp', 'chrome')
     if fingerprint not in ('chrome', 'firefox', 'safari', 'ios', 'android', 'edge', '360', 'qq', 'random', 'randomized'):
         raise ValueError('Unsupported REALITY fingerprint')
+
+    grpc_settings = {}
+    if transport == 'grpc':
+        if field('alpn', 'h2') != 'h2':
+            raise ValueError('gRPC requires HTTP/2')
+        mode = field('mode', 'gun')
+        if mode not in ('gun', 'multi'):
+            raise ValueError('Unsupported gRPC mode')
+        grpc_settings = {'grpcSettings': {
+            'serviceName': field('serviceName', ''), 'multiMode': mode == 'multi',
+        }}
+        authority = field('authority', '')
+        if authority:
+            grpc_settings['grpcSettings']['authority'] = authority
 
     return {
         'log': {'access': 'none', 'loglevel': 'warning'},
@@ -63,7 +80,8 @@ def make_config(uri):
                     'users': [{'id': identifier, 'encryption': 'none', 'flow': flow}],
                 }]},
                 'streamSettings': {
-                    'network': 'tcp', 'security': 'reality',
+                    'network': transport, 'security': 'reality',
+                    **grpc_settings,
                     'realitySettings': {
                         'show': False, 'serverName': server_name,
                         'fingerprint': fingerprint, 'password': public_key,
@@ -92,7 +110,7 @@ def main():
         config = make_config(uri)
     except (ValueError, TypeError):
         # Parsing errors must never echo credentials from the input URI.
-        print('Invalid or unsupported VLESS TCP/REALITY URI.', file=sys.stderr)
+        print('Invalid or unsupported VLESS TCP or gRPC/REALITY URI.', file=sys.stderr)
         return 1
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
