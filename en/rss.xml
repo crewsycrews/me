@@ -7,6 +7,28 @@
     <language>en</language>
     <atom:link href="https://danilrodin.ru/en/rss.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Hang gliding with thegriglat</title>
+      <link>https://danilrodin.ru/en/blog/2026-09-29-deltaplan</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2026-09-29-deltaplan</guid>
+      <pubDate>Tue, 29 Sep 2026 00:00:00 GMT</pubDate>
+      <description>I played my friend Grisha&apos;s Deltaplan: real mountains, flights over the Altai, and a bit of air physics.</description>
+      <yandex:full-text>I played Deltaplan, a game by my friend Grisha — thegriglat. It&apos;s a hang gliding simulator: mountains, clouds, tiny figures of other pilots somewhere overhead. Beautiful! 🪂
+
+
+
+One particularly cool detail: the terrain is built from real elevation maps. The vegetation comes from mapping data too. So the mountains you&apos;re flying over actually exist.
+
+
+
+Grisha also spends his nights working on air physics. Right now, wind and updrafts in the game are calculated using separate formulas. He&apos;s working on a unified simulation of how air flows around mountains, warms up along the slopes, and rises. Complete with conservation of mass and heat, and checks against actual terrain in the Altai. These are the game development updates I get from my friend. 🤝
+
+
+
+
+
+You can watch me fly here. And follow the game link above to try it yourself.</yandex:full-text>
+    </item>
+    <item>
       <title>Ten years with VS Code</title>
       <link>https://danilrodin.ru/en/blog/2026-09-10-vscode-documentary</link>
       <guid isPermaLink="true">https://danilrodin.ru/en/blog/2026-09-10-vscode-documentary</guid>

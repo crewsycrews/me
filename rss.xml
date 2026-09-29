@@ -7,6 +7,28 @@
     <language>ru</language>
     <atom:link href="https://danilrodin.ru/rss.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Полёты на дельтаплане от thegriglat</title>
+      <link>https://danilrodin.ru/blog/2026-09-29-deltaplan</link>
+      <guid isPermaLink="true">https://danilrodin.ru/blog/2026-09-29-deltaplan</guid>
+      <pubDate>Tue, 29 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Поиграл в Deltaplan моего друга Гриши: реальные горы, полёты над Алтаем и немного физики воздуха.</description>
+      <yandex:full-text>Поиграл в Deltaplan моего друга Гриши — thegriglat. Симулятор полётов на дельтаплане: горы, облака, маленькие фигурки других пилотов где-то над головой. Красиво! 🪂
+
+
+
+Отдельно здорово, что рельеф здесь построен на реальных картах высот. Растительность тоже берётся из картографических данных. То есть горы, над которыми летаешь, действительно существуют.
+
+
+
+А ещё Гриша по ночам занимается физикой воздуха. Сейчас ветер и восходящие потоки в игре считаются отдельными формулами, а он работает над общей симуляцией: как воздух обтекает горы, нагревается у склонов и поднимается вверх. С сохранением массы и тепла и проверками на настоящем рельефе Алтая. Вот такие новости разработки игры прилетают мне от друга. 🤝
+
+
+
+
+
+Здесь можно посмотреть, как я летаю. А по ссылке выше — попробовать самому.</yandex:full-text>
+    </item>
+    <item>
       <title>Десять лет с VS Code</title>
       <link>https://danilrodin.ru/blog/2026-09-10-vscode-documentary</link>
       <guid isPermaLink="true">https://danilrodin.ru/blog/2026-09-10-vscode-documentary</guid>
