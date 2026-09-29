@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { join, dirname, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { channel, hash, makeMessage, readPosts, validSlug } from "./telegram/content.mjs";
+import { channel, hash, makeMessage, makePublication, readPosts, validSlug } from "./telegram/content.mjs";
 import { openGitState } from "./telegram/state.mjs";
 import { entryFor, publishPost, resolvePending, waitForPage } from "./telegram/publisher.mjs";
 
@@ -14,6 +14,7 @@ const usage = `Публикация блога в ${channel}:
   npm run telegram -- update slug          Явно обновить существующее сообщение
   npm run telegram -- status               Прочитать удалённый журнал отправок
   npm run telegram -- resolve slug --message-id 123
+  npm run telegram -- resolve slug --message-ids 124,125,126
   npm run telegram -- resolve slug --not-sent
 
 resolve используется только после ручной сверки канала. Команды publish/update
@@ -30,13 +31,15 @@ async function main() {
   if (command === "update" && args.length !== 1) throw new Error(usage);
   if (command === "resolve" && !(
     (args.length === 2 && args[1] === "--not-sent") ||
-    (args.length === 3 && args[1] === "--message-id" && /^[1-9]\d*$/.test(args[2]))
+    (args.length === 3 && args[1] === "--message-id" && /^[1-9]\d*$/.test(args[2])) ||
+    (args.length === 3 && args[1] === "--message-ids" && /^[1-9]\d*(,[1-9]\d*)*$/.test(args[2]))
   )) throw new Error(usage);
 
   if (command === "status" || command === "resolve") {
     const store = openGitState(root);
     if (command === "status") return console.log(JSON.stringify(store.state, null, 2));
-    await resolvePending(store, args[0], args[1] === "--message-id" ? Number(args[2]) : undefined);
+    await resolvePending(store, args[0], args[1] === "--message-ids" ? args[2].split(",").map(Number)
+      : args[1] === "--message-id" ? Number(args[2]) : undefined);
     console.log(`${args[0]}: журнал исправлен; сообщения не отправлялись.`);
     return;
   }
@@ -47,12 +50,13 @@ async function main() {
 
   if (command === "preview") {
     for (const post of selected) {
-      const payload = await makeMessage(post);
+      const { message: payload, photos } = await makePublication(post);
       console.log(`${post.slug} → ${channel} (${payload.text.length}/4096)${post.telegram.message_id ? `; уже опубликован: ${post.telegram.message_id}` : ""}\n\n${payload.text}\n`);
       const links = payload.entities.filter((entity) => entity.type === "text_link");
       if (links.length) console.log("Ссылки в тексте:\n" + links.map((entity) =>
         `${payload.text.slice(entity.offset, entity.offset + entity.length)} → ${entity.url}`,
       ).join("\n") + "\n");
+      if (photos.length) console.log(`${photos.length === 1 ? "Фото" : "Альбом"} после текста (${photos.length}):\n${photos.join("\n")}\n`);
     }
     if (!selected.length) console.log("Нет записей с telegram.publish: true.");
     return;
@@ -62,9 +66,20 @@ async function main() {
     const manifest = { version: 1, posts: {} };
     for (const post of posts.filter((post) => post.telegram)) {
       // Validate enabled outgoing messages before the site's deploy step.
-      if (post.telegram.publish) await makeMessage(post);
+      const publication = post.telegram.publish ? await makePublication(post) : undefined;
+      const photos = [];
+      for (const url of publication?.photos || []) {
+        const imageUrl = new URL(url);
+        if (imageUrl.origin !== new URL(post.url).origin) continue;
+        const publicDir = resolve(root, ".output/public");
+        const path = resolve(publicDir, `.${decodeURIComponent(imageUrl.pathname)}`);
+        if (relative(publicDir, path).startsWith("..")) throw new Error(`${post.slug}: неверный путь фото.`);
+        const image = await readFile(path);
+        if (!image.length) throw new Error(`${post.slug}: пустой файл фото.`);
+        photos.push({ url, hash: hash(image) });
+      }
       const html = await readFile(join(root, ".output/public/blog", post.slug, "index.html"));
-      manifest.posts[post.slug] = { sourceHash: post.sourceHash, htmlHash: hash(html) };
+      manifest.posts[post.slug] = { sourceHash: post.sourceHash, htmlHash: hash(html), photos };
     }
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
     console.log(`Подготовлено страниц: ${Object.keys(manifest.posts).length}. Отправки не было.`);
@@ -94,13 +109,25 @@ async function main() {
   // result in a half-published batch caused by a predictable formatting error.
   for (const post of candidates) {
     if (entryFor(store.state, post)?.status === "pending") throw new Error(`${post.slug}: нужна сверка канала и команда resolve.`);
-    await makeMessage(post);
+    if (update) await makeMessage(post, { imageLinks: !entryFor(store.state, post)?.photos });
+    else {
+      const publication = await makePublication(post);
+      if (publication.photos.some((url) => new URL(url).origin === new URL(post.url).origin &&
+          !manifest.posts?.[post.slug]?.photos?.some((image) => image.url === url))) {
+        throw new Error(`${post.slug}: фото отсутствуют в prepare. Пересоберите сайт.`);
+      }
+    }
     if (manifest.posts?.[post.slug]?.sourceHash !== post.sourceHash) throw new Error(`${post.slug}: исходник изменился после prepare. Пересоберите сайт.`);
   }
   for (const post of candidates) {
     const result = await publishPost({
       post, store, update, token: process.env.TELEGRAM_BOT_TOKEN,
-      wait: () => waitForPage(post, manifest.posts[post.slug].htmlHash),
+      wait: async () => {
+        await waitForPage(post, manifest.posts[post.slug].htmlHash);
+        if (!update) for (const image of manifest.posts[post.slug].photos || []) {
+          await waitForPage({ ...post, url: image.url }, image.hash);
+        }
+      },
     });
     console.log(`${post.slug}: ${result}`);
   }

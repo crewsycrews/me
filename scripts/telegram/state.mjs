@@ -9,8 +9,16 @@ export function validateState(state) {
     throw new Error("Некорректный журнал telegram-state/state.json. Автоматическая отправка остановлена.");
   }
   for (const entry of Object.values(state.posts)) {
-    if (!["sent", "pending"].includes(entry?.status) ||
-        (entry.status === "sent" && (!Number.isSafeInteger(entry.messageId) || entry.messageId < 1))) {
+    if (!["sent", "pending", "partial"].includes(entry?.status) ||
+        (["sent", "partial"].includes(entry.status) && (!Number.isSafeInteger(entry.messageId) || entry.messageId < 1)) ||
+        (entry.photos !== undefined && (!Array.isArray(entry.photos) || entry.photos.length > 10 ||
+          entry.photos.some((url) => typeof url !== "string" || !/^https?:\/\//.test(url)))) ||
+        (entry.status === "partial" && !entry.photos?.length) ||
+        (entry.operation === "media" && (entry.previous?.status !== "partial" || !entry.previous?.photos?.length)) ||
+        (entry.mediaMessageIds !== undefined && (!Array.isArray(entry.mediaMessageIds) ||
+          entry.mediaMessageIds.length !== entry.photos?.length ||
+          entry.mediaMessageIds.some((id) => !Number.isSafeInteger(id) || id < 1) ||
+          new Set(entry.mediaMessageIds).size !== entry.mediaMessageIds.length))) {
       throw new Error("Повреждённая запись в журнале Telegram.");
     }
   }

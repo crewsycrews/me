@@ -6,8 +6,8 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { parseMarkdown } from "@nuxtjs/mdc/runtime";
-import { channel, hash, makeMessage, readPosts } from "./content.mjs";
-import { openGitState } from "./state.mjs";
+import { channel, hash, makeMessage, makePublication, readPosts } from "./content.mjs";
+import { openGitState, validateState } from "./state.mjs";
 import { publishPost, resolvePending, telegramRequest, waitForPage } from "./publisher.mjs";
 
 async function post(markdown = "Текст **заметки**.", telegram = { publish: true, mode: "full" }) {
@@ -19,7 +19,7 @@ function memoryStore() {
   let durable = { version: 1, channel, posts: {} };
   return {
     state: structuredClone(durable),
-    async save(next) { durable = structuredClone(next); },
+    async save(next) { durable = structuredClone(validateState(next)); },
     reload() { this.state = structuredClone(durable); return this; },
   };
 }
@@ -229,4 +229,170 @@ test("CLI preview, prepare and existing-post import work together without a toke
   assert.throws(() => cli("publish"), (error) => error.stderr.includes("Пересоберите сайт"));
   assert.equal(JSON.parse(cli("status")).posts["new-post"], undefined);
   assert.throws(() => cli("update", "../../outside"), (error) => error.stderr.includes("Нужен slug"));
+
+  const photoSource = source.replace("  message_id: 34\n", "") + '\n\n![One](/assets/one.jpg)\n\n![Two](/assets/two.jpg)';
+  await writeFile(join(repo, "content/new-post.md"), photoSource);
+  await mkdir(join(repo, ".output/public/blog/new-post"), { recursive: true });
+  await writeFile(join(repo, ".output/public/blog/new-post/index.html"), "<article>Photo post</article>");
+  assert.match(cli("preview", "new-post"), /Альбом после текста \(2\)/);
+  assert.throws(() => cli("prepare"), (error) => error.stderr.includes("one.jpg"));
+  await mkdir(join(repo, ".output/public/assets"), { recursive: true });
+  await writeFile(join(repo, ".output/public/assets/one.jpg"), "photo-one");
+  await writeFile(join(repo, ".output/public/assets/two.jpg"), "photo-two");
+  cli("prepare");
+  const photoManifest = JSON.parse(await readFile(join(repo, ".output/telegram-manifest.json"), "utf8"));
+  assert.deepEqual(photoManifest.posts["new-post"].photos, [
+    { url: "https://example.com/assets/one.jpg", hash: hash("photo-one") },
+    { url: "https://example.com/assets/two.jpg", hash: hash("photo-two") },
+  ]);
+  const journal = openGitState(repo);
+  journal.state.posts["new-post"] = {
+    status: "pending", operation: "media", previous: {
+      status: "partial", messageId: 100, photos: photoManifest.posts["new-post"].photos.map((photo) => photo.url),
+    },
+  };
+  await journal.save(journal.state);
+  assert.match(cli("resolve", "new-post", "--message-ids", "101,102"), /журнал исправлен/);
+  assert.deepEqual(JSON.parse(cli("status")).posts["new-post"].mediaMessageIds, [101, 102]);
+});
+
+
+test("publication extracts ordered unique photos, keeps formatting, and enforces album limits", async () => {
+  const p = await post("Before **bold**.\n\n![First](/one.jpg)\n\n![Second](/two.png)\n\n![Repeated](/one.jpg)\n\nAfter.");
+  const { message, photos } = await makePublication(p);
+  assert.deepEqual(photos, ["https://example.com/one.jpg", "https://example.com/two.png"]);
+  assert.doesNotMatch(message.text, /📷|First|Second|Repeated/);
+  assert.match(message.text, /Before bold\.\n\nAfter\./);
+  const bold = message.entities.find((e) => e.type === "bold" && e.offset > 0);
+  assert.equal(message.text.slice(bold.offset, bold.offset + bold.length), "bold");
+  const many = Array.from({ length: 11 }, (_, i) => `![Photo](/${i}.jpg)`).join("\n\n");
+  assert.equal((await makePublication(await post("Text\n\n" + many.split("\n\n").slice(0, 10).join("\n\n")))).photos.length, 10);
+  await assert.rejects(makePublication(await post(many)), /максимум 10/);
+  await assert.rejects(makePublication(await post("Text\n\n![Photo](file:///secret.jpg)")), /HTTP/);
+  p.telegram = { publish: true, mode: "teaser", text: "Short.\n\n![Teaser](/teaser.jpg)" };
+  assert.deepEqual((await makePublication(p)).photos, ["https://example.com/teaser.jpg"]);
+});
+
+test("album follows text with durable reservations, retains all IDs, and never reposts on rerun or update", async () => {
+  const p = await post("Text\n\n![One](/one.jpg)\n\n![Two](/two.jpg)");
+  const store = memoryStore();
+  const calls = [];
+  const options = { post: p, store, token: "test", wait: async () => {}, request: async (method, payload) => {
+    calls.push(method);
+    assert.equal(store.reload().state.posts[p.slug].status, "pending");
+    if (method === "sendMediaGroup") {
+      assert.equal(payload.reply_parameters.message_id, 100);
+      assert.deepEqual(payload.media, [
+        { type: "photo", media: "https://example.com/one.jpg" },
+        { type: "photo", media: "https://example.com/two.jpg" },
+      ]);
+      assert.equal(store.state.posts[p.slug].previous.status, "partial");
+      return [{ message_id: 101 }, { message_id: 102 }];
+    }
+    assert.doesNotMatch(payload.text, /📷/);
+    return { message_id: 100 };
+  } };
+  await publishPost(options);
+  assert.deepEqual(calls, ["sendMessage", "sendMediaGroup"]);
+  assert.deepEqual(store.reload().state.posts[p.slug].mediaMessageIds, [101, 102]);
+  assert.equal(await publishPost(options), "already published");
+  p.data.title = "Changed title";
+  await publishPost({ ...options, update: true });
+  assert.deepEqual(calls, ["sendMessage", "sendMediaGroup", "editMessageText"]);
+  assert.deepEqual(store.reload().state.posts[p.slug].mediaMessageIds, [101, 102]);
+});
+
+test("single photo rejection resumes only the photo and rejects changed partial publications", async () => {
+  const p = await post("Text\n\n![One](/one.jpg)");
+  const store = memoryStore();
+  const calls = [];
+  let reject = true;
+  const options = { post: p, store, token: "test", wait: async () => {}, request: async (method, payload) => {
+    calls.push(method);
+    if (method === "sendPhoto") {
+      assert.equal(payload.photo, "https://example.com/one.jpg");
+      if (reject) throw Object.assign(new Error("rejected"), { rejected: true });
+    }
+    return { message_id: method === "sendMessage" ? 100 : 101 };
+  } };
+  await assert.rejects(publishPost(options), /rejected/);
+  assert.equal(store.reload().state.posts[p.slug].status, "partial");
+  p.data.title = "Changed";
+  await assert.rejects(publishPost(options), /изменилась/);
+  p.data.title = "Заметка 👋";
+  reject = false;
+  await publishPost(options);
+  assert.deepEqual(calls, ["sendMessage", "sendPhoto", "sendPhoto"]);
+  assert.deepEqual(store.reload().state.posts[p.slug].mediaMessageIds, [101]);
+});
+
+test("ambiguous album result blocks retries; reconciliation requires every photo ID", async () => {
+  const p = await post("Text\n\n![One](/one.jpg)\n\n![Two](/two.jpg)");
+  const store = memoryStore();
+  let calls = 0;
+  const options = { post: p, store, token: "test", wait: async () => {}, request: async (method) => {
+    calls++;
+    if (method === "sendMessage") return { message_id: 100 };
+    throw new Error("timeout");
+  } };
+  await assert.rejects(publishPost(options), /timeout/);
+  store.reload();
+  await assert.rejects(publishPost(options), /незавершённая/);
+  await assert.rejects(resolvePending(store, p.slug, 101), /все ID/);
+  await assert.rejects(resolvePending(store, p.slug, [101]), /все ID/);
+  await assert.rejects(resolvePending(store, p.slug, [101, 101]), /все ID/);
+  await resolvePending(store, p.slug, [101, 102]);
+  assert.equal(await publishPost(options), "already published");
+  assert.equal(calls, 2);
+  assert.equal(store.reload().state.posts[p.slug].messageId, 100);
+});
+
+test("media --not-sent restores partial state and text reconciliation retains planned photos", async () => {
+  const p = await post("Text\n\n![One](/one.jpg)");
+  const store = memoryStore();
+  const options = { post: p, store, token: "test", wait: async () => {}, request: async () => { throw new Error("timeout"); } };
+  await assert.rejects(publishPost(options), /timeout/);
+  await resolvePending(store, p.slug, 100);
+  assert.equal(store.reload().state.posts[p.slug].status, "partial");
+  await assert.rejects(publishPost(options), /timeout/);
+  await resolvePending(store, p.slug);
+  assert.equal(store.reload().state.posts[p.slug].status, "partial");
+  await publishPost({ ...options, request: async (method) => {
+    assert.equal(method, "sendPhoto"); return { message_id: 101 };
+  } });
+  assert.equal(store.reload().state.posts[p.slug].status, "sent");
+});
+
+test("failed album journal writes never repeat text or automatically repeat uncertain media", async () => {
+  const p = await post("Text\n\n![One](/one.jpg)");
+  for (const failAt of [2, 3, 4]) {
+    const store = memoryStore();
+    const save = store.save.bind(store);
+    let saves = 0;
+    store.save = async (state) => { if (++saves === failAt) throw new Error("offline"); await save(state); };
+    const calls = [];
+    const options = { post: p, store, token: "test", wait: async () => {}, request: async (method) => {
+      calls.push(method); return { message_id: method === "sendMessage" ? 100 : 101 };
+    } };
+    await assert.rejects(publishPost(options), failAt === 2 ? /message-id 100/ : failAt === 4 ? /message-ids 101/ : /offline/);
+    const entry = store.reload().state.posts[p.slug];
+    if (failAt === 2) await resolvePending(store, p.slug, 100);
+    if (failAt === 4) {
+      assert.equal(entry.operation, "media");
+      await assert.rejects(publishPost(options), /незавершённая/);
+      await resolvePending(store, p.slug, [101]);
+    }
+    await publishPost(options);
+    assert.deepEqual(calls, ["sendMessage", "sendPhoto"]);
+  }
+});
+
+test("API validates album arrays, missing IDs and incomplete responses", async () => {
+  const payload = { media: [{ type: "photo", media: "https://example.com/one.jpg" }, { type: "photo", media: "https://example.com/two.jpg" }] };
+  const reply = (result) => async () => new Response(JSON.stringify({ ok: true, result }));
+  const messages = [{ message_id: 101 }, { message_id: 102 }];
+  assert.deepEqual(await telegramRequest("sendMediaGroup", payload, "secret", reply(messages)), messages);
+  for (const bad of [null, messages[0], [messages[0]], [{ message_id: 101 }, {}], [messages[0], messages[0]]]) {
+    await assert.rejects(telegramRequest("sendMediaGroup", payload, "secret", reply(bad)), /сверка/);
+  }
 });

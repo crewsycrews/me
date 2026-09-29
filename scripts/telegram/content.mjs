@@ -41,7 +41,7 @@ export async function readPosts(root) {
 
 // Use Telegram entities instead of MarkdownV2 escaping. Offsets are UTF-16,
 // matching JavaScript string indices and the Bot API (including emoji).
-export function renderBody(body, baseUrl) {
+export function renderBody(body, baseUrl, { imageLinks = true } = {}) {
   let text = "";
   let entities = [];
   const append = (value) => { text += value; };
@@ -70,7 +70,9 @@ export function renderBody(body, baseUrl) {
       return mark(({ strong: "bold", b: "bold", em: "italic", i: "italic", del: "strikethrough", s: "strikethrough" })[tag], children);
     }
     if (tag === "a") return mark("text_link", children, { url: link(node.props.href) });
-    if (tag === "img") return mark("text_link", () => append(`📷 ${node.props.alt || "Изображение"}`), { url: link(node.props.src) });
+    if (tag === "img") return imageLinks
+      ? mark("text_link", () => append(`📷 ${node.props.alt || "Изображение"}`), { url: link(node.props.src) })
+      : undefined;
     if (tag === "code") return mark("code", children);
     if (tag === "pre") {
       mark("pre", () => append(node.props.code || ""), { language: node.props.language || "" });
@@ -101,14 +103,14 @@ export function renderBody(body, baseUrl) {
   return { text, entities };
 }
 
-export async function makeMessage(post) {
+export async function makeMessage(post, options) {
   if (!post.telegram) throw new Error(`${post.slug}: нет настроек telegram.`);
   const title = post.data.title;
   if (typeof title !== "string" || !title.trim()) throw new Error(`${post.slug}: нужен title.`);
   const body = post.telegram.mode === "teaser"
     ? (await parseMarkdown(post.telegram.text, { highlight: false })).body
     : post.body;
-  const rendered = renderBody(body, post.url);
+  const rendered = renderBody(body, post.url, options);
   if (!rendered.text) throw new Error(`${post.slug}: пустой текст.`);
   const prefix = `${title}\n\n`;
   const text = `${prefix}${rendered.text}\n\nЧитать в блоге: ${post.url}`;
@@ -125,4 +127,25 @@ export async function makeMessage(post) {
     ],
     link_preview_options: { is_disabled: true },
   };
+}
+
+export async function makePublication(post) {
+  const photos = [];
+  const collect = (node) => {
+    if (node.tag === "img") {
+      const url = new URL(node.props.src, post.url);
+      if (!["https:", "http:"].includes(url.protocol) || url.username || url.password) {
+        throw new Error(`${post.slug}: для фото нужен публичный HTTP(S) URL.`);
+      }
+      if (!photos.includes(url.href)) photos.push(url.href);
+    }
+    (node.children || []).forEach(collect);
+  };
+  // In teaser mode the author controls both the text and images of the announcement.
+  const body = post.telegram?.mode === "teaser"
+    ? (await parseMarkdown(post.telegram.text, { highlight: false })).body
+    : post.body;
+  collect(body);
+  if (photos.length > 10) throw new Error(`${post.slug}: в одном альбоме максимум 10 фото. Подготовьте teaser с нужными изображениями.`);
+  return { message: await makeMessage(post, { imageLinks: false }), photos };
 }

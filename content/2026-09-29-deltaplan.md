@@ -2,6 +2,9 @@
 title: "Полёты на дельтаплане от thegriglat"
 date: 2026-09-29
 description: "Поиграл в Deltaplan моего друга Гриши: реальные горы, полёты над Алтаем и немного физики воздуха."
+telegram:
+  publish: true
+  mode: full
 ---
 
 Поиграл в [Deltaplan](https://thegriglat.itch.io/deltaplan) моего друга Гриши — thegriglat. Симулятор полётов на дельтаплане: горы, облака, маленькие фигурки других пилотов где-то над головой. Красиво! 🪂
