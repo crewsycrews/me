@@ -4,10 +4,10 @@ definePageMeta({ alias: ["/en/projects"] });
 const { locale, isRussian } = useSiteLocale();
 
 usePageSeo({
-  title: isRussian.value ? "Проекты | Данил Родин" : "Projects | Danil Rodin",
+  title: isRussian.value ? "Hobby-проекты | Данил Родин" : "Hobby projects | Danil Rodin",
   description: isRussian.value
-    ? "Проекты и эксперименты Данила Родина: веб-разработка, инструменты и интерактивные демо."
-    : "Projects and experiments by Danil Rodin, including web development tools and interactive demos.",
+    ? "Личные hobby-проекты Данила Родина: игры, инструменты и эксперименты, которыми он занимается в свободное время."
+    : "Personal hobby projects by Danil Rodin: games, tools and experiments developed in his spare time.",
   locale: locale.value,
   path: "/projects",
   schemaType: "CollectionPage",
@@ -20,8 +20,13 @@ usePageSeo({
 
 <template>
   <section class="mx-auto w-full max-w-5xl px-4 pb-10">
-    <div class="mt-4 flex justify-center">
-      <h1 class="w-full text-center text-xl">{{ isRussian ? "Мои проекты" : "My projects" }}</h1>
+    <div class="mt-4 flex flex-col items-center gap-3 text-center">
+      <h1 class="w-full text-xl">{{ isRussian ? "Мои hobby-проекты" : "My hobby projects" }}</h1>
+      <p class="max-w-xl text-sm leading-relaxed text-white/60">
+        {{ isRussian
+          ? "Игры, инструменты и эксперименты, которыми я занимаюсь в свободное время."
+          : "Games, tools and experiments I work on in my spare time." }}
+      </p>
     </div>
 
     <div class="mt-6 grid gap-6 md:grid-cols-2">
