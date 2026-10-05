@@ -73,9 +73,9 @@ test('direct campaign links preserve all UTM and reject malformed or excessive a
   assert.throws(() => parseAttribution(new URL('https://example.com/go?utm_source=' + 'a'.repeat(5000))));
 });
 
-test('HTTP redirect stores attribution before handing a short payload to Telegram', async t => {
+test('HTTP redirect stores attribution before handing a short payload to MAX', async t => {
   const store = new Store();
-  const server = createHttpServer({ store, botUsername: 'example_bot', ownerChatId: 999, health: () => true });
+  const server = createHttpServer({ store, botUsername: 'example_bot', ownerUserId: 999, health: () => true });
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
   t.after(async () => { await new Promise(resolve => server.close(resolve)); store.close(); });
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -83,7 +83,7 @@ test('HTTP redirect stores attribution before handing a short payload to Telegra
   assert.equal(result.status, 302);
   assert.equal(result.headers.get('referrer-policy'), 'no-referrer');
   const target = new URL(result.headers.get('location'));
-  assert.equal(target.origin, 'https://t.me');
+  assert.equal(target.origin, 'https://max.ru');
   assert.equal(target.pathname, '/example_bot');
   const token = target.searchParams.get('start');
   assert.match(token, /^web_[A-Za-z0-9_-]{24}$/);

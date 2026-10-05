@@ -3,6 +3,8 @@ export function useLeadContact() {
   const endpoint = config.leadBotUrl;
   return {
     leadEndpoint: endpoint,
-    leadHref: endpoint || `https://t.me/${config.leadBotUsername}?start=website`,
+    leadHref: endpoint || (config.leadBotUsername
+      ? `https://max.ru/${config.leadBotUsername}?start=website`
+      : 'https://cassey.danilrodin.ru/go'),
   };
 }

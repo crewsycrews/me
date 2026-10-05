@@ -16,7 +16,7 @@ const copy = computed(() =>
         heading: "Помогу запустить продукт и наладить ИТ вашего бизнеса",
         intro:
           "Нужно запустить сервис, связать несколько систем или разобраться, почему приложение и сеть работают нестабильно? Я разрабатывал продукты с нуля, руководил командами и обслуживал серверы. Помогу выбрать решение и довести его до работающего результата.",
-        cta: "Обсудить задачу в Telegram",
+        cta: "Обсудить задачу в MAX",
         secondary: "Посмотреть, чем я могу помочь ↓",
         note: "Сначала мой дружелюбный бот Кэйси попросит вас поделиться контактом и описать проблему своими словами — техническое задание не обязательно.",
         servicesTitle: "С чем ко мне можно обратиться",
@@ -123,7 +123,7 @@ const copy = computed(() =>
         heading: "Helping you launch products and get your business IT in order",
         intro:
           "Need to launch a service, connect several systems or understand why your application and network are unreliable? I have built products from scratch, led teams and maintained servers. I can help choose a solution and deliver it.",
-        cta: "Discuss your task on Telegram",
+        cta: "Discuss your task on MAX",
         secondary: "See how I can help ↓",
         note: "First, my friendly bot Casey will ask you to share your contact details and describe the problem in your own words. You do not need a technical specification.",
         servicesTitle: "What I can help with",

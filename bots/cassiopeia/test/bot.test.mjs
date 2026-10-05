@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync } from 'node:fs';
@@ -5,11 +6,24 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Store } from '../src/store.mjs';
 import { processUpdate, splitText } from '../src/bot.mjs';
-import { createTelegram, deliverPending } from '../src/telegram.mjs';
+import { createMax, deliverPending } from '../src/max.mjs';
 
-const config = { ownerChatId: 999 };
+const config = { ownerUserId: 999, botToken: 'test-secret' };
 function update(id, message = {}, chatId = 42) {
-  return { update_id: id, message: { chat: { id: chatId, type: 'private' }, from: { id: chatId, username: 'client', first_name: 'Анна', last_name: 'Иванова' }, ...message } };
+  const sender = { user_id: chatId, username: 'client', name: 'Анна Иванова', is_bot: false };
+  const contact = message.contact;
+  let attachments = [];
+  if (contact) {
+    const vcf = `BEGIN:VCARD\r\nVERSION:3.0\r\nTEL;TYPE=cell:${contact.phone_number}\r\nEND:VCARD\r\n`;
+    attachments = [{ type: 'contact', payload: { vcf_info: vcf,
+      max_info: { user_id: contact.user_id },
+      hash: contact.user_id ? createHmac('sha256', config.botToken).update(vcf).digest('hex') : undefined,
+    } }];
+  }
+  return { update_type: 'message_created', timestamp: id, message: {
+    sender, recipient: { chat_type: message.chat?.type === 'group' ? 'chat' : 'dialog', chat_id: chatId + 100 },
+    body: { mid: `mid-${id}`, text: message.text || '', attachments },
+  } };
 }
 function rows(store, table) { return store.db.prepare(`SELECT * FROM ${table}`).all(); }
 function messages(store, chat = 42) { return rows(store, 'outbox').filter(r => r.chat_id === chat).map(r => JSON.parse(r.payload)); }
@@ -18,7 +32,7 @@ function complete(store, startId = 1, payload = '') {
   processUpdate(store, update(startId + 1, { contact: { user_id: 42, phone_number: '+79991234567', first_name: 'Анна <b>', last_name: '& Co' } }), config);
   assert.equal(store.getSession(42).step, 'request');
   assert.equal(messages(store).at(-1).text, 'Сформулируйте ваш запрос своими словами.');
-  assert.deepEqual(messages(store).at(-1).reply_markup, { remove_keyboard: true });
+  assert.deepEqual(messages(store).at(-1).attachments, []);
   processUpdate(store, update(startId + 2, { text: 'Нужен сайт 🪐' }), config);
 }
 
@@ -30,13 +44,13 @@ test('full lead, attribution, exact questions, owner delivery and replay dedupli
   const lead = JSON.parse(rows(store, 'leads')[0].data);
   assert.deepEqual(lead.attribution, attribution);
   assert.equal(lead.phone, '+79991234567');
-  assert.equal(lead.name, 'Анна <b> & Co');
+  assert.equal(lead.name, 'Анна Иванова');
   assert.equal(lead.request, 'Нужен сайт 🪐');
   assert.ok(messages(store).every(m => m.text !== 'Как к вам обращаться?'));
   assert.ok(messages(store).some(m => m.text === 'Сформулируйте ваш запрос своими словами.'));
-  assert.ok(messages(store).some(m => m.reply_markup.keyboard?.[0][0].request_contact));
+  assert.ok(messages(store).some(m => m.attachments?.[0]?.payload.buttons[0][0].type === 'request_contact'));
   assert.match(messages(store, 999)[0].text, /utm_custom: a&b/);
-  assert.match(messages(store, 999)[0].text, /Имя: Анна <b> & Co/);
+  assert.match(messages(store, 999)[0].text, /Имя: Анна Иванова/);
   assert.equal(messages(store, 999)[0].parse_mode, undefined);
   assert.equal(store.getSession(42), null);
   const count = rows(store, 'outbox').length;
@@ -67,7 +81,7 @@ test('foreign contacts and media are rejected; /start resumes and /cancel clears
 test('contact name is automatic, with profile fallback and optional last name', t => {
   const store = new Store(); t.after(() => store.close());
   const cases = [
-    [{ first_name: 'Мария' }, 'Мария'],
+    [{ first_name: 'Мария' }, 'Анна Иванова'],
     [{}, 'Анна Иванова'],
   ];
   let id = 1;
@@ -85,7 +99,7 @@ test('old name drafts advance safely without treating a name reply as the reques
   const store = new Store(); t.after(() => store.close());
   let id = 1;
   for (const text of ['Анна', '/start website']) {
-    store.saveSession(42, { step: 'name', phone: '12345', attribution: { source: 'telegram_direct' } });
+    store.saveSession(42, { step: 'name', phone: '12345', attribution: { source: 'max_direct' } });
     processUpdate(store, update(id++, { text }), config);
     assert.equal(store.getSession(42).step, 'request');
     assert.equal(store.getSession(42).name, 'Анна Иванова');
@@ -96,7 +110,7 @@ test('old name drafts advance safely without treating a name reply as the reques
     assert.equal(rows(store, 'leads').length, count + 1);
     const lead = JSON.parse(rows(store, 'leads').at(-1).data);
     assert.equal(lead.request, 'Нужен сайт');
-    assert.equal(lead.attribution.source, text.startsWith('/start') ? 'website' : 'telegram_direct');
+    assert.equal(lead.attribution.source, text.startsWith('/start') ? 'website' : 'max_direct');
   }
 });
 
@@ -123,13 +137,13 @@ test('expired tokens retain only a labelled website hint; groups cannot create l
 
 test('setup mode exposes own ID but does not accept applications', t => {
   const store = new Store(); t.after(() => store.close());
-  processUpdate(store, update(1, { text: '/whoami' }), { ownerChatId: 0 });
+  processUpdate(store, update(1, { text: '/whoami' }), { ownerUserId: 0 });
   assert.match(messages(store)[0].text, /42/);
-  processUpdate(store, update(2, { text: '/start' }), { ownerChatId: 0 });
+  processUpdate(store, update(2, { text: '/start' }), { ownerUserId: 0 });
   assert.equal(store.getSession(42), null);
 });
 
-test('database restart preserves unfinished conversation, accepted lead, outbox and offset', t => {
+test('database restart preserves unfinished conversation, accepted lead, outbox and deduplication', t => {
   const dir = mkdtempSync(join(tmpdir(), 'cassiopeia-test-')); t.after(() => rmSync(dir, { recursive: true, force: true }));
   const path = join(dir, 'test.sqlite');
   let store = new Store(path);
@@ -140,21 +154,21 @@ test('database restart preserves unfinished conversation, accepted lead, outbox 
   assert.equal(store.getSession(42).name, 'Анна Иванова');
   processUpdate(store, update(3, { text: 'Запрос' }), config);
   store.close(); store = new Store(path); t.after(() => store.close());
-  assert.equal(store.offset, 4);
+  assert.equal(store.hasUpdate('message:mid-3'), true);
   assert.equal(rows(store, 'leads').length, 1);
   assert.ok(messages(store, 999).length);
 });
 
-test('a storage error rolls back both state and offset so update can be retried', t => {
+test('a storage error rolls back both state and deduplication so update can be retried', t => {
   const store = new Store(); t.after(() => store.close());
   const enqueue = store.enqueue.bind(store);
   store.enqueue = () => { throw new Error('disk full'); };
   assert.throws(() => processUpdate(store, update(1, { text: '/start' }), config), /disk full/);
   assert.equal(store.getSession(42), null);
-  assert.equal(store.offset, 0);
+  assert.equal(store.hasUpdate('message:mid-1'), false);
   store.enqueue = enqueue;
   processUpdate(store, update(1, { text: '/start' }), config);
-  assert.equal(store.offset, 2);
+  assert.equal(store.hasUpdate('message:mid-1'), true);
 });
 
 test('outbox retries preserve per-chat order without blocking other recipients', async t => {
@@ -163,8 +177,8 @@ test('outbox retries preserve per-chat order without blocking other recipients',
   store.enqueue(999, { text: 'owner second' });
   store.enqueue(42, { text: 'client' });
   const delivered = [];
-  await deliverPending(store, async (_, data) => {
-    if (data.chat_id === 999) throw Object.assign(new Error('rate limited'), { code: 429, retryAfter: 60 });
+  await deliverPending(store, async (_, path, data) => {
+    if (path.includes('user_id=999')) throw Object.assign(new Error('rate limited'), { code: 429, retryAfter: 60 });
     delivered.push(data.text);
   });
   assert.deepEqual(delivered, ['client']);
@@ -173,33 +187,61 @@ test('outbox retries preserve per-chat order without blocking other recipients',
   assert.equal(failed.attempts, 1);
   assert.ok(failed.next_attempt >= Date.now() + 58000);
   store.db.prepare('UPDATE outbox SET next_attempt=0').run();
-  await deliverPending(store, async (_, data) => delivered.push(data.text));
-  await deliverPending(store, async (_, data) => delivered.push(data.text));
+  await deliverPending(store, async (_, path, data) => delivered.push(data.text));
+  await deliverPending(store, async (_, path, data) => delivered.push(data.text));
   assert.deepEqual(delivered, ['client', 'owner first', 'owner second']);
   assert.equal(store.backlog().count, 0);
 });
 
-test('long messages split without cutting emoji and stay below Telegram size', () => {
+test('long messages split without cutting emoji and stay below MAX size', () => {
   const original = '🚀'.repeat(4000) + 'Яндекс'.repeat(1000);
   const parts = splitText(original);
   assert.equal(parts.join(''), original);
   assert.ok(parts.every(p => p.length <= 3500 && !/[\uD800-\uDBFF]$/.test(p)));
 });
 
-test('Telegram client hides token URLs and preserves retry_after', async () => {
-  const api = createTelegram('123:secret', async () => { throw new Error('https://api.telegram.org/bot123:secret/sendMessage'); });
-  await assert.rejects(api('sendMessage'), e => !e.message.includes('secret') && e.code === 'network');
-  const limited = createTelegram('123:secret', async () => ({ ok: false, status: 429, json: async () => ({ ok: false, error_code: 429, parameters: { retry_after: 17 } }) }));
-  await assert.rejects(limited('sendMessage'), e => e.code === 429 && e.retryAfter === 17);
+test('MAX client uses the current host and header authorization, preserves retry delay and hides secrets', async () => {
+  const api = createMax('secret-token', async (url, options) => {
+    assert.equal(url, 'https://platform-api2.max.ru/me');
+    assert.equal(options.headers.Authorization, 'secret-token');
+    assert.equal(options.body, undefined);
+    return { ok: true, json: async () => ({ username: 'test_bot' }) };
+  });
+  assert.deepEqual(await api('GET', '/me'), { username: 'test_bot' });
+  const limited = createMax('secret-token', async () => ({ ok: false, status: 429,
+    headers: { get: () => '17' }, json: async () => ({ message: 'secret-token' }),
+  }));
+  await assert.rejects(limited('POST', '/messages', {}), e => e.code === 429 && e.retryAfter === 17 && !e.message.includes('secret-token'));
+  const network = createMax('secret-token', async () => { throw new TypeError('secret-token', {
+    cause: Object.assign(new Error('secret-token'), { code: 'UND_ERR_CONNECT_TIMEOUT' }),
+  }); });
+  await assert.rejects(network('GET', '/me'), e => e.code === 'UND_ERR_CONNECT_TIMEOUT' && !e.message.includes('secret-token') && !e.cause);
 });
 
-test('Telegram client retains network cause codes without leaking request details', async () => {
-  const api = createTelegram('123:secret', async () => {
-    throw new TypeError('fetch failed for https://api.telegram.org/bot123:secret/getMe', {
-      cause: Object.assign(new Error('connection timed out'), { code: 'UND_ERR_CONNECT_TIMEOUT' }),
-    });
-  });
-  await assert.rejects(api('getMe'), e => e.code === 'UND_ERR_CONNECT_TIMEOUT' && !e.message.includes('secret') && !e.cause);
-  const timeout = createTelegram('123:secret', async () => { throw Object.assign(new Error('timeout'), { name: 'TimeoutError' }); });
-  await assert.rejects(timeout('getMe'), e => e.code === 'ETIMEDOUT');
+test('bot_started consumes deep-link payload, duplicate deliveries are ignored and older unique events are processed', t => {
+  const store = new Store(); t.after(() => store.close());
+  const token = store.createClick({ source: 'website', page: '/consulting' });
+  const start = { update_type: 'bot_started', timestamp: 123, chat_id: 142,
+    user: { user_id: 42, name: 'Анна Иванова' }, payload: token };
+  processUpdate(store, start, config);
+  const count = rows(store, 'outbox').length;
+  processUpdate(store, start, config);
+  assert.equal(rows(store, 'outbox').length, count);
+  assert.equal(store.getSession(42).attribution.page, '/consulting');
+  processUpdate(store, update(5, { contact: { user_id: 42, phone_number: '12345' } }), config);
+  processUpdate(store, update(4, { text: 'Нужен сайт' }), config);
+  assert.equal(rows(store, 'leads').length, 1);
+});
+
+test('unsigned, tampered and forwarded contacts cannot advance the conversation', t => {
+  const store = new Store(); t.after(() => store.close());
+  processUpdate(store, update(1, { text: '/start' }), config);
+  for (const id of [2, 3, 4]) {
+    const event = update(id, { contact: { user_id: 42, phone_number: '12345' } });
+    if (id === 2) delete event.message.body.attachments[0].payload.hash;
+    if (id === 3) event.message.body.attachments[0].payload.vcf_info += 'tampered';
+    if (id === 4) event.message.link = { type: 'forward' };
+    processUpdate(store, event, config);
+    assert.equal(store.getSession(42).step, 'contact');
+  }
 });

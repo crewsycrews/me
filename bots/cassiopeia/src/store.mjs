@@ -11,10 +11,10 @@ export class Store {
       PRAGMA journal_mode=WAL;
       PRAGMA synchronous=FULL;
       PRAGMA busy_timeout=5000;
-      CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS processed_updates (key TEXT PRIMARY KEY, created INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS clicks (token TEXT PRIMARY KEY, data TEXT NOT NULL, created INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS sessions (chat_id INTEGER PRIMARY KEY, data TEXT NOT NULL, updated INTEGER NOT NULL);
-      CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY AUTOINCREMENT, update_id INTEGER UNIQUE NOT NULL,
+      CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY AUTOINCREMENT, update_id TEXT UNIQUE NOT NULL,
         data TEXT NOT NULL, created INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS outbox (id INTEGER PRIMARY KEY AUTOINCREMENT, chat_id INTEGER NOT NULL,
         payload TEXT NOT NULL, created INTEGER NOT NULL, next_attempt INTEGER NOT NULL DEFAULT 0,
@@ -27,8 +27,8 @@ export class Store {
     try { const result = fn(); this.db.exec('COMMIT'); return result; }
     catch (error) { this.db.exec('ROLLBACK'); throw error; }
   }
-  get offset() { return this.db.prepare("SELECT value FROM meta WHERE key='offset'").get()?.value ?? 0; }
-  set offset(value) { this.db.prepare("INSERT OR REPLACE INTO meta VALUES ('offset', ?)").run(value); }
+  hasUpdate(key) { return !!this.db.prepare('SELECT 1 FROM processed_updates WHERE key=?').get(key); }
+  markUpdate(key) { this.db.prepare('INSERT INTO processed_updates VALUES (?, ?)').run(key, Date.now()); }
   createClick(data, now = Date.now()) {
     const token = `web_${randomBytes(18).toString('base64url')}`;
     this.db.prepare('INSERT INTO clicks VALUES (?, ?, ?)').run(token, JSON.stringify(data), now);
@@ -52,7 +52,7 @@ export class Store {
   }
   enqueue(chatId, payload) {
     this.db.prepare('INSERT INTO outbox(chat_id, payload, created) VALUES (?, ?, ?)')
-      .run(chatId, JSON.stringify({ ...payload, chat_id: chatId }), Date.now());
+      .run(chatId, JSON.stringify({ ...payload, user_id: chatId }), Date.now());
   }
   pending(now = Date.now()) {
     // A failed recipient must not block messages to other people; preserve order per chat.

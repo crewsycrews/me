@@ -102,17 +102,12 @@ useHead({
           :href="leadHref"
           :data-lead-endpoint="leadEndpoint"
           :title="isRussian ? 'Оставить заявку Кассеопее' : 'Contact Cassiopeia'"
-          :aria-label="isRussian ? 'Оставить заявку Кассеопее в Telegram' : 'Contact Cassiopeia on Telegram'"
+          :aria-label="isRussian ? 'Оставить заявку Кассеопее в MAX' : 'Contact Cassiopeia on MAX'"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <img
-            src="/assets/images/telegram_logo.webp"
-            :alt="isRussian ? 'Telegram Данила Родина' : 'Danil Rodin Telegram'"
-            class="icon"
-            width="48"
-            height="48"
-        /></a>
+          <span class="icon lead-icon" aria-hidden="true">MAX</span>
+        </a>
         <a
           href="https://itch.io/profile/casiq"
           :title="isRussian ? 'Профиль на itch.io' : 'itch.io profile'"
@@ -273,6 +268,16 @@ useHead({
 
 .devto {
   filter: invert(1);
+}
+
+.lead-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid currentColor;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 @media (hover: hover) and (pointer: fine) {

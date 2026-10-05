@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { timingSafeEqual } from 'node:crypto';
 
 function validPath(value) {
   return typeof value === 'string' && value.length <= 2048 && value.startsWith('/') && !value.startsWith('//') && !/[?#\r\n]/.test(value);
@@ -33,23 +34,53 @@ export function parseAttribution(url) {
   return { source: 'website', page: item.path, first: item, last: item };
 }
 
-export function createHttpServer({ store, botUsername, ownerChatId, health }) {
+export function createHttpServer({ store, botUsername, ownerUserId, health, webhookSecret, onUpdate }) {
   let bucket = { since: Date.now(), count: 0 };
-  return createServer({ maxHeaderSize: 65536, requestTimeout: 10000, headersTimeout: 10000 }, (req, res) => {
+  return createServer({ maxHeaderSize: 65536, requestTimeout: 10000, headersTimeout: 10000 }, async (req, res) => {
     const send = (status, text, headers = {}) => {
       res.writeHead(status, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store',
         'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff', ...headers });
       res.end(text);
     };
-    if (req.method !== 'GET') return send(405, 'Method not allowed', { Allow: 'GET' });
     if (Buffer.byteLength(req.url || '') > 49152) return send(414, 'Ссылка слишком длинная. Сократите UTM-параметры.');
     let url;
     try { url = new URL(req.url, 'http://localhost'); } catch { return send(400, 'Invalid URL'); }
+    if (url.pathname === '/webhook') {
+      if (req.method !== 'POST') return send(405, 'Method not allowed', { Allow: 'POST' });
+      const supplied = Buffer.from(String(req.headers['x-max-bot-api-secret'] || ''));
+      const expected = Buffer.from(webhookSecret || '');
+      if (!expected.length || supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
+        req.resume();
+        return send(403, 'Forbidden');
+      }
+      let size = 0;
+      const chunks = [];
+      try {
+        for await (const chunk of req) {
+          size += chunk.length;
+          if (size > 65536) { send(413, 'Payload too large'); req.resume(); return; }
+          chunks.push(chunk);
+        }
+      } catch { if (!res.destroyed) send(400, 'Invalid body'); return; }
+      let update;
+      try { update = JSON.parse(Buffer.concat(chunks).toString('utf8')); }
+      catch { return send(400, 'Invalid JSON'); }
+      try {
+        if (!onUpdate) return send(503, 'Webhook not configured');
+        onUpdate(update);
+        // Acknowledge only after state, deduplication and outbox are committed.
+        return send(200, 'ok');
+      } catch {
+        console.error('webhook_processing_failed');
+        return send(503, 'Processing failed');
+      }
+    }
+    if (req.method !== 'GET') return send(405, 'Method not allowed', { Allow: 'GET' });
     if (url.pathname === '/healthz') {
       return send(health() ? 200 : 503, health() ? 'ok' : 'degraded');
     }
     if (url.pathname !== '/go') return send(404, 'Not found');
-    if (!ownerChatId) return send(503, 'Бот пока настраивается. Попробуйте позднее.');
+    if (!ownerUserId) return send(503, 'Бот пока настраивается. Попробуйте позднее.');
     // Global bound avoids trusting spoofable proxy headers and unbounded IP maps.
     if (Date.now() - bucket.since > 60000) bucket = { since: Date.now(), count: 0 };
     if (++bucket.count > 120) return send(429, 'Слишком много переходов. Попробуйте через минуту.', { 'Retry-After': '60' });
@@ -57,7 +88,7 @@ export function createHttpServer({ store, botUsername, ownerChatId, health }) {
     try { attribution = parseAttribution(url); } catch { return send(400, 'Некорректные или слишком длинные параметры ссылки.'); }
     try {
       const token = store.createClick({ ...attribution, clickedAt: new Date().toISOString() });
-      return send(302, 'Открываем Кассеопею в Telegram…', { Location: `https://t.me/${botUsername}?start=${token}` });
+      return send(302, 'Открываем Кассеопею в MAX…', { Location: `https://max.ru/${botUsername}?start=${token}` });
     } catch {
       console.error('click_storage_failed');
       return send(503, 'Не удалось сохранить переход. Попробуйте ещё раз позднее.');

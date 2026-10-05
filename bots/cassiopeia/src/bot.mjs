@@ -1,23 +1,24 @@
-const removeKeyboard = { remove_keyboard: true };
-const contactKeyboard = {
-  keyboard: [[{ text: 'Поделиться контактом', request_contact: true }]],
-  resize_keyboard: true,
-  one_time_keyboard: true,
-};
+import { normalizeUpdate } from './max.mjs';
+
+const removeKeyboard = [];
+const contactKeyboard = [{
+  type: 'inline_keyboard',
+  payload: { buttons: [[{ type: 'request_contact', text: 'Поделиться контактом' }]] },
+}];
 const prompts = {
   contact: 'Поделитесь своим номером телефона кнопкой «Поделиться контактом». Он нужен Данилу, чтобы связаться с вами по заявке.',
   request: 'Сформулируйте ваш запрос своими словами.',
 };
 
-function telegramName(user) {
-  return [user?.first_name, user?.last_name].filter(Boolean).join(' ').trim();
+function profileName(user) {
+  return user?.name?.trim() || [user?.first_name, user?.last_name].filter(Boolean).join(' ').trim();
 }
 
 function senderName(sender) {
-  return telegramName(sender) || (sender.username ? `@${sender.username}` : `Telegram ID ${sender.id}`);
+  return profileName(sender) || (sender.username ? `@${sender.username}` : `MAX ID ${sender.id}`);
 }
 
-// Telegram's message limit is 4096. Split by code points so emoji remain intact.
+// MAX's message limit is 4000. Split by code points so emoji remain intact.
 export function splitText(text, size = 3500) {
   const parts = [];
   let part = '';
@@ -36,7 +37,7 @@ export function formatLead(id, lead) {
     `Дата: ${lead.createdAt}`,
     `Имя: ${lead.name}`,
     `Телефон: ${lead.phone}`,
-    `Telegram: ${lead.username ? `@${lead.username}` : 'без username'} (ID ${lead.userId})`,
+    `MAX: ${lead.username ? `@${lead.username}` : 'без username'} (ID ${lead.userId})`,
     '', 'Запрос:', lead.request, '', 'Атрибуция:',
     `Источник: ${a.source}`,
   ];
@@ -53,29 +54,30 @@ export function formatLead(id, lead) {
 }
 
 export function processUpdate(store, update, config) {
-  if (!Number.isSafeInteger(update.update_id)) throw new Error('Invalid update ID');
-  if (update.update_id < store.offset) return;
+  const normalized = normalizeUpdate(update, config.botToken);
+  if (!normalized) return;
   store.transaction(() => {
-    handleMessage(store, update, config);
-    store.offset = update.update_id + 1;
+    if (store.hasUpdate(normalized.key)) return;
+    handleMessage(store, normalized, config);
+    store.markUpdate(normalized.key);
   });
 }
 
-function handleMessage(store, update, { ownerChatId }) {
+function handleMessage(store, update, { ownerUserId }) {
   const m = update.message;
   if (!m || m.chat?.type !== 'private' || !m.from || m.from.is_bot) return;
   const chatId = m.chat.id;
   const text = m.text?.trim() || '';
   const command = text.match(/^\/(\w+)(?:@\w+)?(?:\s+(.*))?$/s);
   const say = (message, keyboard = removeKeyboard) => store.enqueue(chatId, {
-    text: message, reply_markup: keyboard, link_preview_options: { is_disabled: true },
+    text: message, attachments: keyboard,
   });
   const ask = (session) => say(prompts[session.step], session.step === 'contact' ? contactKeyboard : removeKeyboard);
   if (command?.[1] === 'whoami') {
-    say(`Ваш Telegram chat ID: ${chatId}`);
+    say(`Ваш MAX user ID: ${chatId}`);
     return;
   }
-  if (!ownerChatId) {
+  if (!ownerUserId) {
     say('Кассеопея пока настраивается. Приём заявок скоро откроется.');
     return;
   }
@@ -85,7 +87,7 @@ function handleMessage(store, update, { ownerChatId }) {
     return;
   }
   if (command?.[1] === 'help') {
-    say('Я Кассеопея, помощница Данила Родина. Соберу контакт и описание задачи и передам заявку Данилу.\n/start — начать или продолжить\n/cancel — отменить заполнение\n/whoami — узнать свой Telegram ID');
+    say('Я Кассеопея, помощница Данила Родина. Соберу контакт и описание задачи и передам заявку Данилу.\n/start — начать или продолжить\n/cancel — отменить заполнение\n/whoami — узнать свой MAX ID');
     return;
   }
   let session = store.getSession(chatId);
@@ -107,7 +109,7 @@ function handleMessage(store, update, { ownerChatId }) {
       attribution = { source: 'unknown', status: 'Неизвестный параметр start' };
     }
     // Reopening a link keeps answers already entered; a new attributed link updates this draft.
-    session ??= { step: 'contact', attribution: { source: 'telegram_direct' } };
+    session ??= { step: 'contact', attribution: { source: 'max_direct' } };
     if (attribution) session.attribution = attribution;
     store.saveSession(chatId, session);
     say('Здравствуйте! Я Кассеопея, помощница Данила Родина. Помогу передать ему вашу заявку: попрошу контакт и описание задачи.');
@@ -125,7 +127,7 @@ function handleMessage(store, update, { ownerChatId }) {
       return;
     }
     session.phone = m.contact.phone_number;
-    session.name = telegramName(m.contact) || senderName(m.from);
+    session.name = profileName(m.contact) || senderName(m.from);
     session.step = 'request';
   } else if (session.step === 'request') {
     if (!text || Array.from(text).length > 4000) {
@@ -137,14 +139,10 @@ function handleMessage(store, update, { ownerChatId }) {
       userId: m.from.id, username: m.from.username || null,
       attribution: session.attribution, createdAt: new Date().toISOString(),
     };
-    const id = store.addLead(update.update_id, lead);
+    const id = store.addLead(update.key, lead);
     const chunks = splitText(formatLead(id, lead));
-    chunks.forEach((part, index) => store.enqueue(ownerChatId, {
+    chunks.forEach((part, index) => store.enqueue(ownerUserId, {
       text: chunks.length > 1 ? `Заявка #${id} (${index + 1}/${chunks.length})\n${part}` : part,
-      link_preview_options: { is_disabled: true },
-      ...(index === 0 && lead.username ? { reply_markup: { inline_keyboard: [[{
-        text: 'Открыть профиль клиента', url: `https://t.me/${lead.username}`,
-      }]] } } : {}),
     }));
     store.deleteSession(chatId);
     say(`Спасибо, ${lead.name}! Заявка #${id} принята. Передам её Данилу, чтобы он мог связаться с вами.\n\nДля новой заявки нажмите /start.`);

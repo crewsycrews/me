@@ -50,7 +50,7 @@ export default defineNuxtConfig({
       siteUrl: "https://danilrodin.ru",
       leadBotUrl:
         process.env.NUXT_PUBLIC_LEAD_BOT_URL || "https://cassey.danilrodin.ru/go",
-      leadBotUsername: "casiq_cassiopeia_bot",
+      leadBotUsername: process.env.NUXT_PUBLIC_LEAD_BOT_USERNAME || "id143410863614_1_bot",
       yandexMetrikaId,
     },
   },

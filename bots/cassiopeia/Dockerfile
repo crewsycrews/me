@@ -1,5 +1,5 @@
 FROM node:24.21.0-bookworm-slim
-ENV NODE_ENV=production DATABASE_PATH=/app/data/cassiopeia.sqlite PORT=3000
+ENV NODE_ENV=production DATABASE_PATH=/app/data/cassiopeia-max.sqlite PORT=3000
 WORKDIR /app
 COPY --chown=node:node package.json ./
 COPY --chown=node:node src ./src

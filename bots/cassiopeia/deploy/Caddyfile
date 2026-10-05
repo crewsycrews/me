@@ -1,7 +1,7 @@
 # Import this site block into Caddy running on the same host as Docker Compose.
 # DNS: cassey.danilrodin.ru -> public IP of crews-main-msk.
 cassey.danilrodin.ru {
-    @lead path /go
+    @lead path /go /webhook
     handle @lead {
         reverse_proxy 127.0.0.1:3088
     }
