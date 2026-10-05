@@ -1,1 +1,0 @@
-import{o as e}from"./CoHvJfeZ.js";function t(){let t=e().public,n=t.leadBotUrl;return{leadEndpoint:n,leadHref:n||(t.leadBotUsername?`https://max.ru/${t.leadBotUsername}?start=website`:`https://cassey.danilrodin.ru/go`)}}export{t};
