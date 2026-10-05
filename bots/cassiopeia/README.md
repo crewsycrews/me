@@ -54,9 +54,12 @@ curl -fsS http://127.0.0.1:3088/healthz
 ```
 
 Сервис обращается к `https://platform-api2.max.ru` с токеном в заголовке
-`Authorization`. Если цепочка API требует дополнительный доверенный CA,
-смонтируйте проверенный сертификат read-only и задайте `NODE_EXTRA_CA_CERTS`.
-Проверку TLS не отключайте.
+`Authorization`. В образ включены сертификаты Russian Trusted Root CA и
+Russian Trusted Sub CA с Госуслуг; `NODE_EXTRA_CA_CERTS` задан в Dockerfile.
+Они дополняют стандартное доверенное хранилище Node.js, проверка TLS сохраняется.
+Источники, сроки действия и отпечатки: [certs/README.md](certs/README.md).
+Если в серверном `.env` уже задан `NODE_EXTRA_CA_CERTS`, удалите переопределение
+или укажите `/app/certs/russian-trusted-ca.pem`.
 
 ## HTTPS webhook
 
