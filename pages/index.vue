@@ -2,7 +2,6 @@
 definePageMeta({ alias: ["/en"] });
 
 const { locale, isRussian, localePath } = useSiteLocale();
-const { leadHref, leadEndpoint } = useLeadContact();
 const rotatingTexts = computed(() =>
   isRussian.value
     ? ["Разработчик", "Семьянин", "Здоровый образ жизни"]
@@ -99,15 +98,19 @@ useHead({
             height="48"
         /></a>
         <a
-          :href="leadHref"
-          :data-lead-endpoint="leadEndpoint"
-          :title="isRussian ? 'Оставить заявку Кассеопее' : 'Contact Cassiopeia'"
-          :aria-label="isRussian ? 'Оставить заявку Кассеопее в MAX' : 'Contact Cassiopeia on MAX'"
+          href="https://t.me/casiq"
+          :title="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin Telegram'"
+          :aria-label="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin on Telegram'"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span class="icon lead-icon" aria-hidden="true">MAX</span>
-        </a>
+          <img
+            src="/assets/images/telegram_logo.webp"
+            :alt="isRussian ? 'Telegram Данила Родина' : 'Danil Rodin Telegram'"
+            class="icon"
+            width="48"
+            height="48"
+        /></a>
         <a
           href="https://itch.io/profile/casiq"
           :title="isRussian ? 'Профиль на itch.io' : 'itch.io profile'"
@@ -268,16 +271,6 @@ useHead({
 
 .devto {
   filter: invert(1);
-}
-
-.lead-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid currentColor;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 700;
 }
 
 @media (hover: hover) and (pointer: fine) {
