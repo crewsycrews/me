@@ -2,3 +2,5 @@
 !package.json
 !src/
 !src/**
+!certs/
+!certs/russian-trusted-ca.pem
