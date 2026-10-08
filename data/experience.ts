@@ -4,6 +4,8 @@ type ExperienceProject = {
   name: LocalizedText;
   description: LocalizedText;
   href?: string;
+  period?: LocalizedText;
+  current?: boolean;
 };
 
 type ExperiencePeriod = {
@@ -18,13 +20,13 @@ type ExperiencePeriod = {
 const text = (ru: string, en: string): LocalizedText => ({ ru, en });
 
 // Years mark the start of each period, newest first. Projects within the same
-// employer period share its dates: the CV does not give individual project dates.
+// employer period share its dates unless a project specifies its own period.
 export const experience: ExperiencePeriod[] = [
   {
     year: 2026,
-    period: text("2026 — сейчас", "2026 — present"),
+    period: text("Май 2026 — сейчас", "May 2026 — present"),
     role: text("Работа с клиентами", "Client work"),
-    note: text("Сейчас работаю параллельно с тремя клиентами.", "Currently working with three clients in parallel."),
+    note: text("Сейчас работаю параллельно с двумя клиентами.", "Currently working with two clients in parallel."),
     current: true,
     projects: [
       {
@@ -46,9 +48,11 @@ export const experience: ExperiencePeriod[] = [
       {
         name: text("Готов", "Gotov"),
         href: "https://gotov.org",
+        period: text("Май 2026 — октябрь 2026", "May 2026 — October 2026"),
+        current: false,
         description: text(
-          "Работаю над развитием цифровой платформы еврейских общин: веб-приложением и сервисами для пользователей и организаций.",
-          "Working on a digital platform for Jewish communities, developing the web application and services for users and organisations.",
+          "Работал над развитием цифровой платформы еврейских общин: веб-приложением и сервисами для пользователей и организаций.",
+          "Worked on a digital platform for Jewish communities, developing the web application and services for users and organisations.",
         ),
       },
     ],

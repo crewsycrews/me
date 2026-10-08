@@ -13,6 +13,8 @@ const periods = computed(() => {
     ...period,
     projects: period.projects.map((project) => ({
       ...project,
+      period: project.period ?? period.period,
+      current: project.current ?? period.current,
       side: projectIndex++ % 2 === 0 ? "left" : "right",
     })),
   }));
@@ -58,13 +60,13 @@ usePageSeo({
             v-for="(project, index) in period.projects"
             :key="`${period.year}-${index}`"
             class="timeline-row"
-            :class="[`timeline-row-${project.side}`, { 'timeline-row-current': period.current }]"
+            :class="[`timeline-row-${project.side}`, { 'timeline-row-current': project.current }]"
           >
             <span class="timeline-dot" aria-hidden="true" />
             <article class="project-card">
               <p class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs leading-relaxed text-white/60 sm:text-sm">
-                <span>{{ period.period[locale] }}</span>
-                <span v-if="period.current" class="current-badge">{{ isRussian ? "Сейчас" : "Now" }}</span>
+                <span>{{ project.period[locale] }}</span>
+                <span v-if="project.current" class="current-badge">{{ isRussian ? "Сейчас" : "Now" }}</span>
               </p>
               <h3 class="mt-3 text-xl leading-tight sm:text-2xl">
                 <a v-if="project.href" :href="project.href" target="_blank" rel="noopener noreferrer" class="project-link">

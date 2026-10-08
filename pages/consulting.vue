@@ -5,7 +5,7 @@ const { leadHref, leadEndpoint } = useLeadContact();
 definePageMeta({ alias: ["/en/consulting"] });
 
 const { locale, isRussian, localePath } = useSiteLocale();
-const currentClients = experience.filter((period) => period.current).flatMap((period) => period.projects);
+const currentClients = experience.flatMap((period) => period.projects.filter((project) => project.current ?? period.current));
 const copy = computed(() =>
   isRussian.value
     ? {
@@ -61,7 +61,7 @@ const copy = computed(() =>
         ],
         experienceLabel: "Все проекты и этапы работы →",
         clientsTitle: "С кем работаю сейчас",
-        clientsText: "В 2026 году параллельно работаю с тремя клиентами:",
+        clientsText: "Сейчас параллельно работаю с двумя клиентами:",
         evidenceTitle: "Задачи, которые я уже решал",
         evidence: [
           {
@@ -168,7 +168,7 @@ const copy = computed(() =>
         ],
         experienceLabel: "All projects and career milestones →",
         clientsTitle: "Who I work with now",
-        clientsText: "In 2026, I am working with three clients in parallel:",
+        clientsText: "Currently working with two clients in parallel:",
         evidenceTitle: "Problems I have already solved",
         evidence: [
           {
