@@ -160,6 +160,7 @@ export const usePageSeo = (options: PageSeoOptions) => {
     graph.push({
       "@type": "BreadcrumbList",
       "@id": `${canonicalUrl}#breadcrumb`,
+      name: options.breadcrumbs.map((breadcrumb) => breadcrumb.name).join(" → "),
       itemListElement: options.breadcrumbs.map((breadcrumb, index) => {
         const breadcrumbPath = locale === "en"
           ? breadcrumb.path === "/" ? "/en" : `/en${breadcrumb.path}`

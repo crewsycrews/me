@@ -63,4 +63,4 @@ With real ports, VLANs, uplinks, exceptions, and a clear rollback plan. With tha
 
 ---
 
-Previous part: [Part 1: Replacing a server CPU](/en/blog/2026-09-04-hotel-admin-part-1).
+Previous part: [Part 1: Replacing a server CPU](/en/blog/2026-09-04-hotel-admin-part-1/).

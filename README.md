@@ -27,6 +27,13 @@ npm run generate
 
 Generated static files are written to `.output/public`.
 
+After generation, run `npm run audit:seo` to check every Russian and English
+page against the source inventory and sitemap. The audit requires a unique,
+nonempty `<title>`, description, Open Graph and Twitter titles, and a canonical
+URL matching the sitemap. The publication workflow runs this check before deploy.
+Search engine verification files and the 200/404 fallback pages are not included
+in the sitemap audit.
+
 ## Кассеопея — бот для клиентских заявок
 
 Отдельный сервис на Node.js 24 с Docker Compose, SQLite и атрибуцией переходов:

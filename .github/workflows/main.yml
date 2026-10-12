@@ -60,6 +60,9 @@ jobs:
           NUXT_PUBLIC_LEAD_BOT_URL: ${{ vars.NUXT_PUBLIC_LEAD_BOT_URL || 'https://cassey.danilrodin.ru/go' }}
         run: npm run generate
 
+      - name: Check page titles and canonical URLs
+        run: npm run audit:seo
+
       - name: Validate Telegram posts and record generated pages
         run: npm run telegram -- prepare
 

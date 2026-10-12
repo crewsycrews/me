@@ -42,4 +42,4 @@ I've attached photos of the old processor being removed. Ba-dum-tss. Unfortunate
 
 ---
 
-Next part: [Part 2: Replacing the core switches and trying not to break anything](/en/blog/2026-09-07-hotel-admin-part-2).
+Next part: [Part 2: Replacing the core switches and trying not to break anything](/en/blog/2026-09-07-hotel-admin-part-2/).
