@@ -24,6 +24,14 @@
         39,
         40
       ]
+    },
+    "2026-10-15-hotel-admin-part-3": {
+      "status": "pending",
+      "operation": "send",
+      "attemptId": "70efa290-e586-4914-b152-096e628f4b44",
+      "startedAt": "2026-10-15T10:21:29.470Z",
+      "hash": "40b41a7f6e4e3af1fdc5392393a0cabbf1b2e4f5a1877f1b5073c3c1818775ee",
+      "photos": []
     }
   }
 }
