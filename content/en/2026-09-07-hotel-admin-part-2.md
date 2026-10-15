@@ -64,3 +64,5 @@ With real ports, VLANs, uplinks, exceptions, and a clear rollback plan. With tha
 ---
 
 Previous part: [Part 1: Replacing a server CPU](/en/blog/2026-09-04-hotel-admin-part-1/).
+
+Next part: [Part 3: Moving the hotel’s guest Wi-Fi to a separate VLAN](/en/blog/2026-10-15-hotel-admin-part-3/).
