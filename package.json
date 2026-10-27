@@ -18,7 +18,7 @@
     "test:leads": "node --test bots/cassiopeia/test/*.test.mjs"
   },
   "dependencies": {
-    "nuxt": "^4.5.1"
+    "nuxt": "^4.6.3"
   },
   "devDependencies": {
     "@nuxt/content": "^3.15.2",
