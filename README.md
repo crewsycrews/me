@@ -38,13 +38,9 @@ in the sitemap audit.
 
 Отдельный сервис на Node.js 24 с Docker Compose, SQLite и атрибуцией переходов:
 [инструкция по настройке и развёртыванию](bots/cassiopeia/README.md).
-Кнопка Telegram на главной и обе кнопки обращения на `/consulting` (включая `/en`)
-ведут через `https://cassey.danilrodin.ru/go` к Кассеопее с сохранением полных UTM.
-Перед публикацией сайта настройте DNS и HTTPS-прокси на crews-main-msk по инструкции.
-Адрес можно переопределить GitHub Actions variable `NUXT_PUBLIC_LEAD_BOT_URL`;
-без неё используется указанный домен. Для ручного перехода без сервиса атрибуции:
-`https://t.me/casiq_cassiopeia_bot?start=website`.
-Личные ссылки на странице «Обо мне» и SEO-профиль остаются ссылками на Данила.
+Обе кнопки обращения на `/consulting` ведут напрямую в личный чат Данила в MAX,
+а на `/en/consulting` — в личный Telegram, без бота и передачи UTM в сервис
+атрибуции. Кнопка Telegram на главной также ведёт в личный Telegram.
 Проверки без сборки и реальных отправок: `npm run test:leads` под Node.js 24.
 Отдельный workflow **Cassiopeia Deploy** запускает деплой бота на `crews-main-msk`
 при push в `master`, если изменились `bots/cassiopeia/**`, `public/lead-attribution.js`,

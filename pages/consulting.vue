@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { experience } from "~/data/experience";
 
-const { leadHref, leadEndpoint } = useLeadContact();
 definePageMeta({ alias: ["/en/consulting"] });
 
 const { locale, isRussian, localePath } = useSiteLocale();
+const contactHref = computed(() => isRussian.value
+  ? "https://max.ru/u/f9LHodD0cOLwjANo6WChcNeE-FRCn1aMkH2eeM5r1KTcNSKjFSgVfz8R1M0"
+  : "https://t.me/casiq");
 const currentClients = experience.flatMap((period) => period.projects.filter((project) => project.current ?? period.current));
 const copy = computed(() =>
   isRussian.value
@@ -18,7 +20,7 @@ const copy = computed(() =>
           "Нужно запустить сервис, связать несколько систем или разобраться, почему приложение и сеть работают нестабильно? Я разрабатывал продукты с нуля, руководил командами и обслуживал серверы. Помогу выбрать решение и довести его до работающего результата.",
         cta: "Обсудить задачу в MAX",
         secondary: "Посмотреть, чем я могу помочь ↓",
-        note: "Сначала мой дружелюбный бот Кэйси попросит вас поделиться контактом и описать проблему своими словами — техническое задание не обязательно.",
+        note: "Напишите мне напрямую и опишите задачу своими словами — техническое задание не обязательно.",
         servicesTitle: "С чем ко мне можно обратиться",
         services: [
           {
@@ -123,9 +125,9 @@ const copy = computed(() =>
         heading: "Helping you launch products and get your business IT in order",
         intro:
           "Need to launch a service, connect several systems or understand why your application and network are unreliable? I have built products from scratch, led teams and maintained servers. I can help choose a solution and deliver it.",
-        cta: "Discuss your task on MAX",
+        cta: "Discuss your task on Telegram",
         secondary: "See how I can help ↓",
-        note: "First, my friendly bot Casey will ask you to share your contact details and describe the problem in your own words. You do not need a technical specification.",
+        note: "Message me directly and describe your task in your own words. You do not need a technical specification.",
         servicesTitle: "What I can help with",
         services: [
           {
@@ -250,7 +252,7 @@ usePageSeo({
         {{ copy.intro }}
       </p>
       <div class="mt-7 flex flex-wrap items-center gap-5">
-        <a :href="leadHref" :data-lead-endpoint="leadEndpoint" class="contact-link"
+        <a :href="contactHref" class="contact-link"
           >{{ copy.cta }} <span aria-hidden="true">↗</span></a
         >
         <a
@@ -369,7 +371,7 @@ usePageSeo({
     >
       <h2 id="contact-title">{{ copy.contactTitle }}</h2>
       <p class="mt-4 max-w-2xl text-white/75">{{ copy.contactText }}</p>
-      <a :href="leadHref" :data-lead-endpoint="leadEndpoint" class="contact-link mt-6"
+      <a :href="contactHref" class="contact-link mt-6"
         >{{ copy.cta }} <span aria-hidden="true">↗</span></a
       >
       <p class="mt-4 text-sm text-white/60">
