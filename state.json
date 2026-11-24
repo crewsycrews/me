@@ -33,12 +33,11 @@
       "publishedAt": "2026-10-15T10:21:31.524Z"
     },
     "2026-11-24-open-hands-future": {
-      "status": "pending",
-      "operation": "send",
-      "attemptId": "e7d2eeb8-d895-49c8-8803-f8138636348a",
-      "startedAt": "2026-11-24T10:43:40.782Z",
+      "status": "sent",
+      "messageId": 43,
       "hash": "e296bd80bf9b122e31930fffb5bc2e20ba9beff8d90b1360c9dcb0e3f3ecc197",
-      "photos": []
+      "photos": [],
+      "publishedAt": "2026-11-24T10:43:42.604Z"
     }
   }
 }
