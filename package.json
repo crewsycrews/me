@@ -18,7 +18,7 @@
     "test:leads": "node --test bots/cassiopeia/test/*.test.mjs"
   },
   "dependencies": {
-    "nuxt": "^4.5.1"
+    "nuxt": "^4.6.4"
   },
   "devDependencies": {
     "@nuxt/content": "^3.15.2",
@@ -34,10 +34,13 @@
       "picomatch": "2.3.2"
     },
     "minimatch@3.1.5": {
-      "brace-expansion": "1.1.16"
+      "brace-expansion": "1.1.21"
     },
     "readdirp": {
       "picomatch": "2.3.2"
+    },
+    "readdir-glob": {
+      "minimatch": "^11.0.1"
     },
     "socket.io-client": {
       "socket.io-parser": "4.2.7"
