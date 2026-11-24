@@ -7,6 +7,20 @@
     <language>en</language>
     <atom:link href="https://danilrodin.ru/en/rss.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Open Hands Future</title>
+      <link>https://danilrodin.ru/en/blog/2026-11-24-open-hands-future</link>
+      <guid isPermaLink="true">https://danilrodin.ru/en/blog/2026-11-24-open-hands-future</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 GMT</pubDate>
+      <description>Antimanifesto</description>
+      <yandex:full-text>https://www.openhands.dev/manifesto
+
+While everyone is obsessed with SDD, talking about the mythical harness, all sorts of skills and MCP, someone is “opening their hands” and looking to the future. Orchestrating agents in the cloud - apparently, that&apos;s where we&apos;re headed.
+
+“Agent orchestration as a core engineering skill” - I tried, guys, but sorry. Humans are single-tasking creatures. Evolution rewarded us for sitting down and doing one thing for a long time. We wouldn&apos;t have gotten very far if our ancestors had kept switching between poking a mammoth with a spear and running off to start a fire.
+
+There&apos;s such a thing as craft. Craft requires immersion and involvement. Even if you&apos;re working on a single project with one area of application, it will still have different domains that are endlessly difficult to switch between. Orchestration just isn&apos;t going to work. And that&apos;s without even mentioning the pleasure of the process and its results. You can lose your entire identity with just one agent; once you start orchestrating, you&apos;ll lose yourself completely in that swarm of agents. Companies, please don&apos;t fall for it: you&apos;ll spend a ton of money on something that nobody will benefit from.</yandex:full-text>
+    </item>
+    <item>
       <title>A developer somehow ends up running hotel IT. Part 3: Moving the hotel’s guest Wi-Fi to a separate VLAN</title>
       <link>https://danilrodin.ru/en/blog/2026-10-15-hotel-admin-part-3</link>
       <guid isPermaLink="true">https://danilrodin.ru/en/blog/2026-10-15-hotel-admin-part-3</guid>
