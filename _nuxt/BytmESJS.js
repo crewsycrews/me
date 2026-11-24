@@ -1,1 +1,0 @@
-import{H as e,R as t,h as n}from"./Dr0wzcoL.js";import{t as r}from"#entry";var i={};function a(r,i){return t(),n(`em`,null,[e(r.$slots,`default`)])}var o=Object.assign(r(i,[[`render`,a]]),{__name:`ProseEm`});export{o as default};
