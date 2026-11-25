@@ -252,7 +252,7 @@ usePageSeo({
         {{ copy.intro }}
       </p>
       <div class="mt-7 flex flex-wrap items-center gap-5">
-        <a :href="contactHref" class="contact-link"
+        <a :href="contactHref" class="contact-link" data-analytics-event="messenger_open" :data-analytics-channel="isRussian ? 'max' : 'telegram'" data-analytics-position="consulting_hero"
           >{{ copy.cta }} <span aria-hidden="true">↗</span></a
         >
         <a
@@ -371,12 +371,12 @@ usePageSeo({
     >
       <h2 id="contact-title">{{ copy.contactTitle }}</h2>
       <p class="mt-4 max-w-2xl text-white/75">{{ copy.contactText }}</p>
-      <a :href="contactHref" class="contact-link mt-6"
+      <a :href="contactHref" class="contact-link mt-6" data-analytics-event="messenger_open" :data-analytics-channel="isRussian ? 'max' : 'telegram'" data-analytics-position="consulting_contact"
         >{{ copy.cta }} <span aria-hidden="true">↗</span></a
       >
       <p class="mt-4 text-sm text-white/60">
         {{ copy.emailLabel }}:
-        <a href="mailto:danre1@bk.ru" class="underline underline-offset-4"
+        <a href="mailto:danre1@bk.ru" class="underline underline-offset-4" data-analytics-event="email_open" data-analytics-position="consulting_contact"
           >danre1@bk.ru</a
         >
       </p>

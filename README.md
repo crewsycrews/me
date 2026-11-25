@@ -292,3 +292,18 @@ request new material at least weekly, and consider publications from the last
 8 days. A valid feed does not guarantee this personal blog will be accepted.
 Keep using `/sitemap.xml` for normal site indexing; do not change old publication
 dates just to make articles appear fresh.
+
+## Google Tag Manager events
+
+The site pushes these events to `dataLayer` when a visitor activates a link:
+
+- `messenger_open`: Telegram or MAX contact link; `contact_channel` is `telegram` or `max`.
+- `email_open`: email contact link.
+- `consulting_open`: the homepage link to the consulting page.
+
+Each event includes `link_position` and `page_path`. These are link activations,
+not confirmation that a message was sent. To send them to GA4, configure a GTM
+Custom Event trigger and GA4 Event tag for each event, map the desired data layer
+variables, and publish the container. Check the events in GTM Preview and GA4
+DebugView after deployment. Avoid collecting link URLs, which may contain
+attribution parameters.

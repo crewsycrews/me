@@ -99,6 +99,9 @@ useHead({
         /></a>
         <a
           href="https://t.me/casiq"
+          data-analytics-event="messenger_open"
+          data-analytics-channel="telegram"
+          data-analytics-position="home_social"
           :title="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin Telegram'"
           :aria-label="isRussian ? 'Данил Родин в Telegram' : 'Danil Rodin on Telegram'"
           target="_blank"
@@ -161,7 +164,7 @@ useHead({
         {{ isRussian ? "Помогаю бизнесу с ИТ:" : "I help businesses with IT:" }}<br />
         {{ isRussian ? "от серверов и сетей до разработки сервисов." : "from servers and networks to software development." }}
       </p>
-      <a :href="localePath('/consulting')" class="mt-3 inline-block rounded border border-[#d4ef99]/40 px-4 py-2 transition-colors hover:bg-[#d4ef99]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4ef99]">
+      <a :href="localePath('/consulting')" data-analytics-event="consulting_open" data-analytics-position="home_cta" class="mt-3 inline-block rounded border border-[#d4ef99]/40 px-4 py-2 transition-colors hover:bg-[#d4ef99]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4ef99]">
         {{ isRussian ? "Чем могу помочь вашему бизнесу →" : "How I can help your business →" }}
       </a>
     </div>

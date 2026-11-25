@@ -37,7 +37,7 @@ usePageSeo({
       <h2 class="text-lg">Приятно познакомиться!</h2>
       <p>
         Я <b>Данил Родин</b> — fullstack-разработчик, отец двоих детей и энтузиаст GameDev. Ценю семью,
-        работу, учёбу и дружбу. Если хотите связаться со мной, напишите в Telegram: <NuxtLink to="https://t.me/casiq">@casiq</NuxtLink>.
+        работу, учёбу и дружбу. Если хотите связаться со мной, напишите в Telegram: <NuxtLink to="https://t.me/casiq" data-analytics-event="messenger_open" data-analytics-channel="telegram" data-analytics-position="about">@casiq</NuxtLink>.
       </p>
 
       <h2 class="text-lg">Мой стек:</h2>
@@ -57,7 +57,7 @@ usePageSeo({
       <h2 class="text-lg">Nice to meet you!</h2>
       <p>
         I'm <b>Danil Rodin</b>, a fullstack developer, father of two, and GameDev enthusiast. Passionate about family,
-        work, study, and friendship. If you want to get in touch, feel free to reach out on Telegram <NuxtLink to="https://t.me/casiq">@casiq</NuxtLink>.
+        work, study, and friendship. If you want to get in touch, feel free to reach out on Telegram <NuxtLink to="https://t.me/casiq" data-analytics-event="messenger_open" data-analytics-channel="telegram" data-analytics-position="about">@casiq</NuxtLink>.
       </p>
 
       <h2 class="text-lg">My tech stack:</h2>

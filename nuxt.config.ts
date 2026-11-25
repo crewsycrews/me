@@ -86,6 +86,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-5S5ZGMPF');`,
         },
         {
+          key: "analytics-events",
+          src: `${appBaseURL}analytics-events.js`,
+          defer: true,
+        },
+        {
           key: "yandex-metrika",
           innerHTML: yandexMetrikaScript,
         },
